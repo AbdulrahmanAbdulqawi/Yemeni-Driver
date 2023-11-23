@@ -1,0 +1,30 @@
+﻿@using Yemeni_Driver.ViewModel.Account
+@model LoginViewModel
+@{
+    ViewData["Title"] = "Login";
+}
+
+<p>
+    <h4>Login</h4>
+</p>
+@if (TempData["Error"] != null)
+{
+    <div class="col-md-12 alert alert-danger">
+        <span><b>Sorry!</b> - @TempData["Error"]</span>
+    </div>
+}
+
+<form method="post">
+    <label for="Email">Email:</label>
+    <input type="email" asp-for="Email" required />
+
+    <label for="Password">Password:</label>
+    <input type="password" asp-for="Password" required />
+
+    <button type="submit">Login</button>
+</form>
+
+<div style="margin-top: 20px;">
+    <p><a asp-controller="Account" asp-action="Register">Create Account</a></p>
+</div>
+
