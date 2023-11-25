@@ -1,0 +1,45 @@
+﻿@using Yemeni_Driver.Data.Enums
+@using Yemeni_Driver.ViewModel.Account
+@model DriverRegisterViewModel
+@{
+    ViewData["Title"] = "Driver Register";
+}
+
+<p>
+    <h4>Register your account</h4>
+</p>
+@if (TempData["Error"] != null)
+{
+    <div class="col-md-12 alert alert-danger">
+        <span><b>Sorry!</b> - @TempData["Error"]</span>
+    </div>
+}
+
+<form method="post">
+
+    <label for="FirstName">First Name:</label>
+    <input type="text" asp-for="FirstName" required />
+    <label for="LastName">Last Name:</label>
+    <input type="text" asp-for="LastName" required />
+    <label for="Email">Email:</label>
+    <input type="email" asp-for="Email" required />
+    <label for="Password">Password:</label>
+    <input type="password" asp-for="Password" required />
+    <label for="ConfirmPassword">Confirm Password:</label>
+    <input type="password" asp-for="ConfirmPassword" required />
+
+    <label for="PhoneNumber">Phone Number:</label>
+    <input type="PhoneNumber" asp-for="PhoneNumber" required />
+
+    <div class="form-group">
+        <label asp-for="Gender">Club Category</label>
+        <select asp-for="Gender" asp-items="@Html.GetEnumSelectList<Gender>()" class="form-control">
+            <option>----</option>
+        </select>
+        <span asp-validation-for="Gender" class="text-danger"></span>
+    </div>
+
+
+    <button type="submit">Register</button>
+</form>
+

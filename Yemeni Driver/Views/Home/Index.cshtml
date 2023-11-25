@@ -1,4 +1,8 @@
-﻿@{
+﻿@using Yemeni_Driver.Data
+@using Yemeni_Driver.ViewModel.Home
+@model RegisterSelectRolesViewModel
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -6,3 +10,17 @@
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>
+
+<form method="post">
+    <!-- Existing form fields -->
+
+
+    <h2>Welcome to the RideSharing App!</h2>
+
+    <form method="post">
+        <label for="SelectedRole">Select Your Role:</label>
+        <select asp-for="SelectedRole" asp-items="Model.AvailableRoles"></select>
+
+        <button type="submit">Continue</button>
+    </form>
+</form>

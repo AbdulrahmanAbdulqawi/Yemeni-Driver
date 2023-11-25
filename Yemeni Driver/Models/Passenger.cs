@@ -1,20 +1,15 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 using Yemeni_Driver.Data.Enums;
 
 namespace Yemeni_Driver.Models
 {
-    public class Passenger : User 
+    public class Passenger : ApplicationUser
     {
-        [Key]
-        public string UserId { get; set; }
-
-        [ForeignKey("ApplicationUser")]
-        public string ApplicationUserId { get; set; }
-        public virtual ApplicationUser ApplicationUser { get; set; }
-        public virtual ICollection<Request> Requests { get; set; }
-        public virtual CancelRequest CancelRequest { get; set; }
+    
 
 
     }

@@ -32,15 +32,18 @@ namespace Yemeni_Driver.Migrations
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                    Gender = table.Column<int>(type: "int", nullable: false),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Rating = table.Column<int>(type: "int", nullable: false),
+                    Discriminator = table.Column<string>(type: "nvarchar(21)", maxLength: 21, nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
                     PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
                     TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
                     LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
@@ -159,52 +162,27 @@ namespace Yemeni_Driver.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Drivers",
+                name: "Requests",
                 columns: table => new
                 {
-                    DriverId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    DrivingLicenceNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Gender = table.Column<int>(type: "int", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Rateing = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Drivers", x => x.DriverId);
-                    table.ForeignKey(
-                        name: "FK_Drivers_AspNetUsers_ApplicationUserId",
-                        column: x => x.ApplicationUserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Passengers",
-                columns: table => new
-                {
+                    RequestId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Gender = table.Column<int>(type: "int", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Rateing = table.Column<int>(type: "int", nullable: false)
+                    DateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    RideType = table.Column<int>(type: "int", nullable: false),
+                    PickupLocation = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DropoffLocation = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    EstimationPrice = table.Column<double>(type: "float", nullable: false),
+                    NumberOfSeats = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Passengers", x => x.UserId);
+                    table.PrimaryKey("PK_Requests", x => x.RequestId);
                     table.ForeignKey(
-                        name: "FK_Passengers_AspNetUsers_ApplicationUserId",
-                        column: x => x.ApplicationUserId,
+                        name: "FK_Requests_AspNetUsers_UserId",
+                        column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -223,34 +201,10 @@ namespace Yemeni_Driver.Migrations
                 {
                     table.PrimaryKey("PK_Vehicles", x => x.VehicleId);
                     table.ForeignKey(
-                        name: "FK_Vehicles_Drivers_VehicleId",
+                        name: "FK_Vehicles_AspNetUsers_VehicleId",
                         column: x => x.VehicleId,
-                        principalTable: "Drivers",
-                        principalColumn: "DriverId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Requests",
-                columns: table => new
-                {
-                    RequestId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    DateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    RideType = table.Column<int>(type: "int", nullable: false),
-                    PickupLocation = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DropoffLocation = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    EstimationPrice = table.Column<double>(type: "float", nullable: false),
-                    NumberOfSeats = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Requests", x => x.RequestId);
-                    table.ForeignKey(
-                        name: "FK_Requests_Passengers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Passengers",
-                        principalColumn: "UserId",
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -270,15 +224,15 @@ namespace Yemeni_Driver.Migrations
                 {
                     table.PrimaryKey("PK_CancelRequests", x => new { x.RequestId, x.UserId, x.DriverId });
                     table.ForeignKey(
-                        name: "FK_CancelRequests_Drivers_DriverId",
+                        name: "FK_CancelRequests_AspNetUsers_DriverId",
                         column: x => x.DriverId,
-                        principalTable: "Drivers",
-                        principalColumn: "DriverId");
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_CancelRequests_Passengers_UserId",
+                        name: "FK_CancelRequests_AspNetUsers_UserId",
                         column: x => x.UserId,
-                        principalTable: "Passengers",
-                        principalColumn: "UserId");
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_CancelRequests_Requests_RequestId",
                         column: x => x.RequestId,
@@ -297,17 +251,16 @@ namespace Yemeni_Driver.Migrations
                 {
                     table.PrimaryKey("PK_DriversAndRequests", x => new { x.RequestId, x.DriverId });
                     table.ForeignKey(
-                        name: "FK_DriversAndRequests_Drivers_DriverId",
+                        name: "FK_DriversAndRequests_AspNetUsers_DriverId",
                         column: x => x.DriverId,
-                        principalTable: "Drivers",
-                        principalColumn: "DriverId",
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_DriversAndRequests_Requests_RequestId",
                         column: x => x.RequestId,
                         principalTable: "Requests",
-                        principalColumn: "RequestId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "RequestId");
                 });
 
             migrationBuilder.CreateTable(
@@ -329,17 +282,16 @@ namespace Yemeni_Driver.Migrations
                 {
                     table.PrimaryKey("PK_Trips", x => x.TripId);
                     table.ForeignKey(
-                        name: "FK_Trips_Drivers_DriverId",
+                        name: "FK_Trips_AspNetUsers_DriverId",
                         column: x => x.DriverId,
-                        principalTable: "Drivers",
-                        principalColumn: "DriverId",
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Trips_Requests_RequestId",
                         column: x => x.RequestId,
                         principalTable: "Requests",
-                        principalColumn: "RequestId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "RequestId");
                 });
 
             migrationBuilder.CreateIndex(
@@ -400,21 +352,9 @@ namespace Yemeni_Driver.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Drivers_ApplicationUserId",
-                table: "Drivers",
-                column: "ApplicationUserId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_DriversAndRequests_DriverId",
                 table: "DriversAndRequests",
                 column: "DriverId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Passengers_ApplicationUserId",
-                table: "Passengers",
-                column: "ApplicationUserId",
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Requests_UserId",
@@ -469,12 +409,6 @@ namespace Yemeni_Driver.Migrations
 
             migrationBuilder.DropTable(
                 name: "Requests");
-
-            migrationBuilder.DropTable(
-                name: "Drivers");
-
-            migrationBuilder.DropTable(
-                name: "Passengers");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

@@ -33,8 +33,7 @@ namespace Yemeni_Driver.Data
                 .HasForeignKey(v => v.VehicleId);
 
             // Driver
-            modelBuilder.Entity<Driver>()
-                .HasKey(d => d.DriverId);
+           
 
             modelBuilder.Entity<Driver>()
                 .HasMany(d => d.Vehicles)
@@ -47,7 +46,8 @@ namespace Yemeni_Driver.Data
             modelBuilder.Entity<DriverAndRequest>()
                 .HasOne(dr => dr.Request)
                 .WithMany(r => r.DriverAndRequests)
-                .HasForeignKey(dr => dr.RequestId);
+                .HasForeignKey(dr => dr.RequestId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
 
             modelBuilder.Entity<DriverAndRequest>()
                 .HasOne(dr => dr.Driver)
@@ -59,10 +59,7 @@ namespace Yemeni_Driver.Data
                 .WithOne(t => t.Driver)
                 .HasForeignKey<Trip>(t => t.DriverId);
 
-            modelBuilder.Entity<Driver>()
-                .HasOne(d => d.ApplicationUser)
-                .WithOne(u => u.Driver)
-                .HasForeignKey<ApplicationUser>(u => u.Id);
+          
 
 
             // Request
@@ -113,7 +110,8 @@ namespace Yemeni_Driver.Data
             modelBuilder.Entity<Trip>()
                 .HasOne(t => t.Request)
                 .WithOne(r => r.Trip)
-                .HasForeignKey<Trip>(t => t.RequestId);
+                .HasForeignKey<Trip>(t => t.RequestId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
 
             modelBuilder.Entity<Trip>()
                 .HasOne(t => t.Driver)
@@ -121,8 +119,6 @@ namespace Yemeni_Driver.Data
                 .HasForeignKey<Trip>(t => t.DriverId);
 
             // Passenger
-            modelBuilder.Entity<Passenger>()
-                .HasKey(p => p.UserId);
 
             modelBuilder.Entity<Passenger>()
                 .HasMany(p => p.Requests)
@@ -130,26 +126,18 @@ namespace Yemeni_Driver.Data
                 .HasForeignKey(r => r.UserId);
 
 
-            modelBuilder.Entity<Passenger>()
-                .HasOne(d => d.ApplicationUser)
-                .WithOne(u => u.Passenger)
-                .HasForeignKey<ApplicationUser>(u => u.Id)
-                .OnDelete(DeleteBehavior.ClientSetNull);
+
+
+          
 
             // Other configurations...
 
             //ApplicationUser
-            modelBuilder.Entity<ApplicationUser>()
-                .HasOne(p => p.Passenger)
-                .WithOne(u => u.ApplicationUser)
-                .HasForeignKey<Passenger>(u => u.ApplicationUserId)
-                .OnDelete(DeleteBehavior.ClientSetNull);
+            modelBuilder.Entity<ApplicationUser>().HasKey(u => u.Id);
+
+          
            
-            modelBuilder.Entity<ApplicationUser>()
-             .HasOne(d => d.Driver)
-             .WithOne(u => u.ApplicationUser)
-             .HasForeignKey<Driver>(u => u.ApplicationUserId)
-             .OnDelete(DeleteBehavior.ClientSetNull);
+         
 
             base.OnModelCreating(modelBuilder);
         }
