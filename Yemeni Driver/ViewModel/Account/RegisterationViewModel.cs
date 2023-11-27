@@ -6,7 +6,7 @@ using Yemeni_Driver.Data;
 
 namespace Yemeni_Driver.ViewModel.Account
 {
-    public class DriverRegisterViewModel
+    public class RegisterationViewModel
     {
         [NotNull]
         public string FirstName { get; set; }

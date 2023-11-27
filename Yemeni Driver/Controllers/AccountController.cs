@@ -29,7 +29,7 @@ namespace Yemeni_Driver.Controllers
 
         public IActionResult Register()
         {
-            var response = new RegisterViewModel();
+            var response = new RegisterationViewModel();
             return View(response);
         }
 
@@ -40,7 +40,7 @@ namespace Yemeni_Driver.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Register(RegisterViewModel registerVM)
+        public async Task<IActionResult> Register(RegisterationViewModel registerVM)
         {
             if (ModelState.IsValid)
             {
@@ -100,12 +100,12 @@ namespace Yemeni_Driver.Controllers
 
         public IActionResult RegisterAsDriver()
         {
-            var response = new DriverRegisterViewModel();
+            var response = new RegisterationViewModel();
             return View(response);
         }
 
         [HttpPost]
-        public async Task<IActionResult> RegisterAsDriver(DriverRegisterViewModel driverRegisterVM)
+        public async Task<IActionResult> RegisterAsDriver(RegisterationViewModel driverRegisterVM)
         {
             var getDriver = await _userManager.FindByEmailAsync(driverRegisterVM.Email);
 
@@ -125,6 +125,58 @@ namespace Yemeni_Driver.Controllers
             {
 
                 await _userManager.AddToRoleAsync(appUser, Roles.Driver.ToString());
+
+                await _signInManager.SignInAsync(appUser, isPersistent: false);
+                return RedirectToAction("Index", "Home"); // Redirect to the home page after successful registration
+            }
+
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
+
+            return (IActionResult)(TempData["Error"] = "Registeration Failed");
+
+            //test
+
+
+        }
+
+        public IActionResult RegisterAsPassenger()
+        {
+            var response = new RegisterationViewModel();
+            return View(response);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RegisterAsPassenger(RegisterationViewModel registerVM)
+        {
+            var getDriver = await _userManager.FindByEmailAsync(registerVM.Email);
+
+            if (getDriver != null)
+            {
+                TempData["Error"] = "User Already Exists!";
+                return View(registerVM);
+            }
+
+            var appUser = new ApplicationUser
+            {
+                UserName = registerVM.Email,
+                Email = registerVM.Email,
+                Roles = Roles.Passenger,
+                DrivingLicenseNumber = registerVM.DrivingLicenseNumber,
+                FirstName = registerVM.FirstName,
+                LastName = registerVM.LastName,
+                Gender = registerVM.Gender,
+                PhoneNumber = registerVM.PhoneNumber,
+
+            };
+            var result = await _userManager.CreateAsync(appUser, registerVM.Password);
+
+            if (result.Succeeded)
+            {
+
+                await _userManager.AddToRoleAsync(appUser, appUser.Roles.ToString());
 
                 await _signInManager.SignInAsync(appUser, isPersistent: false);
                 return RedirectToAction("Index", "Home"); // Redirect to the home page after successful registration

@@ -24,3 +24,44 @@
         <button type="submit">Continue</button>
     </form>
 </form>
+<div id="map" style="height: 400px;"></div>
+
+<!-- Add this to your HTML file, replacing 'YOUR_API_KEY' with your actual API key -->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD-1aXeejG3qa4Tj5Msm4Wx5XOuA-GzTZk&callback=initMap" async defer></script>
+
+<script>
+
+    // Place this code in a JavaScript file (e.g., site.js) or directly in your HTML file
+
+    function initMap() {
+        // Check if the browser supports geolocation
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                function (position) {
+                    var myLatLng = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    };
+
+                    var map = new google.maps.Map(document.getElementById('map'), {
+                        center: myLatLng,
+                        zoom: 8
+                    });
+
+                    var marker = new google.maps.Marker({
+                        position: myLatLng,
+                        map: map,
+                        title: 'Your Location'
+                    });
+                },
+                function (error) {
+                    console.error('Error getting location:', error);
+                }
+            );
+        } else {
+            console.error('Geolocation is not supported by this browser.');
+        }
+    }
+
+
+</script>

@@ -35,7 +35,7 @@ namespace Yemeni_Driver.Controllers
         {
             if (model.SelectedRole.Contains("Passenger"))
             {
-                return RedirectToAction("Register", "Account", new { role = model.SelectedRole });
+                return RedirectToAction("RegisterAsPassenger", "Account", new { role = model.SelectedRole });
             }
             // Redirect to the registration page with the selected role
             return RedirectToAction("RegisterAsDriver", "Account", new { role = model.SelectedRole });
