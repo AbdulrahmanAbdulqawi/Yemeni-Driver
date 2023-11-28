@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Yemeni_Driver.Data;
 using Yemeni_Driver.Interfaces;
 using Yemeni_Driver.Models;
@@ -8,10 +9,12 @@ namespace Yemeni_Driver.Repository
     public class UserRepository : IUserRepository
     {
         private readonly ApplicationDbContext _applicationDbContext;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public UserRepository(ApplicationDbContext applicationDbContext)
+        public UserRepository(ApplicationDbContext applicationDbContext, UserManager<ApplicationUser> userManager)
         {
             _applicationDbContext = applicationDbContext;
+            _userManager = userManager;
         }
         public bool Add(ApplicationUser user)
         {
@@ -38,6 +41,17 @@ namespace Yemeni_Driver.Repository
         public async Task<ApplicationUser> GetByIdAsyncNoTracking(string id)
         {
             return await _applicationDbContext.Users.AsNoTracking().FirstOrDefaultAsync(a => a.Id == id);
+        }
+
+        public async Task<IEnumerable<ApplicationUser>> GetDrivers()
+        {
+            var drivers = _userManager.GetUsersInRoleAsync(Roles.Driver.ToString()).Result.ToList();
+            return drivers;
+        }
+
+        public Task<IEnumerable<ApplicationUser>> GetPassengers()
+        {
+            throw new NotImplementedException();
         }
 
         public bool Save()

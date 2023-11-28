@@ -1,0 +1,30 @@
+﻿@using Yemeni_Driver.ViewModel.Vehicle
+@model CreateVehicleViewModel
+
+<h2>Create a Vehicle</h2>
+
+<form method="post" action="@Url.Action("CreateVehicle")">
+    <label for="Model">Model:</label>
+    <input type="text" asp-for="Model" required />
+
+    <label for="Make">Make:</label>
+    <input type="text" asp-for="Make" required />
+
+    <label for="Year">Year:</label>
+    <input type="number" asp-for="Year" required />
+
+    <label for="Color">Color:</label>
+    <input type="text" asp-for="Color" required />
+
+    <label for="PlateNumber">Plate Number:</label>
+    <input type="text" asp-for="PlateNumber" required />
+
+    <!-- Add other vehicle properties as needed -->
+    <label for="UserId">Driver:</label>
+    <select asp-for="UserId" asp-items="@ViewBag.Drivers"></select>
+
+   @*  <label for="DriverId">Driver:</label>
+    <select asp-for="DriverId" asp-items="@ViewBag.Drivers"></select> *@
+
+    <button type="submit">Create Vehicle</button>
+</form>

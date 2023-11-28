@@ -32,5 +32,6 @@ namespace Yemeni_Driver.ViewModel.Account
         public int? Rateing { get; set; }
         public Roles Roles { get; set; } = Roles.Driver;
         public string DrivingLicenseNumber { get; set; }
+        public string? VehicleId { get; set; }
     }
 }

@@ -28,20 +28,20 @@ namespace Yemeni_Driver.Data
                 .HasKey(v => v.VehicleId);
 
             modelBuilder.Entity<Vehicle>()
-                .HasOne(v => v.Driver)
-                .WithMany(d => d.Vehicles)
-                .HasForeignKey(v => v.VehicleId);
+                .HasOne(v => v.ApplicationUser)
+                .WithOne(d => d.Vehicle)
+                .HasForeignKey<ApplicationUser>(v => v.VehicleId);
 
             // Driver
            
 
-            modelBuilder.Entity<Driver>()
-                .HasMany(d => d.Vehicles)
-                .WithOne(v => v.Driver)
-                .HasForeignKey(v => v.VehicleId);
+            modelBuilder.Entity<ApplicationUser>()
+                .HasOne(d => d.Vehicle)
+                .WithOne(v => v.ApplicationUser)
+                .HasForeignKey<Vehicle>(v => v.VehicleId);
 
             modelBuilder.Entity<DriverAndRequest>()
-                .HasKey(dr => new { dr.RequestId, dr.DriverId });
+                .HasKey(dr => new { dr.RequestId, dr.ApplicationUserId });
 
             modelBuilder.Entity<DriverAndRequest>()
                 .HasOne(dr => dr.Request)
@@ -50,14 +50,14 @@ namespace Yemeni_Driver.Data
                 .OnDelete(DeleteBehavior.ClientSetNull);
 
             modelBuilder.Entity<DriverAndRequest>()
-                .HasOne(dr => dr.Driver)
+                .HasOne(dr => dr.ApplicationUser)
                 .WithMany(d => d.DriverAndRequests)
-                .HasForeignKey(dr => dr.DriverId);
+                .HasForeignKey(dr => dr.ApplicationUserId);
 
-            modelBuilder.Entity<Driver>()
+            modelBuilder.Entity<ApplicationUser>()
                 .HasOne(d => d.Trip)
-                .WithOne(t => t.Driver)
-                .HasForeignKey<Trip>(t => t.DriverId);
+                .WithOne(t => t.ApplicationUser)
+                .HasForeignKey<Trip>(t => t.ApplicationUserId);
 
           
 
@@ -67,9 +67,9 @@ namespace Yemeni_Driver.Data
                 .HasKey(r => r.RequestId);
 
             modelBuilder.Entity<Request>()
-                .HasOne(r => r.Passenger)
+                .HasOne(r => r.ApplicationUser)
                 .WithMany(p => p.Requests)
-                .HasForeignKey(r => r.UserId);
+                .HasForeignKey(r => r.ApplicationUserId);
 
             modelBuilder.Entity<Request>()
                 .HasMany(r => r.DriverAndRequests)
@@ -83,7 +83,7 @@ namespace Yemeni_Driver.Data
 
             // CancelRequest
             modelBuilder.Entity<CancelRequest>()
-                .HasKey(cr => new { cr.RequestId, cr.UserId, cr.DriverId });
+                .HasKey(cr => new { cr.RequestId, cr.ApplicationUserId});
 
             modelBuilder.Entity<CancelRequest>()
                 .HasOne(cr => cr.Request)
@@ -92,15 +92,15 @@ namespace Yemeni_Driver.Data
                 .OnDelete(DeleteBehavior.ClientSetNull); ;
 
             modelBuilder.Entity<CancelRequest>()
-                .HasOne(cr => cr.Passenger)
+                .HasOne(cr => cr.ApplicationUser)
                 .WithOne(p => p.CancelRequest)
-                .HasForeignKey <CancelRequest>(cr => cr.UserId)
+                .HasForeignKey <CancelRequest>(cr => cr.ApplicationUserId)
                 .OnDelete(DeleteBehavior.ClientSetNull); ;
 
             modelBuilder.Entity<CancelRequest>()
-                .HasOne(cr => cr.Driver)
+                .HasOne(cr => cr.ApplicationUser)
                 .WithOne(d => d.CancelRequest)
-                .HasForeignKey<CancelRequest>(cr => cr.DriverId)
+                .HasForeignKey<CancelRequest>(cr => cr.ApplicationUserId)
                 .OnDelete(DeleteBehavior.ClientSetNull);;
 
             // Trip
@@ -114,16 +114,16 @@ namespace Yemeni_Driver.Data
                 .OnDelete(DeleteBehavior.ClientSetNull);
 
             modelBuilder.Entity<Trip>()
-                .HasOne(t => t.Driver)
+                .HasOne(t => t.ApplicationUser)
                 .WithOne(d => d.Trip)
-                .HasForeignKey<Trip>(t => t.DriverId);
+                .HasForeignKey<Trip>(t => t.ApplicationUserId);
 
             // Passenger
 
-            modelBuilder.Entity<Passenger>()
+            modelBuilder.Entity<ApplicationUser>()
                 .HasMany(p => p.Requests)
-                .WithOne(r => r.Passenger)
-                .HasForeignKey(r => r.UserId);
+                .WithOne(r => r.ApplicationUser)
+                .HasForeignKey(r => r.ApplicationUserId);
 
 
 
@@ -133,7 +133,6 @@ namespace Yemeni_Driver.Data
             // Other configurations...
 
             //ApplicationUser
-            modelBuilder.Entity<ApplicationUser>().HasKey(u => u.Id);
 
           
            

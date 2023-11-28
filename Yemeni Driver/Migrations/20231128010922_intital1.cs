@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Yemeni_Driver.Migrations
 {
     /// <inheritdoc />
-    public partial class intial : Migration
+    public partial class intital1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -30,11 +30,13 @@ namespace Yemeni_Driver.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Gender = table.Column<int>(type: "int", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Rating = table.Column<int>(type: "int", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Gender = table.Column<int>(type: "int", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Rating = table.Column<int>(type: "int", nullable: true),
+                    DrivingLicenseNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    VehicleId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Discriminator = table.Column<string>(type: "nvarchar(21)", maxLength: 21, nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -166,7 +168,7 @@ namespace Yemeni_Driver.Migrations
                 columns: table => new
                 {
                     RequestId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     DateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     RideType = table.Column<int>(type: "int", nullable: false),
                     PickupLocation = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -178,8 +180,8 @@ namespace Yemeni_Driver.Migrations
                 {
                     table.PrimaryKey("PK_Requests", x => x.RequestId);
                     table.ForeignKey(
-                        name: "FK_Requests_AspNetUsers_UserId",
-                        column: x => x.UserId,
+                        name: "FK_Requests_AspNetUsers_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -195,7 +197,8 @@ namespace Yemeni_Driver.Migrations
                     Year = table.Column<int>(type: "int", nullable: false),
                     Capacity = table.Column<int>(type: "int", nullable: false),
                     Color = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PlateNumber = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    PlateNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ApplicationUserId = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -213,8 +216,7 @@ namespace Yemeni_Driver.Migrations
                 columns: table => new
                 {
                     RequestId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    DriverId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Penalty = table.Column<int>(type: "int", nullable: false),
                     CancelTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CancelledBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -222,15 +224,10 @@ namespace Yemeni_Driver.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CancelRequests", x => new { x.RequestId, x.UserId, x.DriverId });
+                    table.PrimaryKey("PK_CancelRequests", x => new { x.RequestId, x.ApplicationUserId });
                     table.ForeignKey(
-                        name: "FK_CancelRequests_AspNetUsers_DriverId",
-                        column: x => x.DriverId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_CancelRequests_AspNetUsers_UserId",
-                        column: x => x.UserId,
+                        name: "FK_CancelRequests_AspNetUsers_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
                     table.ForeignKey(
@@ -245,14 +242,14 @@ namespace Yemeni_Driver.Migrations
                 columns: table => new
                 {
                     RequestId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    DriverId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_DriversAndRequests", x => new { x.RequestId, x.DriverId });
+                    table.PrimaryKey("PK_DriversAndRequests", x => new { x.RequestId, x.ApplicationUserId });
                     table.ForeignKey(
-                        name: "FK_DriversAndRequests_AspNetUsers_DriverId",
-                        column: x => x.DriverId,
+                        name: "FK_DriversAndRequests_AspNetUsers_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -269,7 +266,7 @@ namespace Yemeni_Driver.Migrations
                 {
                     TripId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     RequestId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    DriverId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     StartTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Duration = table.Column<int>(type: "int", nullable: false),
@@ -282,8 +279,8 @@ namespace Yemeni_Driver.Migrations
                 {
                     table.PrimaryKey("PK_Trips", x => x.TripId);
                     table.ForeignKey(
-                        name: "FK_Trips_AspNetUsers_DriverId",
-                        column: x => x.DriverId,
+                        name: "FK_Trips_AspNetUsers_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -334,9 +331,9 @@ namespace Yemeni_Driver.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CancelRequests_DriverId",
+                name: "IX_CancelRequests_ApplicationUserId",
                 table: "CancelRequests",
-                column: "DriverId",
+                column: "ApplicationUserId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -346,25 +343,19 @@ namespace Yemeni_Driver.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CancelRequests_UserId",
-                table: "CancelRequests",
-                column: "UserId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_DriversAndRequests_DriverId",
+                name: "IX_DriversAndRequests_ApplicationUserId",
                 table: "DriversAndRequests",
-                column: "DriverId");
+                column: "ApplicationUserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Requests_UserId",
+                name: "IX_Requests_ApplicationUserId",
                 table: "Requests",
-                column: "UserId");
+                column: "ApplicationUserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Trips_DriverId",
+                name: "IX_Trips_ApplicationUserId",
                 table: "Trips",
-                column: "DriverId",
+                column: "ApplicationUserId",
                 unique: true);
 
             migrationBuilder.CreateIndex(

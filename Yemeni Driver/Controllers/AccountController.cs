@@ -115,17 +115,25 @@ namespace Yemeni_Driver.Controllers
             }
 
             var appUser = new ApplicationUser { UserName = driverRegisterVM.Email, Email = driverRegisterVM.Email, 
-                Roles = Roles.Driver, DrivingLicenseNumber = driverRegisterVM.DrivingLicenseNumber,
+                 DrivingLicenseNumber = driverRegisterVM.DrivingLicenseNumber,
                 FirstName = driverRegisterVM.FirstName, LastName = driverRegisterVM.LastName, Gender = driverRegisterVM.Gender, PhoneNumber = driverRegisterVM.PhoneNumber,
-
+                VehicleId = driverRegisterVM.VehicleId
+               
             };
+
+            var newVehicle = new Vehicle
+            {
+                ApplicationUserId = appUser.Id,
+                VehicleId = appUser.VehicleId,
+            };
+
+            appUser.Vehicle = newVehicle;
+
             var result = await _userManager.CreateAsync(appUser, driverRegisterVM.Password);
 
             if (result.Succeeded)
             {
-
                 await _userManager.AddToRoleAsync(appUser, Roles.Driver.ToString());
-
                 await _signInManager.SignInAsync(appUser, isPersistent: false);
                 return RedirectToAction("Index", "Home"); // Redirect to the home page after successful registration
             }
@@ -163,7 +171,6 @@ namespace Yemeni_Driver.Controllers
             {
                 UserName = registerVM.Email,
                 Email = registerVM.Email,
-                Roles = Roles.Passenger,
                 DrivingLicenseNumber = registerVM.DrivingLicenseNumber,
                 FirstName = registerVM.FirstName,
                 LastName = registerVM.LastName,
@@ -176,7 +183,7 @@ namespace Yemeni_Driver.Controllers
             if (result.Succeeded)
             {
 
-                await _userManager.AddToRoleAsync(appUser, appUser.Roles.ToString());
+                await _userManager.AddToRoleAsync(appUser, Roles.Passenger.ToString());
 
                 await _signInManager.SignInAsync(appUser, isPersistent: false);
                 return RedirectToAction("Index", "Home"); // Redirect to the home page after successful registration

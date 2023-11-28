@@ -5,13 +5,13 @@
 namespace Yemeni_Driver.Migrations
 {
     /// <inheritdoc />
-    public partial class makeDrivingLicenseAcceptNull : Migration
+    public partial class intital2 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<string>(
-                name: "DrivingLicenseNumber",
+                name: "VehicleId",
                 table: "AspNetUsers",
                 type: "nvarchar(max)",
                 nullable: true,
@@ -23,7 +23,7 @@ namespace Yemeni_Driver.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<string>(
-                name: "DrivingLicenseNumber",
+                name: "VehicleId",
                 table: "AspNetUsers",
                 type: "nvarchar(max)",
                 nullable: false,

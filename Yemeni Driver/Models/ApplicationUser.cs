@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations.Schema;
 using Yemeni_Driver.Data;
 using Yemeni_Driver.Data.Enums;
 
@@ -12,8 +13,10 @@ namespace Yemeni_Driver.Models
         public string? PhoneNumber { get; set; }
         public int? Rating { get; set; }
         public string? DrivingLicenseNumber { get; set; }
-        public Roles? Roles { get; set; }
-        public virtual ICollection<Vehicle> Vehicles { get; set; }
+
+        [ForeignKey("Vehicle")]
+        public string? VehicleId { get; set; }
+        public virtual Vehicle Vehicle { get; set; }
         public virtual ICollection<DriverAndRequest> DriverAndRequests { get; set; }
         public virtual Trip Trip { get; set; }
         public virtual CancelRequest CancelRequest { get; set; }

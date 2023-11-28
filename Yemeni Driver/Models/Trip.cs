@@ -9,8 +9,8 @@ namespace Yemeni_Driver.Models
         public string TripId { get; set; }
         [ForeignKey("Request")]
         public string RequestId { get; set; }
-        [ForeignKey("Driver")]
-        public string DriverId { get; set; }
+        [ForeignKey("ApplicationUser")]
+        public string ApplicationUserId { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
         public int Duration {  get; set; }
@@ -23,7 +23,7 @@ namespace Yemeni_Driver.Models
 
 
         public virtual Request Request { get; set; }
-        public virtual Driver Driver { get; set; }
+        public virtual ApplicationUser ApplicationUser { get; set; }
 
     }
 }

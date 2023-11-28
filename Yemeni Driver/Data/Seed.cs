@@ -48,6 +48,7 @@ namespace Yemeni_Driver.Data
                         UserName = "passenger-user",
                         Email = appPassngerUserEmail,
                         EmailConfirmed = true,
+                    
                     };
                     await userManager.CreateAsync(newAppUser, "123456aA@");
                     await userManager.AddToRoleAsync(newAppUser, Roles.Passenger.ToString());
@@ -55,17 +56,19 @@ namespace Yemeni_Driver.Data
 
                 string appDriverUserEmail = "driver@gmail.com";
 
-                var appDriverUser = await userManager.FindByEmailAsync(appPassngerUserEmail);
+                var appDriverUser = await userManager.FindByEmailAsync(appDriverUserEmail);
                 if (appDriverUser == null)
                 {
                     var newAppUser = new ApplicationUser()
                     {
                         UserName = "driver-user",
-                        Email = appPassngerUserEmail,
+                        Email = appDriverUserEmail,
                         EmailConfirmed = true,
+                        VehicleId = "123AA"
                     };
                     await userManager.CreateAsync(newAppUser, "123456aA@");
                     await userManager.AddToRoleAsync(newAppUser, Roles.Driver.ToString());
+                    
                 }
             }
         }

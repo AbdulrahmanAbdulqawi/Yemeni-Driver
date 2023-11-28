@@ -5,6 +5,9 @@ namespace Yemeni_Driver.Interfaces
     public interface IUserRepository
     {
         Task<IEnumerable<ApplicationUser>> GetAll();
+        Task<IEnumerable<ApplicationUser>> GetDrivers();
+        Task<IEnumerable<ApplicationUser>> GetPassengers();
+
         Task<ApplicationUser> GetByIdAsync(string id);
         Task<ApplicationUser> GetByIdAsyncNoTracking(string id);
         bool Add(ApplicationUser user);
