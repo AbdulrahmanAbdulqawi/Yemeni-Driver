@@ -125,6 +125,12 @@ namespace Yemeni_Driver.Controllers
             {
                 ApplicationUserId = appUser.Id,
                 VehicleId = appUser.VehicleId,
+                Capacity = driverRegisterVM.Capacity,
+                Color = driverRegisterVM.Color,
+                Model = driverRegisterVM.Model,
+                Year = driverRegisterVM.Year,
+                Make = driverRegisterVM.Make,
+                PlateNumber = driverRegisterVM.PlateNumber,
             };
 
             appUser.Vehicle = newVehicle;

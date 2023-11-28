@@ -20,7 +20,7 @@ namespace Yemeni_Driver.Controllers
             _userRepository = userRepository;
             _userManager = userManager;
         }
-        public async Task<IActionResult> CreateVehicle()
+        public async Task<IActionResult> UpdateVehicle()
         
         {
             // Retrieve a list of drivers to populate a dropdown in the form
@@ -31,22 +31,22 @@ namespace Yemeni_Driver.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateVehicle(CreateVehicleViewModel createVehicleVM)
+        public async Task<IActionResult> UpdateVehicle(UpdateVehicleViewModel updateVehicleVM)
         {
             if(ModelState.IsValid) {
 
-                var vehicle = await _vehicleRepository.GetVehicleByIdAsync(createVehicleVM.UserId);
+                var vehicle = await _vehicleRepository.GetVehicleByIdAsync(updateVehicleVM.UserId);
                 // Map the ViewModel to the Entity
                 var newVehicle = new Vehicle
                 {
-                    ApplicationUserId = createVehicleVM.UserId,
+                    ApplicationUserId = updateVehicleVM.UserId,
                     VehicleId = vehicle.VehicleId,
-                    Model = createVehicleVM.Model,
-                    Make = createVehicleVM.Make,
-                    Year = createVehicleVM.Year,
-                    Capacity = createVehicleVM.Capacity,
-                    Color = createVehicleVM.Color,
-                    PlateNumber = createVehicleVM.PlateNumber,
+                    Model = updateVehicleVM.Model,
+                    Make = updateVehicleVM.Make,
+                    Year = updateVehicleVM.Year,
+                    Capacity = updateVehicleVM.Capacity,
+                    Color = updateVehicleVM.Color,
+                    PlateNumber = updateVehicleVM.PlateNumber,
                 };
                 _vehicleRepository.Update(newVehicle);
 

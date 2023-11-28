@@ -3,43 +3,67 @@
 @using Yemeni_Driver.ViewModel.Account
 @model RegisterationViewModel
 @{
-    ViewData["Title"] = "Passeneger Registeration";
+    ViewData["Title"] = "Passenger Registration";
 }
 
-<p>
-    <h4>Register your account</h4>
-</p>
-@if (TempData["Error"] != null)
-{
-    <div class="col-md-12 alert alert-danger">
-        <span><b>Sorry!</b> - @TempData["Error"]</span>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+
+            <h4 class="text-center">Register your account</h4>
+
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger">
+                    <strong>Sorry!</strong> - @TempData["Error"]
+                </div>
+            }
+
+            <form method="post">
+
+                <div class="form-group">
+                    <label for="FirstName">First Name:</label>
+                    <input type="text" asp-for="FirstName" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="LastName">Last Name:</label>
+                    <input type="text" asp-for="LastName" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="Email">Email:</label>
+                    <input type="email" asp-for="Email" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="Password">Password:</label>
+                    <input type="password" asp-for="Password" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="ConfirmPassword">Confirm Password:</label>
+                    <input type="password" asp-for="ConfirmPassword" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="PhoneNumber">Phone Number:</label>
+                    <input type="PhoneNumber" asp-for="PhoneNumber" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Gender">Gender:</label>
+                    <select asp-for="Gender" asp-items="@Html.GetEnumSelectList<Gender>()" class="form-control">
+                        <option value="">----</option>
+                    </select>
+                    <span asp-validation-for="Gender" class="text-danger"></span>
+                </div>
+
+                <!-- ... (previous code) ... -->
+                <br />
+                <button type="submit" class="btn btn-primary btn-block">Register</button>
+
+            </form>
+        </div>
     </div>
-}
-
-<form method="post">
-
-    <label for="FirstName">First Name:</label>
-    <input type="text" asp-for="FirstName" required />
-    <label for="LastName">Last Name:</label>
-    <input type="text" asp-for="LastName" required />
-    <label for="Email">Email:</label>
-    <input type="email" asp-for="Email" required />
-    <label for="Password">Password:</label>
-    <input type="password" asp-for="Password" required />
-    <label for="ConfirmPassword">Confirm Password:</label>
-    <input type="password" asp-for="ConfirmPassword" required />
-
-    <label for="PhoneNumber">Phone Number:</label>
-    <input type="PhoneNumber" asp-for="PhoneNumber" required />
-
-    <div class="form-group">
-        <label asp-for="Gender">Gender</label>
-        <select asp-for="Gender" asp-items="@Html.GetEnumSelectList<Gender>()" class="form-control">
-            <option>----</option>
-        </select>
-        <span asp-validation-for="Gender" class="text-danger"></span>
-    </div>
-
-    <button type="submit">Register</button>
-</form>
-
+</div>

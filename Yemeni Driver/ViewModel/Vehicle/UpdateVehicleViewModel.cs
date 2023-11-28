@@ -4,7 +4,7 @@ using Yemeni_Driver.Models;
 
 namespace Yemeni_Driver.ViewModel.Vehicle
 {
-    public class CreateVehicleViewModel
+    public class UpdateVehicleViewModel
     {
         public string Model { get; set; }
 
