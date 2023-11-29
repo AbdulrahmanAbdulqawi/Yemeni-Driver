@@ -54,6 +54,20 @@ namespace Yemeni_Driver.Repository
             throw new NotImplementedException();
         }
 
+        public async Task<List<(double?, double?)>> GetUserLocation(string userId)
+        {
+            var userLocation = await _applicationDbContext.Users.Where(u => u.Id == userId && u.LiveLocationLatitude != null && u.LiveLocationLongitude != null)
+                .Select(a => new
+            {
+                a.LiveLocationLongitude,
+                a.LiveLocationLatitude,
+            }).ToListAsync();
+
+            var resultList = userLocation.Select(ll => (ll.LiveLocationLatitude, ll.LiveLocationLongitude)).ToList();
+
+            return resultList;
+        }
+
         public bool Save()
         {
             var saved = _applicationDbContext.SaveChanges();

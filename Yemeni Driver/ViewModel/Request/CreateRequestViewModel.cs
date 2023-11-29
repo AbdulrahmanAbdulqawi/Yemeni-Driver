@@ -1,14 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Yemeni_Driver.Data.Enums;
 
-namespace Yemeni_Driver.Models
+namespace Yemeni_Driver.ViewModel.Request
 {
-    public class Request
+    public class CreateRequestViewModel
     {
-        [Key]
         public string RequestId { get; set; }
-        [ForeignKey("ApplicationUser")]
         public string ApplicationUserId { get; set; }
         public DateTime PickupTime { get; set; }
         public string PickupLocation { get; set; }
@@ -16,11 +15,5 @@ namespace Yemeni_Driver.Models
         public double EstimationPrice { get; set; }
         public int NumberOfSeats { get; set; }
         public RequestStatus Status { get; set; }
-
-        public virtual ApplicationUser ApplicationUser { get; set; }
-        public virtual ICollection<DriverAndRequest> DriverAndRequests { get; set; }
-        public virtual Trip Trip { get; set; }
-        public virtual CancelRequest CancelRequest { get; set; }
-
     }
 }

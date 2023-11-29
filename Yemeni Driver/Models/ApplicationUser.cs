@@ -13,6 +13,9 @@ namespace Yemeni_Driver.Models
         public string? PhoneNumber { get; set; }
         public int? Rating { get; set; }
         public string? DrivingLicenseNumber { get; set; }
+        public double? LiveLocationLatitude { get; set; }
+        public double? LiveLocationLongitude { get; set; }
+        public string? Location { get; set; }
 
         [ForeignKey("Vehicle")]
         public string? VehicleId { get; set; }

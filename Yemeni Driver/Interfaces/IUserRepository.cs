@@ -7,7 +7,7 @@ namespace Yemeni_Driver.Interfaces
         Task<IEnumerable<ApplicationUser>> GetAll();
         Task<IEnumerable<ApplicationUser>> GetDrivers();
         Task<IEnumerable<ApplicationUser>> GetPassengers();
-
+        Task<List<(double?, double?)>> GetUserLocation(string userId); 
         Task<ApplicationUser> GetByIdAsync(string id);
         Task<ApplicationUser> GetByIdAsyncNoTracking(string id);
         bool Add(ApplicationUser user);

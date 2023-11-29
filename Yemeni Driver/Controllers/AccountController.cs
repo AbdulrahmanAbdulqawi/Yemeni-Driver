@@ -79,6 +79,8 @@ namespace Yemeni_Driver.Controllers
         {
             if (!ModelState.IsValid) return View(loginVM);
             var user = await _userManager.FindByEmailAsync(loginVM.Email);
+            var drivers = await _userManager.GetUsersInRoleAsync(Roles.Driver.ToString());
+            var passengers = await _userManager.GetUsersInRoleAsync(Roles.Passenger.ToString());
             if (user != null)
             {
                 var passwordCheck = await _userManager.CheckPasswordAsync(user, loginVM.Password);
@@ -87,7 +89,17 @@ namespace Yemeni_Driver.Controllers
                     var result = await _signInManager.PasswordSignInAsync(user, loginVM.Password, false, false);
                     if (result.Succeeded)
                     {
-                        return RedirectToAction("Index", "Home");
+                        if(drivers.Contains(user))
+                        {
+                            return RedirectToAction("DriverDashboard", "Dashboard");
+                        }else if(passengers.Contains(user))
+                        {
+                            return RedirectToAction("PassengerDashboard", "Dashboard");
+                        }
+                        else
+                        {
+                            return RedirectToAction("AdminDashboard", "Dashboard");
+                        }
                     }
                 }
                 //password doesnt match 
@@ -105,7 +117,7 @@ namespace Yemeni_Driver.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> RegisterAsDriver(RegisterationViewModel driverRegisterVM)
+        public async Task<IActionResult> RegisterAsDriver( RegisterationViewModel driverRegisterVM)
         {
             var getDriver = await _userManager.FindByEmailAsync(driverRegisterVM.Email);
 
@@ -117,8 +129,7 @@ namespace Yemeni_Driver.Controllers
             var appUser = new ApplicationUser { UserName = driverRegisterVM.Email, Email = driverRegisterVM.Email, 
                  DrivingLicenseNumber = driverRegisterVM.DrivingLicenseNumber,
                 FirstName = driverRegisterVM.FirstName, LastName = driverRegisterVM.LastName, Gender = driverRegisterVM.Gender, PhoneNumber = driverRegisterVM.PhoneNumber,
-                VehicleId = driverRegisterVM.VehicleId
-               
+                VehicleId = driverRegisterVM.VehicleId,
             };
 
             var newVehicle = new Vehicle
@@ -141,7 +152,7 @@ namespace Yemeni_Driver.Controllers
             {
                 await _userManager.AddToRoleAsync(appUser, Roles.Driver.ToString());
                 await _signInManager.SignInAsync(appUser, isPersistent: false);
-                return RedirectToAction("Index", "Home"); // Redirect to the home page after successful registration
+                return RedirectToAction("DriverDashboard", "Dashboard"); // Redirect to the home page after successful registration
             }
 
             foreach (var error in result.Errors)
@@ -192,7 +203,7 @@ namespace Yemeni_Driver.Controllers
                 await _userManager.AddToRoleAsync(appUser, Roles.Passenger.ToString());
 
                 await _signInManager.SignInAsync(appUser, isPersistent: false);
-                return RedirectToAction("Index", "Home"); // Redirect to the home page after successful registration
+                return RedirectToAction("Index", "Dashboard"); // Redirect to the home page after successful registration
             }
 
             foreach (var error in result.Errors)

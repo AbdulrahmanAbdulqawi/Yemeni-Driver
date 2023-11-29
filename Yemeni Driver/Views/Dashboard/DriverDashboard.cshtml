@@ -1,7 +1,5 @@
-﻿@using Yemeni_Driver.Data
-@using Yemeni_Driver.ViewModel.Home
-@model RegisterSelectRolesViewModel
-
+﻿@using Yemeni_Driver.ViewModel.Dashboard
+@model DriverDashboardViewModel
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -68,24 +66,52 @@
         <div class="welcome">
             Welcome to the RideSharing App!
         </div>
-
-        <form method="post" class="select-role-form">
-            <div class="form-group">
-                <label for="SelectedRole">Select Your Role:</label>
-                <select asp-for="SelectedRole" asp-items="Model.AvailableRoles"></select>
+        <div class="col">
+            <div class="card shadow-sm">
+                <img class="bd-placeholder-img card-img-top" src="Image" width="100%" height="225"></img>
+                <div class="card-body">
+                    <p class="card-text">@Model.FirstName</p>
+                    <p class="card-text">@Model.Location</p>
+                </div>
             </div>
+        </div>
 
-            <button type="submit">Continue</button>
-        </form>
-        <label for="existingAccount">Do you already have an account?</label>
-        <a asp-controller="Account" asp-action="Login">Login</a>
-@* 
-        <div id="map"></div> *@
+        <div id="map"></div>
     </div>
 
- @*    <!-- Add this to your HTML file, replacing 'YOUR_API_KEY' with your actual API key -->
+    <!-- Add this to your HTML file, replacing 'YOUR_API_KEY' with your actual API key -->
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD-1aXeejG3qa4Tj5Msm4Wx5XOuA-GzTZk&callback=initMap" async defer></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
+    <script>
+        function updateLiveLocation() {
+            navigator.geolocation.getCurrentPosition(function (position) {
+                var latitude = position.coords.latitude;
+                var longitude = position.coords.longitude;
+
+                fetch('/api/updateLiveLocation', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ latitude: latitude, longitude: longitude }),
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        console.log('Live location updated successfully.');
+                    })
+                    .catch(error => {
+                        console.error('Error updating live location:', error);
+                    });
+            });
+        }
+
+        // Periodically update live location (e.g., every 5 seconds)
+        setInterval(updateLiveLocation, 5000);
+
+    </script>
     <script>
         // Place this code in a JavaScript file (e.g., site.js) or directly in your HTML file
         function initMap() {
@@ -116,6 +142,11 @@
                 console.error('Geolocation is not supported by this browser.');
             }
         }
-    </script> *@
+    </script>
 </body>
 </html>
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
