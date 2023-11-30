@@ -47,5 +47,9 @@ namespace Yemeni_Driver.ViewModel.Account
         public string? Color { get; set; }
 
         public string? PlateNumber { get; set; }
+        public IFormFile? VehicleImage { get; set; }
+        [Required]
+        public IFormFile ProfileImage { get; set; }
+
     }
 }

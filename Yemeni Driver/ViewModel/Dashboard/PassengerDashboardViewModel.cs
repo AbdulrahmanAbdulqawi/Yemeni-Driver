@@ -13,5 +13,7 @@ namespace Yemeni_Driver.ViewModel.Dashboard
         }
         public string FirstName { get; set; }
         public string Location { get; set; }
+        public string Image { get; set; }
+
     }
 }

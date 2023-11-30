@@ -32,6 +32,7 @@ namespace Yemeni_Driver.Controllers
             {
                 FirstName = passengerDetailes.Result.FirstName,
                 Location = passengerDetailes.Result.Location,
+                Image = passengerDetailes.Result.ProfileImageUrl
                 
             };
             
@@ -42,13 +43,13 @@ namespace Yemeni_Driver.Controllers
         public IActionResult DriverDashboard()
         {
             var user = _httpContextAccessor.HttpContext.User.GetUserId();
-            var DriverDetailes = _dashboardRepository.GetDriverByIdAsync(user);
+            var driverDetailes = _dashboardRepository.GetDriverByIdAsync(user);
 
             var driverDashboardVM = new DriverDashboardViewModel
             {
-                FirstName = DriverDetailes.Result.FirstName,
-                Location = DriverDetailes.Result.Location,
-
+                FirstName = driverDetailes.Result.FirstName,
+                Location = driverDetailes.Result.Location,
+                Image = driverDetailes.Result.ProfileImageUrl
             };
 
 

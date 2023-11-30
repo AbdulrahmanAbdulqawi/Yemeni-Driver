@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using CloudinaryDotNet.Actions;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Yemeni_Driver.Data;
 using Yemeni_Driver.Interfaces;
 using Yemeni_Driver.Models;
 using Yemeni_Driver.ViewModel.Account;
-using Yemeni_Driver.ViewModel.Home;
 
 namespace Yemeni_Driver.Controllers
 {
@@ -12,19 +12,15 @@ namespace Yemeni_Driver.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly IUserRepository _UserRepository;
-        private readonly ApplicationDbContext _applicationDb;
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IPhotoService _photoService;
 
 
 
-        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ApplicationDbContext applicationDb, IHttpContextAccessor httpContextAccessor, IUserRepository userRepository)
+        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ApplicationDbContext applicationDb, IHttpContextAccessor httpContextAccessor, IUserRepository userRepository, IPhotoService photoService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            _applicationDb = applicationDb;
-            _httpContextAccessor = httpContextAccessor;
-            _UserRepository = userRepository;
+            _photoService = photoService;
         }
 
         public IActionResult Register()
@@ -125,13 +121,31 @@ namespace Yemeni_Driver.Controllers
                 TempData["Error"] = "User Already Exists!";
                 return View(driverRegisterVM);
             }
+            ImageUploadResult profileImageUploadResult = new ImageUploadResult();
+            if(driverRegisterVM.ProfileImage != null)
+            {
+                profileImageUploadResult = await _photoService.AddPhotoAsync(driverRegisterVM.ProfileImage);
+            }
 
-            var appUser = new ApplicationUser { UserName = driverRegisterVM.Email, Email = driverRegisterVM.Email, 
-                 DrivingLicenseNumber = driverRegisterVM.DrivingLicenseNumber,
+            var appUser = new ApplicationUser { UserName = driverRegisterVM.Email, Email = driverRegisterVM.Email,
+                DrivingLicenseNumber = driverRegisterVM.DrivingLicenseNumber,
                 FirstName = driverRegisterVM.FirstName, LastName = driverRegisterVM.LastName, Gender = driverRegisterVM.Gender, PhoneNumber = driverRegisterVM.PhoneNumber,
                 VehicleId = driverRegisterVM.VehicleId,
             };
+            if(profileImageUploadResult == null)
+            {
+                appUser.ProfileImageUrl = "";
+            }
+            else
+            {
+                appUser.ProfileImageUrl = profileImageUploadResult.Url.ToString();
+            }
 
+            ImageUploadResult vehicleImageUploadResult = new ImageUploadResult();
+            if (driverRegisterVM.VehicleImage != null)
+            {
+                vehicleImageUploadResult = await _photoService.AddPhotoAsync(driverRegisterVM.ProfileImage);
+            }
             var newVehicle = new Vehicle
             {
                 ApplicationUserId = appUser.Id,
@@ -143,6 +157,15 @@ namespace Yemeni_Driver.Controllers
                 Make = driverRegisterVM.Make,
                 PlateNumber = driverRegisterVM.PlateNumber,
             };
+
+            if (vehicleImageUploadResult == null)
+            {
+                newVehicle.VehiclImageUrl = "";
+            }
+            else
+            {
+                newVehicle.VehiclImageUrl = vehicleImageUploadResult.Url.ToString();
+            }
 
             appUser.Vehicle = newVehicle;
 
@@ -183,7 +206,11 @@ namespace Yemeni_Driver.Controllers
                 TempData["Error"] = "User Already Exists!";
                 return View(registerVM);
             }
-
+            ImageUploadResult profileImageUploadResult = new ImageUploadResult();
+            if (registerVM.ProfileImage != null)
+            {
+                profileImageUploadResult = await _photoService.AddPhotoAsync(registerVM.ProfileImage);
+            }
             var appUser = new ApplicationUser
             {
                 UserName = registerVM.Email,
@@ -193,7 +220,7 @@ namespace Yemeni_Driver.Controllers
                 LastName = registerVM.LastName,
                 Gender = registerVM.Gender,
                 PhoneNumber = registerVM.PhoneNumber,
-
+                ProfileImageUrl = profileImageUploadResult.Url.ToString()
             };
             var result = await _userManager.CreateAsync(appUser, registerVM.Password);
 

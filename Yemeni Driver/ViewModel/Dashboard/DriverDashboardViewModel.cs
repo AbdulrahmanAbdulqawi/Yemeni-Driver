@@ -3,6 +3,8 @@
     public class DriverDashboardViewModel
     {
         public string FirstName { get; set; }
-        public string Location { get; set; }    
+        public string Location { get; set; }
+        public string Image { get; set; }
+
     }
 }

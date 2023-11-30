@@ -19,7 +19,7 @@
                 </div>
             }
 
-            <form method="post">
+            <form method="post" enctype="multipart/form-data">
 
                 <div class="form-group">
                     <label for="FirstName">First Name:</label>
@@ -57,6 +57,11 @@
                         <option value="">----</option>
                     </select>
                     <span asp-validation-for="Gender" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ProfileImage">Profile Image</label>
+                    <input asp-for="ProfileImage" type="file" class="form-control">
+                    <span asp-validation-for="ProfileImage" class="text-danger"></span>
                 </div>
 
                 <!-- ... (previous code) ... -->
@@ -97,7 +102,11 @@
                     <label for="Year">Year:</label>
                     <input type="number" asp-for="Year" class="form-control" required />
                 </div>
-
+                <div class="form-group">
+                    <label asp-for="VehicleImage">Vehicle Image</label>
+                    <input asp-for="VehicleImage" type="file" class="form-control">
+                    <span asp-validation-for="VehicleImage" class="text-danger"></span>
+                </div>
                 <!-- ... (remaining code) ... -->
                 <!-- Add other vehicle fields as needed -->
                 <br />

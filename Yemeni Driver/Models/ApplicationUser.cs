@@ -16,7 +16,7 @@ namespace Yemeni_Driver.Models
         public double? LiveLocationLatitude { get; set; }
         public double? LiveLocationLongitude { get; set; }
         public string? Location { get; set; }
-
+        public string? ProfileImageUrl { get; set; }
         [ForeignKey("Vehicle")]
         public string? VehicleId { get; set; }
         public virtual Vehicle Vehicle { get; set; }

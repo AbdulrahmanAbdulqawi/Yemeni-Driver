@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Yemeni Driver</title>
+    <title>@ViewData["Title"] Yemeni Driver</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 
@@ -23,6 +23,19 @@
             flex: 1 0 auto;
         }
 
+        button {
+            background-color: #28a745;
+            color: #fff;
+            padding: 10px 20px;
+            font-size: 1em;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.3s; /* Add a smooth transition effect */
+        }
+
+            button:hover {
+                background-color: #218838; /* Change the background color on hover */
+            }
         footer {
             flex-shrink: 0;
         }
