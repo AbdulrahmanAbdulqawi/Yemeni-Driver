@@ -20,56 +20,56 @@ namespace Yemeni_Driver.Data
                 if (!await roleManager.RoleExistsAsync(Roles.Driver.ToString()))
                     await roleManager.CreateAsync(new IdentityRole(Roles.Driver.ToString()));
 
-                //Users
-                var userManager = serviceScope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-                string adminUserEmail = "Abdulrahman.Abdulqawi@gmail.com";
+                ////Users
+                //var userManager = serviceScope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+                //string adminUserEmail = "Abdulrahman.Abdulqawi@gmail.com";
 
-                var adminUser = await userManager.FindByEmailAsync(adminUserEmail);
-                if (adminUser == null)
-                {
-                    var newAdminUser = new ApplicationUser()
-                    {
-                        UserName = "AbdulrahmanAbdulqawi",
-                        Email = adminUserEmail,
-                        EmailConfirmed = true,
+                //var adminUser = await userManager.FindByEmailAsync(adminUserEmail);
+                //if (adminUser == null)
+                //{
+                //    var newAdminUser = new ApplicationUser()
+                //    {
+                //        UserName = "AbdulrahmanAbdulqawi",
+                //        Email = adminUserEmail,
+                //        EmailConfirmed = true,
                       
-                    };
-                    await userManager.CreateAsync(newAdminUser, "123456aA@");
-                    await userManager.AddToRoleAsync(newAdminUser, Roles.Admin.ToString());
-                }
+                //    };
+                //    await userManager.CreateAsync(newAdminUser, "123456aA@");
+                //    await userManager.AddToRoleAsync(newAdminUser, Roles.Admin.ToString());
+                //}
 
-                string appPassngerUserEmail = "passenger@gmail.com";
+                //string appPassngerUserEmail = "passenger@gmail.com";
 
-                var appPassengerUser = await userManager.FindByEmailAsync(appPassngerUserEmail);
-                if (appPassengerUser == null)
-                {
-                    var newAppUser = new ApplicationUser()
-                    {
-                        UserName = "passenger-user",
-                        Email = appPassngerUserEmail,
-                        EmailConfirmed = true,
+                //var appPassengerUser = await userManager.FindByEmailAsync(appPassngerUserEmail);
+                //if (appPassengerUser == null)
+                //{
+                //    var newAppUser = new ApplicationUser()
+                //    {
+                //        UserName = "passenger-user",
+                //        Email = appPassngerUserEmail,
+                //        EmailConfirmed = true,
                     
-                    };
-                    await userManager.CreateAsync(newAppUser, "123456aA@");
-                    await userManager.AddToRoleAsync(newAppUser, Roles.Passenger.ToString());
-                }
+                //    };
+                //    await userManager.CreateAsync(newAppUser, "123456aA@");
+                //    await userManager.AddToRoleAsync(newAppUser, Roles.Passenger.ToString());
+                //}
 
-                string appDriverUserEmail = "driver@gmail.com";
+                //string appDriverUserEmail = "driver@gmail.com";
 
-                var appDriverUser = await userManager.FindByEmailAsync(appDriverUserEmail);
-                if (appDriverUser == null)
-                {
-                    var newAppUser = new ApplicationUser()
-                    {
-                        UserName = "driver-user",
-                        Email = appDriverUserEmail,
-                        EmailConfirmed = true,
-                        VehicleId = "123AA"
-                    };
-                    await userManager.CreateAsync(newAppUser, "123456aA@");
-                    await userManager.AddToRoleAsync(newAppUser, Roles.Driver.ToString());
+                //var appDriverUser = await userManager.FindByEmailAsync(appDriverUserEmail);
+                //if (appDriverUser == null)
+                //{
+                //    var newAppUser = new ApplicationUser()
+                //    {
+                //        UserName = "driver-user",
+                //        Email = appDriverUserEmail,
+                //        EmailConfirmed = true,
+                //        VehicleId = "123AA"
+                //    };
+                //    await userManager.CreateAsync(newAppUser, "123456aA@");
+                //    await userManager.AddToRoleAsync(newAppUser, Roles.Driver.ToString());
                     
-                }
+                //}
             }
         }
     }

@@ -108,12 +108,12 @@ namespace Yemeni_Driver.Controllers
 
         public IActionResult RegisterAsDriver()
         {
-            var response = new RegisterationViewModel();
+            var response = new DriverRegisterationViewModel();
             return View(response);
         }
 
         [HttpPost]
-        public async Task<IActionResult> RegisterAsDriver( RegisterationViewModel driverRegisterVM)
+        public async Task<IActionResult> RegisterAsDriver(DriverRegisterationViewModel driverRegisterVM)
         {
             var getDriver = await _userManager.FindByEmailAsync(driverRegisterVM.Email);
 
@@ -121,31 +121,19 @@ namespace Yemeni_Driver.Controllers
                 TempData["Error"] = "User Already Exists!";
                 return View(driverRegisterVM);
             }
-            ImageUploadResult profileImageUploadResult = new ImageUploadResult();
-            if(driverRegisterVM.ProfileImage != null)
-            {
-                profileImageUploadResult = await _photoService.AddPhotoAsync(driverRegisterVM.ProfileImage);
-            }
+            var profileImageUploadResult = await _photoService.AddPhotoAsync(driverRegisterVM.ProfileImage);
+
 
             var appUser = new ApplicationUser { UserName = driverRegisterVM.Email, Email = driverRegisterVM.Email,
                 DrivingLicenseNumber = driverRegisterVM.DrivingLicenseNumber,
                 FirstName = driverRegisterVM.FirstName, LastName = driverRegisterVM.LastName, Gender = driverRegisterVM.Gender, PhoneNumber = driverRegisterVM.PhoneNumber,
                 VehicleId = driverRegisterVM.VehicleId,
+                ProfileImageUrl = profileImageUploadResult.Url.ToString(),
             };
-            if(profileImageUploadResult == null)
-            {
-                appUser.ProfileImageUrl = "";
-            }
-            else
-            {
-                appUser.ProfileImageUrl = profileImageUploadResult.Url.ToString();
-            }
 
-            ImageUploadResult vehicleImageUploadResult = new ImageUploadResult();
-            if (driverRegisterVM.VehicleImage != null)
-            {
-                vehicleImageUploadResult = await _photoService.AddPhotoAsync(driverRegisterVM.ProfileImage);
-            }
+
+            var vehicleImageUploadResult = await _photoService.AddPhotoAsync(driverRegisterVM.ProfileImage);
+
             var newVehicle = new Vehicle
             {
                 ApplicationUserId = appUser.Id,
@@ -156,16 +144,8 @@ namespace Yemeni_Driver.Controllers
                 Year = driverRegisterVM.Year,
                 Make = driverRegisterVM.Make,
                 PlateNumber = driverRegisterVM.PlateNumber,
+                VehiclImageUrl = vehicleImageUploadResult.Url.ToString()
             };
-
-            if (vehicleImageUploadResult == null)
-            {
-                newVehicle.VehiclImageUrl = "";
-            }
-            else
-            {
-                newVehicle.VehiclImageUrl = vehicleImageUploadResult.Url.ToString();
-            }
 
             appUser.Vehicle = newVehicle;
 
@@ -192,12 +172,12 @@ namespace Yemeni_Driver.Controllers
 
         public IActionResult RegisterAsPassenger()
         {
-            var response = new RegisterationViewModel();
+            var response = new PassengerRegisterationViewModel();
             return View(response);
         }
 
         [HttpPost]
-        public async Task<IActionResult> RegisterAsPassenger(RegisterationViewModel registerVM)
+        public async Task<IActionResult> RegisterAsPassenger(PassengerRegisterationViewModel registerVM)
         {
             var getDriver = await _userManager.FindByEmailAsync(registerVM.Email);
 
@@ -206,16 +186,13 @@ namespace Yemeni_Driver.Controllers
                 TempData["Error"] = "User Already Exists!";
                 return View(registerVM);
             }
-            ImageUploadResult profileImageUploadResult = new ImageUploadResult();
-            if (registerVM.ProfileImage != null)
-            {
-                profileImageUploadResult = await _photoService.AddPhotoAsync(registerVM.ProfileImage);
-            }
+
+            var profileImageUploadResult = await _photoService.AddPhotoAsync(registerVM.ProfileImage);
+
             var appUser = new ApplicationUser
             {
                 UserName = registerVM.Email,
                 Email = registerVM.Email,
-                DrivingLicenseNumber = registerVM.DrivingLicenseNumber,
                 FirstName = registerVM.FirstName,
                 LastName = registerVM.LastName,
                 Gender = registerVM.Gender,

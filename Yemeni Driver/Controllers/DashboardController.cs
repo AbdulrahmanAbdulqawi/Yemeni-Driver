@@ -25,7 +25,7 @@ namespace Yemeni_Driver.Controllers
         {
             var user = _httpContextAccessor.HttpContext.User.GetUserId();
             var passengerDetailes = _dashboardRepository.GetPassengerByIdAsync(user);
-            var drivers = _dashboardRepository.GetDrivers().Result.ToList();
+            var drivers = _dashboardRepository.GetDrivers().Result.Where(a => a.FirstName != null).ToList();
 
 
             var passengerDashboardVM = new PassengerDashboardViewModel(drivers)

@@ -30,66 +30,34 @@
             color: #007bff;
         }
 
-        .select-role-form {
-            margin-top: 20px;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
         .role-label {
-            font-weight: bold;
-            display: block; /* Ensures labels are on their own line */
-            margin-bottom: 5px; /* Adds some space between labels and inputs */
-        }
-
-        input[type="text"],
-        select {
-            width: 100%;
-            padding: 10px;
-            box-sizing: border-box;
-            margin-bottom: 10px; /* Adds space between input elements */
-        }
-
-        button {
-            background-color: #007bff; /* Use a green color for the button */
-            color: #fff;
-            padding: 10px 20px;
-            font-size: 1em;
-            cursor: pointer;
-            border: none; /* Remove the default button border */
-            transition: background-color 0.3s; /* Add transition for smooth color change */
+            display: block;
             margin-bottom: 10px;
         }
 
-        button:hover {
-            background-color: #0056b3; /* Darker shade of blue on hover */
+        .account-register {
+            background-color: #007bff;
+            color: #fff;
+            padding: 15px 30px;
+            font-size: 1em;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.3s;
+            margin: 10px;
+            text-decoration: none; /* Remove default link underline */
+            display: inline-block;
+            width: 45%; /* Equal width for both buttons */
+            box-sizing: border-box; /* Include padding and border in the element's total width and height */
+        }
+
+        .account-register:hover {
+            background-color: #0056b3;
+            color: #fff;
         }
 
         a {
-            color: #007bff; /* Use the primary color for the link */
-            text-decoration: none;
-            margin-left: 5px; /* Adds space between the label and link */
-        }
-
-        #map {
-            height: 400px;
-            margin-top: 20px;
-        }
-
-        .account-section {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 10px;
-        }
-
-        .account-section a {
-            color: #007bff;
             text-decoration: none;
         }
-
 
     </style>
 </head>
@@ -99,55 +67,15 @@
             Welcome to the RideSharing App!
         </div>
 
-        <form method="post" class="select-role-form">
-            <div class="form-group">
-                <label class="role-label" for="SelectedRole">Select Your Role:</label>
-                <select asp-for="SelectedRole" asp-items="Model.AvailableRoles"></select>
-            </div>
+        <label class="role-label">Are You:</label>
 
-            <button type="submit">Continue</button>
-        </form>
+        <a class="account-register" asp-controller="Account" asp-action="RegisterAsDriver">Driver</a>
+        <a class="account-register" asp-controller="Account" asp-action="RegisterAsPassenger">Passenger</a>
 
-        <div class="centered-section">
-            <label class="account-have "for="existingAccount">Do you already have an account?</label>
+        <div class="account-section">
+            <label for="existingAccount">Do you already have an account?</label>
             <a asp-controller="Account" asp-action="Login">Login</a>
         </div>
     </div>
-
-    <!-- Add this to your HTML file, replacing 'YOUR_API_KEY' with your actual API key -->
-    <!-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD-1aXeejG3qa4Tj5Msm4Wx5XOuA-GzTZk&callback=initMap" async defer></script>
-
-    <script>
-        // Place this code in a JavaScript file (e.g., site.js) or directly in your HTML file
-        function initMap() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    function (position) {
-                        var myLatLng = {
-                            lat: position.coords.latitude,
-                            lng: position.coords.longitude
-                        };
-
-                        var map = new google.maps.Map(document.getElementById('map'), {
-                            center: myLatLng,
-                            zoom: 8
-                        });
-
-                        var marker = new google.maps.Marker({
-                            position: myLatLng,
-                            map: map,
-                            title: 'Your Location'
-                        });
-                    },
-                    function (error) {
-                        console.error('Error getting location:', error);
-                    }
-                );
-            } else {
-                console.error('Geolocation is not supported by this browser.');
-            }
-        }
-    </script> -->
-
 </body>
 </html>

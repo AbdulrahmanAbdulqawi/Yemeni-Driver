@@ -30,16 +30,7 @@ namespace Yemeni_Driver.Controllers
 
             return View(model);
         }
-        [HttpPost]
-        public IActionResult Index(RegisterSelectRolesViewModel model)
-        {
-            if (model.SelectedRole.Contains("Passenger"))
-            {
-                return RedirectToAction("RegisterAsPassenger", "Account", new { role = model.SelectedRole });
-            }
-            // Redirect to the registration page with the selected role
-            return RedirectToAction("RegisterAsDriver", "Account", new { role = model.SelectedRole });
-        }
+        
         public IActionResult Privacy()
         {
             return View();
