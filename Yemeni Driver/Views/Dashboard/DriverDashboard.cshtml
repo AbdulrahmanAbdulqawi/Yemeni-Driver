@@ -129,20 +129,19 @@
   @*   <script src="~/js/updateLiveLocation.js"></script> *@
 
     <script>
-        // Connect to the SignalR hub
         const hubConnection = new signalR.HubConnectionBuilder()
             .withUrl("/notificationHub")
             .build();
 
         hubConnection.start().then(() => {
-            console.log("Connected to NotificationHub");
+            console.log("Driver Connected to NotificationHub");
         }).catch(err => console.error(err.toString()));
 
         // Handle the new ride request event
-        hubConnection.on("ReceiveNotification", () => {
+        hubConnection.on("ReceiveNotification", (newRequest) => {
             // Add the new notification to the list
             const notificationList = $("#notificationList");
-            notificationList.append(`<li>${"you have a request"}</li>`);
+            notificationList.append(`<li>You have a new ride request: ${newRequest}</li>`);
 
             // You can customize this further, such as displaying a modal or updating the UI as needed
         });
