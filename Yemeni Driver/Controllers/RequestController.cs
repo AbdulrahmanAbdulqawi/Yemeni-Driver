@@ -46,7 +46,7 @@ namespace Yemeni_Driver.Controllers
 
             _requestRepository.Add(request);
 
-            await _hubContext.Clients.All.SendAsync("ReceiveNotification", "New ride request available!");
+            //await _hubContext.Clients.All.SendAsync("ReceiveNotification", "New ride request available!");
 
             // You might want to return some information about the created request
             return RedirectToAction("PassengerDashboard", "Dashboard");
