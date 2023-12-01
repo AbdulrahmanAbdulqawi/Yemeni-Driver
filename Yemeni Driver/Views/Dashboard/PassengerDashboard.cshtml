@@ -3,8 +3,10 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-b4gtqYsMTSyMgktXf1aGD9qO8+Xw2fWVbXL7/6efKxFj1IJMgLyF5YvZhERJYlLQ6" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.10/signalr.min.js"></script>
+
 
 
     <title>@ViewData["Title"]</title>
@@ -99,7 +101,7 @@
                 margin-bottom: 20px;
             }
 
-        .btn btn-primary{
+        .btn .btn-primary{
             margin-top:10px;
         }
 
@@ -127,7 +129,22 @@
                     <div class="ride-section">
                         <h5>Ready for your next ride?</h5>
                         <p>Simply click the button below to request a ride.</p>
-                        <button id="requestRideBtn" class="btn btn-primary">Request Ride</button>
+
+                        <form method="post">
+
+                            <div class="form-group">
+                                <label for="dropoffLocation">Dropoff Location:</label>
+                                <input type="text" id="dropoffLocation" />
+                            </div>
+
+
+
+                            <!-- Add other fields if needed -->
+
+                            <button type="submit" id="requestRideBtn" class="btn btn-primary">Submit Request</button>
+                        </form>
+
+
                         <div id="requestProgress" class="progress">
                             <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 100%"></div>
                         </div>
@@ -155,7 +172,8 @@
             </div>
         </div>
     </div>
-  @*   <script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script>
         const hubConnection = new signalR.HubConnectionBuilder()
             .withUrl("/notificationHub")
             .build();
@@ -164,16 +182,16 @@
             console.log("Connected to NotificationHub");
         }).catch(err => console.error(err.toString()));
 
-        hubConnection.on("ReceiveNotification", (message) => {
-            // Handle the notification, e.g., show a pop-up
-            showNotification(message);
+        // Handle the new ride request event
+        hubConnection.on("ReceiveNotification", () => {
+            // Handle the notification, e.g., show a pop-up or update the UI
+            alert(`New ride request: }`);
         });
-        
-    </script> *@
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-   <script src="~/js/Request.js"></script>
+    </script>
+    <script src="~/js/Request.js"></script>
+
    @* <script src="~/js/updateLiveLocation.js"></script> *@
-@*    <script src="~/js/notification.js"></script> *@
+
 
 </body>
 </html>

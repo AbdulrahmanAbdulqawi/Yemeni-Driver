@@ -63,12 +63,29 @@
             height: 400px;
             margin-top: 20px;
         }
-        button{
+
+        #notificationSection {
+            margin-top: 20px;
+        }
+
+        #notificationList {
+            list-style-type: none;
+            padding: 0;
+        }
+
+            #notificationList li {
+                border: 1px solid #dee2e6;
+                margin-bottom: 5px;
+                padding: 10px;
+            }
+
+        button {
             background-color: #007bff;
         }
-        button:hover{
+
+            button:hover {
                 background-color: #0056b3;
-        }
+            }
 
     </style>
 </head>
@@ -90,8 +107,6 @@
                         <button class="view-details-button" onclick="viewDriverDetails()">View</button>
                     </div>
                 </div>
-
-               
             </div>
 
             <!-- Add more cards as needed -->
@@ -99,17 +114,38 @@
         </div>
 
         <div id="map"></div>
+
+        <!-- Notification section -->
+        <div id="notificationSection">
+            <h3>Notifications</h3>
+            <ul id="notificationList"></ul>
+        </div>
     </div>
 
     <!-- Add your script tags for Google Maps and location updates -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.10/signalr.min.js"></script>
 
-    <script src="~/js/updateLiveLocation.js"></script>
+  @*   <script src="~/js/updateLiveLocation.js"></script> *@
 
-   
+    <script>
+        // Connect to the SignalR hub
+        const hubConnection = new signalR.HubConnectionBuilder()
+            .withUrl("/notificationHub")
+            .build();
 
+        hubConnection.start().then(() => {
+            console.log("Connected to NotificationHub");
+        }).catch(err => console.error(err.toString()));
+
+        // Handle the new ride request event
+        hubConnection.on("ReceiveNotification", () => {
+            // Add the new notification to the list
+            const notificationList = $("#notificationList");
+            notificationList.append(`<li>${"you have a request"}</li>`);
+
+            // You can customize this further, such as displaying a modal or updating the UI as needed
+        });
+    </script>
 </body>
-
-
 </html>

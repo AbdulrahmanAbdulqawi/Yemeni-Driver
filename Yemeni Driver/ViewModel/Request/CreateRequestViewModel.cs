@@ -7,8 +7,8 @@ namespace Yemeni_Driver.ViewModel.Request
 {
     public class CreateRequestViewModel
     {
-        public string RequestId { get; set; }
-        public string ApplicationUserId { get; set; }
+        //public string RequestId { get; set; }
+        //public string ApplicationUserId { get; set; }
         public string DropoffLocation { get; set; }
     }
 }

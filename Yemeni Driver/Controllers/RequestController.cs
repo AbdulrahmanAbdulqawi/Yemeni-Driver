@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using System.Net;
 using Yemeni_Driver.Interfaces;
 using Yemeni_Driver.Models;
 using Yemeni_Driver.Service;
@@ -9,7 +10,7 @@ using Yemeni_Driver.ViewModel.Request;
 namespace Yemeni_Driver.Controllers
 {
     [ApiController]
-    [Route("api/request")]
+    [Route("api/request/")]
     public class RequestController : Controller
     {
         private readonly IRequestRepository _requestRepository;
@@ -24,46 +25,43 @@ namespace Yemeni_Driver.Controllers
             _hubContext = hubContext;
             _userManager = userManager;
         }
-
-        [HttpGet("createRequest")]
-        public IActionResult CreateRequest()
-        {
-            return RedirectToAction("PassengerDashboard", "Dashboard");
-        }
-
         [HttpPost("createRequest")]
-        public async Task<IActionResult> CreateRequest(CreateRequestViewModel createRequestVM)
+        public async Task<IActionResult> CreateRequest([FromBody] CreateRequestViewModel createRequestVM)
         {
             var userId = _httpContextAccessor.HttpContext.User.GetUserId();
-            var user = _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+            var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
 
-            _requestRepository.Add(new Request
+            // Validate the incoming data (dropoff location, etc.) as needed
+
+            var request = new Request
             {
                 RequestId = $"{DateTime.Now:yyyyMMddHHmmssfff}-{RandomString(4)}",
-                PickupLocation = user.Result.Location,
+                PickupLocation = user.Location, // Assuming you have a Location property in the ApplicationUser model
                 DropoffLocation = createRequestVM.DropoffLocation,
-                EstimationPrice = DistanceService.EstimatePrice( user.Result.Location, createRequestVM.DropoffLocation),
+                EstimationPrice = DistanceService.EstimatePrice(user.Location, createRequestVM.DropoffLocation),
                 ApplicationUserId = userId,
                 PickupTime = DateTime.Now,
                 Status = Data.Enums.RequestStatus.Requested,
-            });
+            };
+
+            _requestRepository.Add(request);
 
             await _hubContext.Clients.All.SendAsync("ReceiveNotification", "New ride request available!");
 
-            return RedirectToAction("PassengerDashboard", "Dashboard"); // Redirect to the home page after successful registration
-
+            // You might want to return some information about the created request
+            return RedirectToAction("PassengerDashboard", "Dashboard");
         }
 
         [HttpPost("cancelRequest")]
-        public async Task<IActionResult> CancelRequest(string requestId)
+        public async Task<IActionResult> CancelRequest([FromBody] CancelRequestViewModel cancelRequestVM)
         {
-            var request = await _requestRepository.GetByIdAsyncNoTracking(requestId);
+            var request = await _requestRepository.GetByIdAsyncNoTracking(cancelRequestVM.RequestId);
             if (request != null)
             {
                 _requestRepository.Delete(request);
-                return RedirectToAction("PassengerDashboard", "Dashboard");
+                return Ok(new { Message = "Request cancelled successfully" });
             }
-            return (IActionResult)(TempData["Error"] = "Request is not found");
+            return NotFound(new { Error = "Request not found" });
         }
 
         private static string RandomString(int length)

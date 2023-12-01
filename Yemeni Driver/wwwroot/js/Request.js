@@ -1,9 +1,12 @@
-
 $(document).ready(function () {
+    // Handler for form submission
     $("#requestRideBtn").click(function () {
         // Show progress bar and cancel button
         $("#requestProgress").show();
         $("#cancelRequestBtn").show();
+
+        // Capture the drop-off location from the input field
+        var dropoffLocation = $("#dropoffLocation").val();
 
         // Simulate a delay for the request (you can replace this with your actual request logic)
         setTimeout(function () {
@@ -16,6 +19,11 @@ $(document).ready(function () {
             url: '/api/request/createRequest', // Replace with your actual API endpoint
             type: 'POST',
             dataType: 'json',
+            contentType: 'application/json', // Set the content type to JSON
+            data: JSON.stringify({
+                // Pass the drop-off location as part of the request data
+                DropoffLocation: dropoffLocation
+            }),
             success: function (data) {
                 console.log("Request created successfully");
                 // Optionally, you can redirect the user or update the UI as needed
@@ -27,6 +35,7 @@ $(document).ready(function () {
         });
     });
 
+    // Handler for cancel button click
     $("#cancelRequestBtn").click(function () {
         // Hide progress bar and cancel button
         $("#requestProgress").hide();
