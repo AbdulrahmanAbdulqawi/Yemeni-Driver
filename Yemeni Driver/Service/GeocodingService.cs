@@ -24,5 +24,12 @@ namespace Yemeni_Driver.Service
             var address = googleLocationService.GetAddressFromLatLang(latitude, longitude);
             return address;
         }
+
+        public async Task<MapPoint> GetCoordinatedFromAddress(string location)
+        {
+            GoogleLocationService googleLocationService = new GoogleLocationService(apiKey);
+            var address = googleLocationService.GetLatLongFromAddress(location);
+            return address;
+        }
     }
 }

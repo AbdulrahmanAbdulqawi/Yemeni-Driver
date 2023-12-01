@@ -24,4 +24,14 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Scripts\" />
+    <Folder Include="wwwroot\js\DashboardViews\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\js\Request.js" />
+    <None Include="wwwroot\js\updateLiveLocation.js" />
+  </ItemGroup>
+
 </Project>

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Yemeni_Driver.Data;
+using Yemeni_Driver.Data.Enums;
 using Yemeni_Driver.Interfaces;
 using Yemeni_Driver.Models;
 
@@ -37,6 +38,11 @@ namespace Yemeni_Driver.Repository
         public async Task<Request> GetByIdAsyncNoTracking(string id)
         {
             return await _dbContext.Requests.AsNoTracking().FirstOrDefaultAsync(a => a.RequestId == id);
+        }
+
+        public Task<Request> GetByStatus(RequestStatus requestStatus)
+        {
+            throw new NotImplementedException();
         }
 
         public bool Save()

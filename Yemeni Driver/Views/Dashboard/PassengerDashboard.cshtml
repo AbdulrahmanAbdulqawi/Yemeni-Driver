@@ -3,6 +3,10 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-b4gtqYsMTSyMgktXf1aGD9qO8+Xw2fWVbXL7/6efKxFj1IJMgLyF5YvZhERJYlLQ6" crossorigin="anonymous"></script>
+
+
     <title>@ViewData["Title"]</title>
     <style>
         body {
@@ -98,6 +102,16 @@
         .btn btn-primary{
             margin-top:10px;
         }
+
+        #requestProgress {
+            display: none;
+            margin-top: 20px;
+        }
+
+        #cancelRequestBtn {
+            display: none;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -110,9 +124,15 @@
             </div>
             <div class="card-body">
                 <div class="ride-section">
-                    <h5>Ready for your next ride?</h5>
-                    <p>Simply click the button below to request a ride.</p>
-                    <a id="requestRideBtn" class="btn btn-primary" asp-controller="Request" asp-action="CreateRequest" >Request Ride</a>
+                    <div class="ride-section">
+                        <h5>Ready for your next ride?</h5>
+                        <p>Simply click the button below to request a ride.</p>
+                        <button id="requestRideBtn" class="btn btn-primary">Request Ride</button>
+                        <div id="requestProgress" class="progress">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 100%"></div>
+                        </div>
+                        <button id="cancelRequestBtn" class="btn btn-danger">Cancel Request</button>
+                    </div>
                 </div>
 
                 <div class="container mt-5">
@@ -135,34 +155,25 @@
             </div>
         </div>
     </div>
+  @*   <script>
+        const hubConnection = new signalR.HubConnectionBuilder()
+            .withUrl("/notificationHub")
+            .build();
 
+        hubConnection.start().then(() => {
+            console.log("Connected to NotificationHub");
+        }).catch(err => console.error(err.toString()));
+
+        hubConnection.on("ReceiveNotification", (message) => {
+            // Handle the notification, e.g., show a pop-up
+            showNotification(message);
+        });
+        
+    </script> *@
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script>
-        function updateLiveLocation() {
-            navigator.geolocation.getCurrentPosition(function (position) {
-                var latitude = position.coords.latitude;
-                var longitude = position.coords.longitude;
+   <script src="~/js/Request.js"></script>
+   @* <script src="~/js/updateLiveLocation.js"></script> *@
+@*    <script src="~/js/notification.js"></script> *@
 
-                fetch('/api/updateLiveLocation', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ latitude: latitude, longitude: longitude }),
-                })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        console.log('Live location updated successfully.');
-                    })
-                    .catch(error => {
-                        console.error('Error updating live location:', error);
-                    });
-            });
-        }
-
-        setInterval(updateLiveLocation, 5000);
-    </script>
 </body>
 </html>

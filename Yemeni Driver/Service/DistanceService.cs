@@ -1,8 +1,12 @@
-﻿namespace Yemeni_Driver.Service
+﻿using GoogleMaps.LocationServices;
+
+namespace Yemeni_Driver.Service
 {
     public static class DistanceService
     {
         private const double EarthRadiusKm = 6371.0;
+        private const double RatePerKilometer = 0.5; // Adjust this rate as needed
+
 
         public static double CalculateDistance(double lat1, double lon1, double lat2, double lon2)
         {
@@ -31,6 +35,19 @@
         private static double DegreesToRadians(double degrees)
         {
             return degrees * Math.PI / 180.0;
+        }
+        public static double EstimatePrice(string pickupLocation, string dropoffLocation)
+        {
+            var geoCodingService = new GeocodingService(Data.Constants.API_KEY);
+            var pickupLoc = geoCodingService.GetCoordinatedFromAddress(pickupLocation);
+            var dropoffLoc = geoCodingService.GetCoordinatedFromAddress(dropoffLocation);
+
+
+            double distanceInKilometers = CalculateDistance(pickupLoc.Result.Latitude, pickupLoc.Result.Longitude,
+                dropoffLoc.Result.Latitude, dropoffLoc.Result.Longitude);
+            double estimatedPrice = distanceInKilometers * RatePerKilometer;
+
+            return estimatedPrice;
         }
     }
 }
