@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Yemeni_Driver.Data;
 using Yemeni_Driver.Interfaces;
+using Yemeni_Driver.Models;
 using Yemeni_Driver.Service;
 using Yemeni_Driver.ViewModel.Dashboard;
 
@@ -21,18 +22,35 @@ namespace Yemeni_Driver.Controllers
             return View();
         }
 
-        public IActionResult PassengerDashboard()
+        public async Task<IActionResult> PassengerDashboard()
         {
             var user = _httpContextAccessor.HttpContext.User.GetUserId();
-            var passengerDetailes = _dashboardRepository.GetPassengerByIdAsync(user);
+            var passengerDetailes = await _dashboardRepository.GetPassengerByIdAsync(user);
+           
             var drivers = _dashboardRepository.GetDrivers().Result.Where(a => a.FirstName != null).ToList();
 
+            Dictionary<double, ApplicationUser> closestDriver = [];
+            foreach (var driver in drivers) {
+                var claculateDistance = DistanceService
+              .CalculateDistance((double)passengerDetailes.LiveLocationLatitude, (double)passengerDetailes.LiveLocationLongitude,
+              (double)driver.LiveLocationLatitude, (double)driver.LiveLocationLongitude);
+                closestDriver.Add(claculateDistance, driver);
+            }
 
-            var passengerDashboardVM = new PassengerDashboardViewModel(drivers)
+            closestDriver.OrderByDescending(a => a.Key).Take(5);
+
+            var orderdDrivers = new List<ApplicationUser>();
+
+            foreach (var item in closestDriver.Values)
             {
-                FirstName = passengerDetailes.Result.FirstName,
-                Location = passengerDetailes.Result.Location,
-                Image = passengerDetailes.Result.ProfileImageUrl
+                orderdDrivers.Add(item);
+            }
+
+            var passengerDashboardVM = new PassengerDashboardViewModel(orderdDrivers)
+            {
+                FirstName = passengerDetailes.FirstName,
+                Location = passengerDetailes.Location,
+                Image = passengerDetailes.ProfileImageUrl
                 
             };
             

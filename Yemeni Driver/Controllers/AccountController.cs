@@ -187,6 +187,12 @@ namespace Yemeni_Driver.Controllers
                 return View(registerVM);
             }
 
+            if(!ModelState.IsValid)
+            {
+                TempData["Error"] = "entries are invalid!";
+                return View(registerVM);
+            }
+
             var profileImageUploadResult = await _photoService.AddPhotoAsync(registerVM.ProfileImage);
 
             var appUser = new ApplicationUser
@@ -207,14 +213,13 @@ namespace Yemeni_Driver.Controllers
                 await _userManager.AddToRoleAsync(appUser, Roles.Passenger.ToString());
 
                 await _signInManager.SignInAsync(appUser, isPersistent: false);
-                return RedirectToAction("Index", "Dashboard"); // Redirect to the home page after successful registration
+                return RedirectToAction("PassengerDashboard", "Dashboard"); // Redirect to the home page after successful registration
             }
 
             foreach (var error in result.Errors)
             {
                 ModelState.AddModelError(string.Empty, error.Description);
             }
-
             return (IActionResult)(TempData["Error"] = "Registeration Failed");
 
             //test

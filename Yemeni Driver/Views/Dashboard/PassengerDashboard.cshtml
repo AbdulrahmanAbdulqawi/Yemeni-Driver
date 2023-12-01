@@ -30,8 +30,7 @@
             .card img {
                 width: 100%;
                 height: 225px;
-                object-fit: cover;
-                border-bottom: 1px solid #dee2e6;
+                object-fit:contain;
             }
 
         .card-body {
@@ -113,7 +112,7 @@
                 <div class="ride-section">
                     <h5>Ready for your next ride?</h5>
                     <p>Simply click the button below to request a ride.</p>
-                    <button id="requestRideBtn" class="btn btn-primary" asp-controller="Request" asp-action="MakeRequest" onclick="requestRide()">Request Ride</button>
+                    <a id="requestRideBtn" class="btn btn-primary" asp-controller="Request" asp-action="CreateRequest" >Request Ride</a>
                 </div>
 
                 <div class="container mt-5">
