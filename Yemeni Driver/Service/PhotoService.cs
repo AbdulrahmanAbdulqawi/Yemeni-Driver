@@ -1,6 +1,7 @@
 ﻿using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using Microsoft.Extensions.Options;
+using Yemeni_Driver.Data;
 using Yemeni_Driver.Helpers;
 using Yemeni_Driver.Interfaces;
 
@@ -12,7 +13,7 @@ namespace Yemeni_Driver.Service
         public PhotoService(IOptions<CloudinarySettings> config)
         {
             var account = new Account(
-                config.Value.CloudName, config.Value.ApiKey, config.Value.ApiSecret);
+                Constants.CloudinaryCloudName, Constants.CloudinaryApiKey, Constants.CloudinaryApiSecret);
             _cloudinary = new Cloudinary(account);
         }
         public async Task<ImageUploadResult> AddPhotoAsync(IFormFile file)

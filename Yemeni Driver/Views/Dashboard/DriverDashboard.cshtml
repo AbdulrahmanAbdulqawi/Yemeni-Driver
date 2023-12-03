@@ -1,6 +1,5 @@
-﻿<!DOCTYPE html>
-<html lang="en">
-<head>
+﻿@using Yemeni_Driver.ViewModel.Dashboard
+@model DriverDashboardViewModel
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"]</title>
@@ -87,9 +86,50 @@
                 background-color: #0056b3;
             }
 
+    .drivers-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    .driver-card {
+        width: 300px;
+        margin: 10px;
+        text-align: center;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease-in-out;
+    }
+
+        .driver-card:hover {
+            transform: scale(1.05);
+        }
+
+        .driver-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+    .driver-card-body {
+        padding: 15px;
+    }
+
+    .driver-card-title {
+        font-size: 1.5em;
+        margin-bottom: 10px;
+    }
+
+    .driver-card-text {
+        margin-bottom: 10px;
+        font-size: 1.2em;
+    }
+
+
     </style>
-</head>
-<body>
+
+
     <div class="container">
         <div class="welcome">
             Welcome to the RideSharing App!
@@ -97,6 +137,12 @@
 
         <div class="card-container">
             <div class="card">
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger">
+                    <strong>Sorry!</strong> - @TempData["Error"]
+                </div>
+            }
                 <img src="@Model.Image" alt="Driver Image">
                 <div class="card-body">
                     <p class="card-text">@Model.FirstName</p>
@@ -104,8 +150,42 @@
 
                     <div class="card-buttons">
                         <button class="edit-button" onclick="editDriverDetails()">Edit</button>
-                        <button class="view-details-button" onclick="viewDriverDetails()">View</button>
-                    </div>
+                    <a asp-controller="Account" asp-action="ViewDriverDetails" asp-route-driverId="@Model.Id" class="btn btn-primary">View Details</a>
+                </div>
+                </div>
+            </div>
+
+            <div class="container mt-5">
+                <h2 class="text-center mb-4">Requests</h2>
+                <div class="drivers-container">
+                    @if(Model.Requests.Count() == 0)
+                    {
+                            <div class="driver-card-body">
+                                <p class="driver-card-text">You dont have any request!</p>
+
+                            </div>
+                          
+                    }
+                    else{
+                        foreach (var request in Model.Requests)
+                        {
+                            var user = Model.Users.FirstOrDefault(a => a.Id == request.ApplicationUserId);
+                            <div class="driver-card">
+                                <div class="driver-card-body">
+                                    @if (user != null)
+                                    {
+                                        <img class="card-img-top" src="@user.ProfileImageUrl" alt="Card image cap">
+                                        <h5 class="driver-card-title">@user.FirstName @user.LastName</h5>
+                                        <p class="driver-card-text">PickUp Location: @request.PickupLocation</p>
+                                        <p class="driver-card-text">DropOff Location: @request.DropoffLocation</p>
+                                        <a asp-controller="request" asp-action="AcceptRequest" asp-route-requestId="@request.RequestId" class="btn btn-primary">Accept</a>
+
+                                    }
+                                </div>
+                            </div>
+                        }
+                    }
+                    
                 </div>
             </div>
 
@@ -113,38 +193,12 @@
 
         </div>
 
-        <div id="map"></div>
-
-        <!-- Notification section -->
-        <div id="notificationSection">
-            <h3>Notifications</h3>
-            <ul id="notificationList"></ul>
-        </div>
     </div>
 
     <!-- Add your script tags for Google Maps and location updates -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.10/signalr.min.js"></script>
 
-  @*   <script src="~/js/updateLiveLocation.js"></script> *@
+     <script src="~/js/updateLiveLocation.js"></script> 
 
-    <script>
-        const hubConnection = new signalR.HubConnectionBuilder()
-            .withUrl("/notificationHub")
-            .build();
 
-        hubConnection.start().then(() => {
-            console.log("Driver Connected to NotificationHub");
-        }).catch(err => console.error(err.toString()));
-
-        // Handle the new ride request event
-        hubConnection.on("ReceiveNotification", (newRequest) => {
-            // Add the new notification to the list
-            const notificationList = $("#notificationList");
-            notificationList.append(`<li>You have a new ride request: ${newRequest}</li>`);
-
-            // You can customize this further, such as displaying a modal or updating the UI as needed
-        });
-    </script>
-</body>
-</html>

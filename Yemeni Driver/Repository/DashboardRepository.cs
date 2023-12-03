@@ -46,9 +46,9 @@ namespace Yemeni_Driver.Repository
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<ApplicationUser>> GetPassengers()
+        public async Task<IEnumerable<ApplicationUser>> GetPassengers()
         {
-            throw new NotImplementedException();
+            return await _userManager.GetUsersInRoleAsync(Roles.Passenger.ToString());
         }
     }
 }

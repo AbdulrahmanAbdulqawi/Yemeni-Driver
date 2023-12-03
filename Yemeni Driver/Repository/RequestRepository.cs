@@ -40,10 +40,6 @@ namespace Yemeni_Driver.Repository
             return await _dbContext.Requests.AsNoTracking().FirstOrDefaultAsync(a => a.RequestId == id);
         }
 
-        public Task<Request> GetByStatus(RequestStatus requestStatus)
-        {
-            throw new NotImplementedException();
-        }
 
         public bool Save()
         {
@@ -55,6 +51,13 @@ namespace Yemeni_Driver.Repository
         {
             _dbContext.Update(request);
             return Save();
+        }
+
+        public async Task<IEnumerable<Request>> GetByStatus(RequestStatus requestStatus)
+        {
+            var requests = await _dbContext.Requests.Where(r => r.Status == requestStatus).ToListAsync();
+
+            return requests;
         }
     }
 }

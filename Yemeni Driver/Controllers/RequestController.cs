@@ -17,13 +17,14 @@ namespace Yemeni_Driver.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IHubContext<NotificationHub> _hubContext;
         private readonly UserManager<ApplicationUser> _userManager;
-
-        public RequestController(IRequestRepository requestRepository, IHttpContextAccessor httpContextAccessor, IHubContext<NotificationHub> hubContext, UserManager<ApplicationUser> userManager)
+        private readonly IDriverAndRequestRepository _driverAndRequestRepository;
+        public RequestController(IRequestRepository requestRepository, IHttpContextAccessor httpContextAccessor, IHubContext<NotificationHub> hubContext, UserManager<ApplicationUser> userManager, IDriverAndRequestRepository driverAndRequestRepository)
         {
             _requestRepository = requestRepository;
             _httpContextAccessor = httpContextAccessor;
             _hubContext = hubContext;
             _userManager = userManager;
+            _driverAndRequestRepository = driverAndRequestRepository;
         }
         [HttpPost("createRequest")]
         public async Task<IActionResult> CreateRequest([FromBody] CreateRequestViewModel createRequestVM)
@@ -31,6 +32,10 @@ namespace Yemeni_Driver.Controllers
             var userId = _httpContextAccessor.HttpContext.User.GetUserId();
             var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
 
+            if(_requestRepository.GetAll().Result.Any(a => a.ApplicationUserId == userId && a.Status == Data.Enums.RequestStatus.Requested))
+            {
+                return View(TempData["Error"] == "Request is in progress");
+            }
             // Validate the incoming data (dropoff location, etc.) as needed
 
             var request = new Request
@@ -46,7 +51,7 @@ namespace Yemeni_Driver.Controllers
 
             _requestRepository.Add(request);
 
-            await _hubContext.Clients.All.SendAsync("ReceiveNotification", "New ride request available!");
+            //await _hubContext.Clients.All.SendAsync("ReceiveNotification", "New ride request available!");
 
             // You might want to return some information about the created request
             return RedirectToAction("PassengerDashboard", "Dashboard");
@@ -60,6 +65,26 @@ namespace Yemeni_Driver.Controllers
             {
                 _requestRepository.Delete(request);
                 return Ok(new { Message = "Request cancelled successfully" });
+            }
+            return NotFound(new { Error = "Request not found" });
+        }
+        [Route("api/request")]
+        [HttpPost("acceptRequest")]
+        public async Task<IActionResult> AcceptRequest(string requestId)
+        {
+            var request = await _requestRepository.GetByIdAsyncNoTracking(requestId);
+            var driverId = _httpContextAccessor.HttpContext.User.GetUserId();
+            if (request != null)
+            {
+                request.Status = Data.Enums.RequestStatus.Accepted;
+                _requestRepository.Update(request);
+                var requestAndDriver = new DriverAndRequest
+                {
+                    ApplicationUserId = driverId,
+                    RequestId = requestId
+                };
+                _driverAndRequestRepository.Add(requestAndDriver);
+                return RedirectToAction("DriverDashboard", "Dashboard");
             }
             return NotFound(new { Error = "Request not found" });
         }

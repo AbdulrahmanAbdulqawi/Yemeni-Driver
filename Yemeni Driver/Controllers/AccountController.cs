@@ -1,10 +1,12 @@
 ﻿using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Yemeni_Driver.Data;
 using Yemeni_Driver.Interfaces;
 using Yemeni_Driver.Models;
 using Yemeni_Driver.ViewModel.Account;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Yemeni_Driver.Controllers
 {
@@ -13,14 +15,16 @@ namespace Yemeni_Driver.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IPhotoService _photoService;
+        private readonly IUserRepository _userRepository;
 
 
 
-        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ApplicationDbContext applicationDb, IHttpContextAccessor httpContextAccessor, IUserRepository userRepository, IPhotoService photoService)
+        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IHttpContextAccessor httpContextAccessor, IUserRepository userRepository, IPhotoService photoService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _photoService = photoService;
+            _userRepository = userRepository;
         }
 
         public IActionResult Register()
@@ -222,10 +226,42 @@ namespace Yemeni_Driver.Controllers
             }
             return (IActionResult)(TempData["Error"] = "Registeration Failed");
 
-            //test
-
-
         }
+
+        public async Task<IActionResult> ViewDriverDetails(string driverId)
+        {
+            var driver = await _userRepository.GetByIdAsync(driverId);
+            if (driver == null)
+            {
+                return NotFound(); // Handle the case where the driver is not found
+            }
+
+
+            DriverDetailsViewModel driverVM = new DriverDetailsViewModel()
+            {
+                Email = driver.Email,
+                FirstName = driver.FirstName,
+                LastName = driver.LastName,
+                Image = driver.ProfileImageUrl,
+                Location = driver.Location,
+                PhoneNumber = driver.PhoneNumber,
+                Rating = 5
+            };
+
+            return View(driverVM);
+        }
+
+        //public async Task<IActionResult> EditDriverDetails(string driverId)
+        //{
+
+        //}
+
+        //[HttpPost]
+        //public async Task<IActionResult> EditDriverDetails(EditDriverDetailsViewModel editDriverDetailsViewModel)
+        //{
+
+        //}
+
 
 
 

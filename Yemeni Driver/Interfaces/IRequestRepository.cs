@@ -8,7 +8,7 @@ namespace Yemeni_Driver.Interfaces
         Task<IEnumerable<Request>> GetAll();
         Task<Request> GetByIdAsync(string id);
         Task<Request> GetByIdAsyncNoTracking(string id);
-        Task<Request> GetByStatus(RequestStatus requestStatus);
+        Task<IEnumerable<Request>> GetByStatus(RequestStatus requestStatus);
         bool Add(Request request);
         bool Update(Request request);
         bool Delete(Request request);

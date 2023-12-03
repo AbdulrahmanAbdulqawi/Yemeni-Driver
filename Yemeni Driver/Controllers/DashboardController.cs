@@ -11,11 +11,12 @@ namespace Yemeni_Driver.Controllers
     {
         private readonly IDashboardRepository _dashboardRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
-
-        public DashboardController(IDashboardRepository dashboardRepository, IHttpContextAccessor httpContextAccessor)
+        private readonly IRequestRepository _requestRepository;
+        public DashboardController(IDashboardRepository dashboardRepository, IHttpContextAccessor httpContextAccessor, IRequestRepository requestRepository)
         {
             _dashboardRepository = dashboardRepository;
             _httpContextAccessor = httpContextAccessor;
+            _requestRepository = requestRepository;
         }
         public IActionResult Index()
         {
@@ -26,9 +27,14 @@ namespace Yemeni_Driver.Controllers
         {
             var user = _httpContextAccessor.HttpContext.User.GetUserId();
             var passengerDetailes = await _dashboardRepository.GetPassengerByIdAsync(user);
-           
+            
+            if(passengerDetailes.LiveLocationLatitude == null || passengerDetailes.LiveLocationLongitude == null)
+            {
+                passengerDetailes.LiveLocationLongitude = 10.5;
+                passengerDetailes.LiveLocationLatitude = 10.5;
+            }
             var drivers = _dashboardRepository.GetDrivers().Result.Where(a => a.FirstName != null).ToList();
-
+            
             Dictionary<double, ApplicationUser> closestDriver = [];
             foreach (var driver in drivers) {
                 var claculateDistance = DistanceService
@@ -62,9 +68,13 @@ namespace Yemeni_Driver.Controllers
         {
             var user = _httpContextAccessor.HttpContext.User.GetUserId();
             var driverDetailes = _dashboardRepository.GetDriverByIdAsync(user);
+            
+            var requests = _requestRepository.GetByStatus(Data.Enums.RequestStatus.Requested).Result;
+            var passengers = _dashboardRepository.GetPassengers().Result;
 
-            var driverDashboardVM = new DriverDashboardViewModel
+            var driverDashboardVM = new DriverDashboardViewModel(requests, passengers)
             {
+                Id = driverDetailes.Result.Id,
                 FirstName = driverDetailes.Result.FirstName,
                 Location = driverDetailes.Result.Location,
                 Image = driverDetailes.Result.ProfileImageUrl

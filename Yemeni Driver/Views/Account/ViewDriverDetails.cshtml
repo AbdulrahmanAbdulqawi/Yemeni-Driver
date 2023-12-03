@@ -1,0 +1,32 @@
+﻿@using Yemeni_Driver.ViewModel.Account
+@model DriverDetailsViewModel
+
+<style>
+    /* Custom styles to set a maximum width for the container */
+    #custom-container {
+        max-width: 250px; /* Set your desired maximum width */
+        margin: auto;
+    }
+
+    .card-body{
+        text-align:center
+    }
+</style>
+@{
+    ViewData["Title"] = "Driver Details";
+}
+
+<div class="container">
+    <h2 class="text-center mb-4">Driver Details</h2>
+    <div class="card">
+        <img src="@Model.Image" id="custom-container" class="card-img-top img-fluid mx-auto" alt="Driver Image">
+        <div class="card-body">
+            <h5 class="card-title">@Model.FirstName @Model.LastName</h5>
+            <p class="card-text">Email: @Model.Email</p>
+            <p class="card-text">Phone Number: @Model.PhoneNumber</p>
+            <p class="card-text">Rating: @Model.Rating</p>
+            <p class="card-text">Location: @Model.Location</p>
+            <!-- Add more details as needed -->
+        </div>
+    </div>
+</div>
