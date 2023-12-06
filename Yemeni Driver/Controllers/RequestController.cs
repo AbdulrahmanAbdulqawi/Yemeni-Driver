@@ -68,7 +68,7 @@ namespace Yemeni_Driver.Controllers
             }
             return NotFound(new { Error = "Request not found" });
         }
-        [Route("api/request")]
+        [Route("api/request/acceptRequest")]
         [HttpPost("acceptRequest")]
         public async Task<IActionResult> AcceptRequest(string requestId)
         {
@@ -87,6 +87,33 @@ namespace Yemeni_Driver.Controllers
                 return RedirectToAction("DriverDashboard", "Dashboard");
             }
             return NotFound(new { Error = "Request not found" });
+        }
+
+        [Route("api/request/getDriverRequests")]
+        [HttpPost("getDriverRequests")]
+        public async Task<IActionResult> GetDriverRequests(string driverId)
+        {
+            var requests = await _driverAndRequestRepository.GetDriverAndRequestAsync();
+
+            var driverRequests = requests.Where(a => a.ApplicationUserId == driverId).ToList();
+            List<GetRequestsViewModel> requestsList = [];
+            foreach (var request in driverRequests)
+            {
+                var requestDetails = await _requestRepository.GetByIdAsyncNoTracking(request.RequestId);
+                requestsList.Add(new GetRequestsViewModel
+                {
+                    Status = requestDetails.Status,
+                    NumberOfSeats = requestDetails.NumberOfSeats,
+                    ApplicationUserId = requestDetails.ApplicationUserId,
+                    DropoffLocation = requestDetails.DropoffLocation,
+                    PickupLocation = requestDetails.PickupLocation,
+                    EstimationPrice = requestDetails.EstimationPrice,
+                    PickupTime = requestDetails.PickupTime
+                });
+            }
+
+            return View(requestsList);
+           
         }
 
         private static string RandomString(int length)

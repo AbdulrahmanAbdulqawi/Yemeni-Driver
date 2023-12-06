@@ -1,4 +1,5 @@
-﻿using Yemeni_Driver.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using Yemeni_Driver.Data;
 using Yemeni_Driver.Interfaces;
 using Yemeni_Driver.Models;
 
@@ -23,9 +24,9 @@ namespace Yemeni_Driver.Repository
             return Save();
         }
 
-        public Task<IEnumerable<DriverAndRequest>> GetDriverAndRequestAsync()
+        public async Task<IEnumerable<DriverAndRequest>> GetDriverAndRequestAsync()
         {
-            throw new NotImplementedException();
+            return await _context.DriversAndRequests.ToListAsync();
         }
 
         public bool Save()

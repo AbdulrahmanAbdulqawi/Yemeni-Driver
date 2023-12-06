@@ -4,6 +4,7 @@ namespace Yemeni_Driver.ViewModel.Account
 {
     public class DriverDetailsViewModel
     {
+        public string? DriverId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Location { get; set; }

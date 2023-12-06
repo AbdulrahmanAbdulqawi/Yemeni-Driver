@@ -160,7 +160,7 @@
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <a class="dropdown-item" asp-controller="Account" asp-action="ViewDriverDetails" asp-route-driverId="@Model.Id">Profile</a>
-                            <a class="dropdown-item" href="#">Requests</a>
+                            <a class="dropdown-item" asp-controller="Request" asp-action="GetDriverRequests" asp-route-driverId="@Model.Id">Requests</a>
                             <a class="dropdown-item" href="#">Trips</a>
                         </div>
                     </li>
