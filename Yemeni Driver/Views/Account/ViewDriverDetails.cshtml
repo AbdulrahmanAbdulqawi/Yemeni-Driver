@@ -4,29 +4,51 @@
 <style>
     /* Custom styles to set a maximum width for the container */
     #custom-container {
-        max-width: 250px; /* Set your desired maximum width */
+        max-width: 500px; /* Set your desired maximum width */
         margin: auto;
     }
 
-    .card-body{
-        text-align:center
+    .card-body {
+        text-align: center;
+    }
+
+    #vehicle-image {
+        max-width: 100%;
+        height: auto;
+        margin-bottom: 10px;
     }
 </style>
+
 @{
-    ViewData["Title"] = "Driver Details";
+    ViewData["Title"] = "Driver Dashboard";
 }
 
-<div class="container">
-    <h2 class="text-center mb-4">Driver Details</h2>
-    <div class="card">
-        <img src="@Model.Image" id="custom-container" class="card-img-top img-fluid mx-auto" alt="Driver Image">
-        <div class="card-body">
-            <h5 class="card-title">@Model.FirstName @Model.LastName</h5>
-            <p class="card-text">Email: @Model.Email</p>
-            <p class="card-text">Phone Number: @Model.PhoneNumber</p>
-            <p class="card-text">Rating: @Model.Rating</p>
-            <p class="card-text">Location: @Model.Location</p>
-            <!-- Add more details as needed -->
+<div class="container" id="custom-container">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <img src="@Model.Image" class="card-img-top img-fluid" alt="Driver Image">
+                <div class="card-body">
+                    <h5 class="card-title">@Model.FirstName @Model.LastName</h5>
+                    <p class="card-text">Email: @Model.Email</p>
+                    <p class="card-text">Phone Number: @Model.PhoneNumber</p>
+                    <p class="card-text">Rating: @Model.Rating</p>
+                    <p class="card-text">Location: @Model.Location</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Vehicle Details</h5>
+                    <img src="@Model.ViewVehicle.VehiclImageUrl" id="vehicle-image" class="img-fluid" alt="Vehicle Image">
+                    <p class="card-text">Make: @Model.ViewVehicle.Make</p>
+                    <p class="card-text">Model: @Model.ViewVehicle.Model</p>
+                    <p class="card-text">Plate Number: @Model.ViewVehicle.PlateNumber</p>
+                    <p class="card-text">Year: @Model.ViewVehicle.Year</p>
+                </div>
+            </div>
         </div>
     </div>
 </div>

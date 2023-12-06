@@ -47,6 +47,7 @@ namespace Yemeni_Driver.Controllers
                     Capacity = updateVehicleVM.Capacity,
                     Color = updateVehicleVM.Color,
                     PlateNumber = updateVehicleVM.PlateNumber,
+                    VehiclImageUrl = updateVehicleVM.VehicleImageUrl,
                 };
                 _vehicleRepository.Update(newVehicle);
 

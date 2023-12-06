@@ -6,6 +6,7 @@ namespace Yemeni_Driver.ViewModel.Vehicle
 {
     public class UpdateVehicleViewModel
     {
+        public string VehicleId {  get; set; }
         public string Model { get; set; }
 
         [Required]
@@ -24,5 +25,7 @@ namespace Yemeni_Driver.ViewModel.Vehicle
         public string PlateNumber { get; set; }
 
         public string? UserId { get; set; } // To associat
+        public IFormFile VehicleImage { get; set; }
+        public string? VehicleImageUrl { get; set; } 
     }
 }

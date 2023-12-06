@@ -1,4 +1,6 @@
 ﻿using CloudinaryDotNet.Actions;
+using GoogleMapsApi.Entities.Directions.Response;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,15 +18,17 @@ namespace Yemeni_Driver.Controllers
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IPhotoService _photoService;
         private readonly IUserRepository _userRepository;
+        private readonly IVehicleRepository _vehicleRepository;
 
 
 
-        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IHttpContextAccessor httpContextAccessor, IUserRepository userRepository, IPhotoService photoService)
+        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IHttpContextAccessor httpContextAccessor, IUserRepository userRepository, IPhotoService photoService, IVehicleRepository vehicleRepository)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _photoService = photoService;
             _userRepository = userRepository;
+            _vehicleRepository = vehicleRepository;
         }
 
         public IActionResult Register()
@@ -138,7 +142,7 @@ namespace Yemeni_Driver.Controllers
 
             var vehicleImageUploadResult = await _photoService.AddPhotoAsync(driverRegisterVM.ProfileImage);
 
-            var newVehicle = new Vehicle
+            var newVehicle = new Models.Vehicle
             {
                 ApplicationUserId = appUser.Id,
                 VehicleId = appUser.VehicleId,
@@ -230,7 +234,8 @@ namespace Yemeni_Driver.Controllers
 
         public async Task<IActionResult> ViewDriverDetails(string driverId)
         {
-            var driver = await _userRepository.GetByIdAsync(driverId);
+            var driver = await _userRepository.GetByIdAsyncNoTracking(driverId);
+            var vehicle = await _vehicleRepository.GetVehicleByOwner(driverId);
             if (driver == null)
             {
                 return NotFound(); // Handle the case where the driver is not found
@@ -245,22 +250,116 @@ namespace Yemeni_Driver.Controllers
                 Image = driver.ProfileImageUrl,
                 Location = driver.Location,
                 PhoneNumber = driver.PhoneNumber,
-                Rating = 5
+                Rating = 5,
+                ViewVehicle = new ViewModel.Vehicle.ViewVehicleViewModel
+                {
+                    Capacity = vehicle.Capacity,
+                    Color = vehicle.Color,
+                    Make = vehicle.Make,
+                    Model = vehicle.Model,
+                    PlateNumber = vehicle.PlateNumber,
+                    VehiclImageUrl = vehicle.VehiclImageUrl,
+                    Year = vehicle.Year,
+                }
             };
 
             return View(driverVM);
         }
 
-        //public async Task<IActionResult> EditDriverDetails(string driverId)
-        //{
+        public async Task<IActionResult> EditDriverDetails(string driverId)
+        {
+            var driver = await _userRepository.GetByIdAsyncNoTracking(driverId);
+            var vehicle = await _vehicleRepository.GetVehicleByOwner(driverId);
+            
+            if(driver == null)
+            {
+                return NotFound(driverId);
+            }
+            var editDriverDetailesVM = new EditDriverDetailsViewModel()
+            {
+                DrivingLicenseNumber = driver.DrivingLicenseNumber,
+                Email = driver.Email,
+                FirstName = driver.FirstName,
+                LastName = driver.LastName,
+                Gender = (Data.Enums.Gender)driver.Gender,
+                ProfileImageUrl = driver.ProfileImageUrl,
+                PhoneNumber = driver.PhoneNumber,
+                
+                Vehicle = new Models.Vehicle
+                {
+                    VehicleId = vehicle.VehicleId,
+                    ApplicationUserId = vehicle.ApplicationUserId,
+                    Capacity = vehicle.Capacity,
+                    Color = vehicle.Color,
+                    Make = vehicle.Make,
+                    Model = vehicle.Model,
+                    PlateNumber = vehicle.PlateNumber,
+                    VehiclImageUrl = vehicle.VehiclImageUrl,
+                    Year = vehicle.Year,
+                }
+            };
 
-        //}
+            return View(editDriverDetailesVM);
+        }
 
-        //[HttpPost]
-        //public async Task<IActionResult> EditDriverDetails(EditDriverDetailsViewModel editDriverDetailsViewModel)
-        //{
+        [HttpPost]
+        public async Task<IActionResult> EditDriverDetails(string driverId, EditDriverDetailsViewModel editDriverDetailsViewModel)
+        {
+            var driver = await _userRepository.GetByIdAsyncNoTracking(driverId);
+            var vehicle = await _vehicleRepository.GetVehicleByOwner(driverId);
+            ModelState.Remove("Vehicle.ApplicationUser");
+            if(!ModelState.IsValid)
+            {
+                ModelState.AddModelError("", "Failed to update driver");
+                return View("Error", editDriverDetailsViewModel);
+            }
+            try
+            {
+                await _photoService.DeletePhotoAsync(driver.ProfileImageUrl);
+                if(vehicle.VehiclImageUrl != null)
+                {
+                    await _photoService.DeletePhotoAsync(vehicle.VehiclImageUrl);
+                }
+            }
+            catch (Exception)
+            {
 
-        //}
+                ModelState.AddModelError("", "couldnt delete photo");
+                return View(editDriverDetailsViewModel);
+            }
+
+            try
+            {
+                var profileImageResult = await _photoService.AddPhotoAsync(editDriverDetailsViewModel.ProfileImage);
+                var vehicleImageResult = await _photoService.AddPhotoAsync(editDriverDetailsViewModel.VehicleImage);
+
+
+
+                driver.FirstName = editDriverDetailsViewModel.FirstName;
+                driver.LastName = editDriverDetailsViewModel.LastName;
+                driver.Email = editDriverDetailsViewModel.Email;
+                driver.Gender = editDriverDetailsViewModel.Gender;
+                driver.PhoneNumber = editDriverDetailsViewModel.PhoneNumber;
+                driver.ProfileImageUrl = profileImageResult.Url.ToString();
+                _userRepository.Update(driver);
+
+
+                var vehicletoUpdate = editDriverDetailsViewModel.Vehicle;
+                vehicletoUpdate.ApplicationUserId = driverId;
+                vehicletoUpdate.VehicleId = vehicle.VehicleId;
+                vehicletoUpdate.VehiclImageUrl = vehicleImageResult.Url.ToString();
+                _vehicleRepository.Update(vehicletoUpdate);
+                
+                return RedirectToAction("DriverDashboard", "Dashboard");
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+           
+
+        }
 
 
 

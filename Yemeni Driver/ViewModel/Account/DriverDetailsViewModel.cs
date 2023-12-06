@@ -1,4 +1,6 @@
-﻿namespace Yemeni_Driver.ViewModel.Account
+﻿using Yemeni_Driver.ViewModel.Vehicle;
+
+namespace Yemeni_Driver.ViewModel.Account
 {
     public class DriverDetailsViewModel
     {
@@ -12,5 +14,6 @@
             get; set;
         }
         public int Rating { get; set; }
+        public ViewVehicleViewModel ViewVehicle { get; set; }
     }
 }
