@@ -30,8 +30,11 @@ namespace YemeniDriver.Test
         {
             // Configure services here
             services.AddControllersWithViews();
+            string uniqueDatabaseName = "TestDatabase_" + Guid.NewGuid().ToString();
+
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseInMemoryDatabase("TestDatabase"));
+                options.UseInMemoryDatabase(uniqueDatabaseName));
+
 
             services.AddScoped<IDashboardRepository, DashboardRepository>();
             services.AddScoped<IUserRepository, UserRepository>(); // Add other repositories...

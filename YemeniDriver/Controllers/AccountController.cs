@@ -137,6 +137,7 @@ namespace YemeniDriver.Controllers
                 FirstName = driverRegisterVM.FirstName, LastName = driverRegisterVM.LastName, Gender = driverRegisterVM.Gender, PhoneNumber = driverRegisterVM.PhoneNumber,
                 VehicleId = driverRegisterVM.VehicleId,
                 ProfileImageUrl = profileImageUploadResult.Url.ToString(),
+                Roles = Roles.Driver,
             };
 
 
@@ -211,7 +212,8 @@ namespace YemeniDriver.Controllers
                 LastName = registerVM.LastName,
                 Gender = registerVM.Gender,
                 PhoneNumber = registerVM.PhoneNumber,
-                ProfileImageUrl = profileImageUploadResult.Url.ToString()
+                ProfileImageUrl = profileImageUploadResult.Url.ToString(),
+                Roles = Roles.Passenger
             };
             var result = await _userManager.CreateAsync(appUser, registerVM.Password);
 

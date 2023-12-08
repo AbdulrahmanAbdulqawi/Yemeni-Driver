@@ -45,8 +45,13 @@ namespace YemeniDriver.Repository
 
         public async Task<IEnumerable<ApplicationUser>> GetDrivers()
         {
-            var drivers = _userManager.GetUsersInRoleAsync(Roles.Driver.ToString()).Result.ToList();
-            return drivers;
+            var drivers = await _userManager.GetUsersInRoleAsync(Roles.Driver.ToString());
+
+            if(!drivers.Any(a => a.Roles == Roles.Driver))
+            {
+                throw new Exception("No Driver Found");
+            }
+            return drivers.ToList();
         }
 
         public Task<IEnumerable<ApplicationUser>> GetPassengers()

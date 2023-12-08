@@ -19,24 +19,7 @@ namespace YemeniDriver.Test
         public static void Initialize(ApplicationDbContext dbContext)
         {
             // Add test data to the in-memory database
-            dbContext.Users.Add(new ApplicationUser
-            {
-                Id = "userId1",
-                UserName = "testuser1",
-                Email = "testuser1@example.com",
-                // Add other properties as needed
-            });
-
-            dbContext.Users.Add(new ApplicationUser
-            {
-                Id = "userId2",
-                UserName = "testuser2",
-                Email = "testuser2@example.com",
-                // Add other properties as needed
-            });
-
-            // Save changes to the in-memory database
-            dbContext.SaveChanges();
+          
         }
        
     }

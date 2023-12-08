@@ -18,6 +18,7 @@ namespace YemeniDriver.Test
         private readonly Mock<UserManager<ApplicationUser>> _userManagerMock;
         private readonly IDashboardRepository _dashboardRepository;
         private readonly ApplicationDbContext _dbContextMock;
+        private readonly List<ApplicationUser> _users;
 
         public DashboardRepositoryTests()
         {
@@ -32,13 +33,15 @@ namespace YemeniDriver.Test
                 null, null, null, null, null, null, null, null);
 
             _dbContextMock = serviceProvider.GetRequiredService<ApplicationDbContext>();
-            DbContextMocker.Initialize(_dbContextMock);
+            _dbContextMock.Database.EnsureDeleted(); // Ensure the database is deleted before each test
+            _dbContextMock.Database.EnsureCreated(); 
+                _users = AddTestData();
+
 
             _userRepositoryMock = new UserRepository(_dbContextMock, _userManagerMock.Object);
             _dashboardRepository = new DashboardRepository(_dbContextMock, _userManagerMock.Object, _userRepositoryMock);
 
-
-
+            
         }
 
         [Fact]
@@ -69,22 +72,54 @@ namespace YemeniDriver.Test
         public async Task GetDrivers_ReturnsListOfDrivers_WhenDriversExist()
         {
             // Arrange
-            var expectedDrivers = new List<ApplicationUser>
-            {
-                new ApplicationUser { Id = "userId1", Email = "testuser1@example.com" },
-                new ApplicationUser { Id = "userId2", Email = "testusr2@example.com" },
-            };
-
             _userManagerMock.Setup(x => x.GetUsersInRoleAsync(Roles.Driver.ToString()))
-            .ReturnsAsync(expectedDrivers);
+            .ReturnsAsync(_users);
             // Act
             var result = await _dashboardRepository.GetDrivers();
 
             // Assert
             result.ShouldNotBeEmpty();
-            result.ShouldBe(expectedDrivers);
+            result.ShouldBe(_users);
         }
 
+        //[Fact]
+        //public async Task GetDrivers_ThrowsException_WhenDriversNotExist()
+        //{
 
+        //    _userManagerMock.Setup(x => x.GetUsersInRoleAsync(Roles.Driver.ToString()))
+        //    .ReturnsAsync(_users);
+        //    // Act
+        //    var result = _dashboardRepository.GetDrivers();
+
+        //    // Assert
+        //    await Should.ThrowAsync<Exception>(async () => await result);
+
+        //}
+
+
+        public List<ApplicationUser> AddTestData()
+        {
+            _dbContextMock.Users.Add(new ApplicationUser
+            {
+                Id = "userId1",
+                UserName = "testuser1",
+                Email = "testuser1@example.com",
+                Roles = Roles.Driver
+                // Add other properties as needed
+            });
+
+            _dbContextMock.Users.Add(new ApplicationUser
+            {
+                Id = "userId2",
+                UserName = "testuser2",
+                Email = "testuser2@example.com",
+                Roles = Roles.Passenger
+                // Add other properties as needed
+            });
+
+            // Save changes to the in-memory database
+            _dbContextMock.SaveChanges();
+            return _dbContextMock.Users.ToList();
+        }
     }
 }

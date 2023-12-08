@@ -20,7 +20,7 @@ namespace YemeniDriver.Models
         public string? ProfileImageUrl { get; set; }
         [ForeignKey("Vehicle")]
         public string? VehicleId { get; set; }
-        //public Roles? Roles { get; set; }
+        public Roles? Roles { get; set; }
         public virtual Vehicle Vehicle { get; set; }
         public virtual ICollection<DriverAndRequest> DriverAndRequests { get; set; }
         public virtual Trip Trip { get; set; }
