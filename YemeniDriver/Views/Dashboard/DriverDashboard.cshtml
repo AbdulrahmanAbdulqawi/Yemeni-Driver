@@ -1,0 +1,233 @@
+﻿@using YemeniDriver.ViewModel.Dashboard
+@model DriverDashboardViewModel
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .welcome {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            color: #007bff;
+        }
+
+        .card-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .card {
+            width: 300px;
+            margin: 10px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease-in-out;
+        }
+
+            .card:hover {
+                transform: scale(1.05);
+            }
+
+            .card img {
+                width: 100%;
+                height: 200px;
+                object-fit: cover;
+                border-bottom: 1px solid #dee2e6;
+            }
+
+        .card-body {
+            padding: 15px;
+        }
+
+        .card-text {
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        #map {
+            height: 400px;
+            margin-top: 20px;
+        }
+
+        #notificationSection {
+            margin-top: 20px;
+        }
+
+        #notificationList {
+            list-style-type: none;
+            padding: 0;
+        }
+
+            #notificationList li {
+                border: 1px solid #dee2e6;
+                margin-bottom: 5px;
+                padding: 10px;
+            }
+
+        button {
+            background-color: #007bff;
+        }
+
+            button:hover {
+                background-color: #0056b3;
+            }
+
+    .drivers-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    .driver-card {
+        width: 300px;
+        margin: 10px;
+        text-align: center;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease-in-out;
+    }
+
+        .driver-card:hover {
+            transform: scale(1.05);
+        }
+
+        .driver-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+    .driver-card-body {
+        padding: 15px;
+    }
+
+    .driver-card-title {
+        font-size: 1.5em;
+        margin-bottom: 10px;
+    }
+
+    .driver-card-text {
+        margin-bottom: 10px;
+        font-size: 1.2em;
+    }
+
+
+    </style>
+    <head>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.10/signalr.min.js"></script>
+
+    <script src="~/js/updateLiveLocation.js"></script>
+
+</head>
+
+    <div class="container">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+            <a class="navbar-brand" href="#">RideSharing App</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Home</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Menu
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" asp-controller="Account" asp-action="ViewDriverDetails" asp-route-driverId="@Model.Id">Profile</a>
+                            <a class="dropdown-item" asp-controller="Request" asp-action="GetDriverRequests" asp-route-driverId="@Model.Id">Requests</a>
+                            <a class="dropdown-item" href="#">Trips</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <div class="card-container">
+            <div class="card">
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger">
+                    <strong>Sorry!</strong> - @TempData["Error"]
+                </div>
+            }
+                <img src="@Model.Image" alt="Driver Image">
+                <div class="card-body">
+                    <p class="card-text">@Model.FirstName</p>
+                    <p class="card-text">@Model.Location</p>
+
+                    <div class="card-buttons">
+                    <a asp-controller="Account" asp-action="EditDriverDetails" asp-route-driverId="@Model.Id" class="btn btn-primary">Edit</a>
+                    <a asp-controller="Account" asp-action="ViewDriverDetails" asp-route-driverId="@Model.Id" class="btn btn-primary">View</a>
+                </div>
+                </div>
+            </div>
+
+            <div class="container mt-5">
+                <h2 class="text-center mb-4">Requests</h2>
+                <div class="drivers-container">
+                    @if(Model.Requests.Count() == 0)
+                    {
+                            <div class="driver-card-body">
+                                <p class="driver-card-text">You dont have any request!</p>
+
+                            </div>
+                          
+                    }
+                    else{
+                        foreach (var request in Model.Requests)
+                        {
+                            var user = Model.Users.FirstOrDefault(a => a.Id == request.ApplicationUserId);
+                            <div class="driver-card">
+                                <div class="driver-card-body">
+                                    @if (user != null)
+                                    {
+                                        <img class="card-img-top" src="@user.ProfileImageUrl" alt="Card image cap">
+                                        <h5 class="driver-card-title">@user.FirstName @user.LastName</h5>
+                                        <p class="driver-card-text">PickUp Location: @request.PickupLocation</p>
+                                        <p class="driver-card-text">DropOff Location: @request.DropoffLocation</p>
+                                        <a asp-controller="request" asp-action="AcceptRequest" asp-route-requestId="@request.RequestId" class="btn btn-primary">Accept</a>
+
+                                    }
+                                </div>
+                            </div>
+                        }
+                    }
+                    
+                </div>
+            </div>
+
+            <!-- Add more cards as needed -->
+
+        </div>
+
+    </div>
+
+
+    <!-- Add your script tags for Google Maps and location updates -->
+ 
+
