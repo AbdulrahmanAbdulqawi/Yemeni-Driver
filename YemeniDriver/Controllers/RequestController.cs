@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using System.Net;
+using Yemeni_Driver.Interfaces;
 using YemeniDriver.Interfaces;
 using YemeniDriver.Models;
 using YemeniDriver.Service;
@@ -15,25 +16,27 @@ namespace YemeniDriver.Controllers
     {
         private readonly IRequestRepository _requestRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IHubContext<NotificationHub> _hubContext;
+        private readonly IHubContext<RideHub> _hubContext;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IDriverAndRequestRepository _driverAndRequestRepository;
-        public RequestController(IRequestRepository requestRepository, IHttpContextAccessor httpContextAccessor, IHubContext<NotificationHub> hubContext, UserManager<ApplicationUser> userManager, IDriverAndRequestRepository driverAndRequestRepository)
+        private readonly ITripRepository _tripRepository;
+        public RequestController(IRequestRepository requestRepository, IHttpContextAccessor httpContextAccessor, IHubContext<RideHub> hubContext, UserManager<ApplicationUser> userManager, IDriverAndRequestRepository driverAndRequestRepository, ITripRepository tripRepository)
         {
             _requestRepository = requestRepository;
             _httpContextAccessor = httpContextAccessor;
             _hubContext = hubContext;
             _userManager = userManager;
             _driverAndRequestRepository = driverAndRequestRepository;
+            _tripRepository = tripRepository;
         }
         [HttpPost("createRequest")]
         public async Task<IActionResult> CreateRequest([FromBody] CreateRequestViewModel createRequestVM)
         {
-            var userId = _httpContextAccessor.HttpContext.User.GetUserId();
+            var passengerId = _httpContextAccessor.HttpContext.User.GetUserId();
             var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
             var requests = await _requestRepository.GetAll();
         
-            if (requests.Any(a => a.ApplicationUserId == userId && a.Status == Data.Enums.RequestStatus.Requested))
+            if (requests.Any(a => a.ApplicationUserId == passengerId && a.Status == Data.Enums.RequestStatus.Requested))
             {
                 return View(TempData["Error"] == "Request is in progress");
             }
@@ -45,12 +48,14 @@ namespace YemeniDriver.Controllers
                 PickupLocation = user.Location, // Assuming you have a Location property in the ApplicationUser model
                 DropoffLocation = createRequestVM.DropoffLocation,
                 EstimationPrice = DistanceService.EstimatePrice(user.Location, createRequestVM.DropoffLocation),
-                ApplicationUserId = userId,
+                ApplicationUserId = passengerId,
                 PickupTime = DateTime.Now,
                 Status = Data.Enums.RequestStatus.Requested,
+                DriverID = createRequestVM.DriverId,
             };
 
             _requestRepository.Add(request);
+            await _hubContext.Clients.All.SendAsync("ReceiveRideRequestUpdate", "New ride request created!");
 
             //await _hubContext.Clients.All.SendAsync("ReceiveNotification", "New ride request available!");
 
@@ -69,9 +74,10 @@ namespace YemeniDriver.Controllers
             }
             return NotFound(new { Error = "Request not found" });
         }
+
         [Route("api/request/acceptRequest")]
         [HttpPost("acceptRequest")]
-        public async Task<IActionResult> AcceptRequest(string requestId)
+        public async Task<IActionResult> AcceptRequest(string requestId, string passengerId)
         {
             var request = await _requestRepository.GetByIdAsyncNoTracking(requestId);
             var driverId = _httpContextAccessor.HttpContext.User.GetUserId();
@@ -85,6 +91,24 @@ namespace YemeniDriver.Controllers
                     RequestId = requestId
                 };
                 _driverAndRequestRepository.Add(requestAndDriver);
+                var trip = new Trip
+                {
+                    TripId = $"{DateTime.Now:yyyyMMddHHmmssfff}-{RandomString(4)}",
+                    ApplicationUserId = passengerId,
+                    RequestId = requestId,
+                    StartTime = DateTime.UtcNow,
+                    EndTime = DateTime.UtcNow.AddMinutes(60),
+                    Duration = 60,
+                    Price = request.EstimationPrice,
+                    DriverRating = 5,
+                    PassengerRating = 5,
+                    Comment = "I like the driver",
+                    DriverId = driverId
+                };
+                _tripRepository.Add(trip);
+
+
+
                 return RedirectToAction("DriverDashboard", "Dashboard");
             }
             return NotFound(new { Error = "Request not found" });

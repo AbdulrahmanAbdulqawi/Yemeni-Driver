@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Yemeni_Driver.Interfaces;
+using Yemeni_Driver.Repository;
 using YemeniDriver.Data;
 using YemeniDriver.Helpers;
 using YemeniDriver.Interfaces;
@@ -20,6 +22,8 @@ builder.Services.AddScoped<IDashboardRepository, DashboardRepository>();
 builder.Services.AddScoped<IPhotoService, PhotoService>();
 builder.Services.AddScoped<IRequestRepository, RequestRepository>();
 builder.Services.AddScoped<IDriverAndRequestRepository, DriverAndRequestRepository>();
+builder.Services.AddScoped<ITripRepository, TripRepository>();
+
 
 builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
 builder.Services.AddSignalR();
@@ -63,14 +67,13 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapHub<RideHub>("/ridehub");
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapHub<NotificationHub>("/notificationHub");
-    endpoints.MapControllers();
-});
+
+
 
 app.Run();

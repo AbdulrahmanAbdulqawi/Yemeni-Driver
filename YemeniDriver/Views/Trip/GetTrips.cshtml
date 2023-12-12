@@ -1,0 +1,55 @@
+﻿@using Yemeni_Driver.ViewModel.Trip
+@model List<GetTripsViewModel>
+
+<h2>Trips</h2>
+
+@if (Model.Count == 0)
+{
+    <p>No Trips available.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+
+           @*  public string RequestId { get; set; }
+            public string ApplicationUserId { get; set; }
+            public string PassengerName {  get; set; }
+            public string DriverName {  get; set; }
+            public DateTime StartTime { get; set; }
+            public DateTime EndTime { get; set; }
+            public int Duration { get; set; }
+            public double Price { get; set; }
+            public int DriverRating { get; set; }
+            public int PassengerRating { get; set; }
+            public string Comment { get; set; } *@
+            <tr>
+                <th>Passenger Name</th>
+                <th>StartTime</th>
+                <th>EndTime</th>
+                <th>Duration</th>
+                <th>Price</th>
+                <th>Driver Rating</th>
+                <th>Passenger Rating</th>
+                <th>Comment</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var trip in Model)
+            {
+                <tr>
+                    <td>@trip.PassengerName</td>
+                    <td>@trip.StartTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                    <td>@trip.EndTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                    <td>@trip.Duration Mins</td>
+                    <td>@trip.Price$</td>
+                    <td>@trip.DriverRating</td>
+                    <td>@trip.PassengerRating</td>
+                    <td>@trip.Comment</td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+

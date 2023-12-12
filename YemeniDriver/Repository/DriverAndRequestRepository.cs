@@ -12,6 +12,7 @@ namespace YemeniDriver.Repository
         {
             _context = context;
         }
+
         public bool Add(DriverAndRequest driverAndRequest)
         {
             _context.DriversAndRequests.Add(driverAndRequest);
@@ -27,6 +28,16 @@ namespace YemeniDriver.Repository
         public async Task<IEnumerable<DriverAndRequest>> GetDriverAndRequestAsync()
         {
             return await _context.DriversAndRequests.ToListAsync();
+        }
+
+        public async Task<string> GetDriverIdByRequestId(string requestId)
+        {
+            var driver = await _context.DriversAndRequests.FindAsync(requestId);
+            if(driver == null)
+            {
+                return null;
+            }
+            return await Task.FromResult(driver.ApplicationUserId);
         }
 
         public bool Save()

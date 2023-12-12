@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace YemeniDriver.Models
@@ -11,6 +12,7 @@ namespace YemeniDriver.Models
         public string RequestId { get; set; }
         [ForeignKey("ApplicationUser")]
         public string ApplicationUserId { get; set; }
+        public string DriverId { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
         public int Duration {  get; set; }

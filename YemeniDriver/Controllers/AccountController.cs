@@ -138,6 +138,8 @@ namespace YemeniDriver.Controllers
                 VehicleId = driverRegisterVM.VehicleId,
                 ProfileImageUrl = profileImageUploadResult.Url.ToString(),
                 Roles = Roles.Driver,
+                LiveLocationLatitude =10,
+                LiveLocationLongitude =10,
             };
 
 
@@ -213,7 +215,9 @@ namespace YemeniDriver.Controllers
                 Gender = registerVM.Gender,
                 PhoneNumber = registerVM.PhoneNumber,
                 ProfileImageUrl = profileImageUploadResult.Url.ToString(),
-                Roles = Roles.Passenger
+                Roles = Roles.Passenger,
+                LiveLocationLongitude = 10,
+                LiveLocationLatitude = 10,
             };
             var result = await _userManager.CreateAsync(appUser, registerVM.Password);
 

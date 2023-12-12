@@ -75,8 +75,11 @@ namespace YemeniDriver.Controllers
 
             // Ensure the above asynchronous call is awaited to get the actual result
 
+            var requests = await _requestRepository.GetByStatus(Data.Enums.RequestStatus.Requested);
+            var driverRequests = requests.Where(a => a.DriverID == user);
+
             var driverDashboardVM = new DriverDashboardViewModel(
-                await _requestRepository.GetByStatus(Data.Enums.RequestStatus.Requested),
+                driverRequests,
                 await _dashboardRepository.GetPassengers())
                 {
                     Id = driverDetails.Id,

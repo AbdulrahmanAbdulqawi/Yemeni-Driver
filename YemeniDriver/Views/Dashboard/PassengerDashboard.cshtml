@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@using YemeniDriver.ViewModel.Dashboard
+@model PassengerDashboardViewModel
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -126,6 +129,25 @@
                 <img class="card-img-top" src="@Model.Image" alt="Card image cap">
             </div>
             <div class="card-body">
+
+                <div class="container mt-5">
+                    <h2 class="text-center mb-4">Available Drivers</h2>
+                    <div class="drivers-container">
+                        @foreach (var driver in Model.AvailableDrivers)
+                        {
+                            <div class="driver-card">
+                                <div class="driver-card-body">
+                                    <h5 class="driver-card-title">@driver.FirstName @driver.LastName</h5>
+                                    <p class="driver-card-text">Gender: @driver.Gender</p>
+                                    <p class="driver-card-text">Address: @driver.Location</p>
+                                    <img class="card-img-top" src="@driver.ProfileImageUrl" alt="Card image cap">
+                                    <a asp-controller="Account" asp-action="ViewDriverDetails" asp-route-driverId="@driver.Id" class="btn btn-primary">View</a>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+
                 <div class="ride-section">
                     <div class="ride-section">
                         <h5>Ready for your next ride?</h5>
@@ -133,12 +155,22 @@
 
                         <form method="post">
 
+
+                            <div class="form-group">
+                                <label for="selectedDriver">Select a Driver:</label>
+                                <select id="selectedDriver" class="form-control">
+                                    <option value="">Select a driver</option>
+                                    @foreach (var driver in Model.AvailableDrivers)
+                                    {
+                                        <option value="@driver.Id">@driver.FirstName @driver.LastName</option>
+                                    }
+                                </select>
+                            </div>
+                            <br />
                             <div class="form-group">
                                 <label for="dropoffLocation">Dropoff Location:</label>
                                 <input type="text" id="dropoffLocation" />
                             </div>
-
-
 
                             <!-- Add other fields if needed -->
 
@@ -158,23 +190,6 @@
                     </div>
                 </div>
 
-                <div class="container mt-5">
-                    <h2 class="text-center mb-4">Available Drivers</h2>
-                    <div class="drivers-container">
-                        @foreach (var driver in Model.AvailableDrivers)
-                        {
-                            <div class="driver-card">
-                                <div class="driver-card-body">
-                                    <h5 class="driver-card-title">@driver.FirstName @driver.LastName</h5>
-                                    <p class="driver-card-text">Gender: @driver.Gender</p>
-                                    <p class="driver-card-text">Address: @driver.Location</p>
-                                    <img class="card-img-top" src="@driver.ProfileImageUrl" alt="Card image cap">
-                                    <a asp-controller="Account" asp-action="ViewDriverDetails" asp-route-driverId="@driver.Id" class="btn btn-primary">View</a>
-                                </div>
-                            </div>
-                        }
-                    </div>
-                </div>
             </div>
         </div>
     </div>

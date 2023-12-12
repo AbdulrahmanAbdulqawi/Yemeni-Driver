@@ -5,14 +5,17 @@ $(document).ready(function () {
         $("#requestProgress").show();
         $("#cancelRequestBtn").show();
 
-        // Capture the drop-off location from the input field
+        // Capture the selected driver and drop-off location
+        var selectedDriver = $("#selectedDriver").val();
         var dropoffLocation = $("#dropoffLocation").val();
 
-        // Simulate a delay for the request (you can replace this with your actual request logic)
-        setTimeout(function () {
+        // Validate that a driver is selected
+        if (!selectedDriver) {
+            alert("Please select a driver.");
             // Hide progress bar
             $("#requestProgress").hide();
-        }, 5000); // Simulating a 5-second delay, adjust as needed
+            return;
+        }
 
         // Create a request using AJAX
         $.ajax({
@@ -21,7 +24,7 @@ $(document).ready(function () {
             dataType: 'json',
             contentType: 'application/json', // Set the content type to JSON
             data: JSON.stringify({
-                // Pass the drop-off location as part of the request data
+                DriverId: selectedDriver,
                 DropoffLocation: dropoffLocation
             }),
             success: function (data) {
@@ -31,6 +34,10 @@ $(document).ready(function () {
             error: function (error) {
                 console.error('Error creating request:', error);
                 // Optionally, handle the error and update the UI accordingly
+            },
+            complete: function () {
+                // Hide progress bar
+                $("#requestProgress").hide();
             }
         });
     });

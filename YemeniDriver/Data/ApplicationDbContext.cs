@@ -120,6 +120,10 @@ namespace YemeniDriver.Data
                 .WithOne(d => d.Trip)
                 .HasForeignKey<Trip>(t => t.ApplicationUserId);
 
+            modelBuilder.Entity<Trip>()
+               .HasIndex(e => e.ApplicationUserId)
+               .IsUnique(false);
+
             // Passenger
 
             modelBuilder.Entity<ApplicationUser>()

@@ -10,6 +10,7 @@ namespace YemeniDriver.Models
         public string RequestId { get; set; }
         [ForeignKey("ApplicationUser")]
         public string ApplicationUserId { get; set; }
+        public string DriverID { get; set; }
         public DateTime PickupTime { get; set; }
         public string PickupLocation { get; set; }
         public string DropoffLocation { get; set; }

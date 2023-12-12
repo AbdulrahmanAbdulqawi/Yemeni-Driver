@@ -4,12 +4,13 @@
 <style>
     /* Custom styles to set a maximum width for the container */
     #custom-container {
-        max-width: 500px; /* Set your desired maximum width */
+        max-width: 800px; /* Set your desired maximum width */
         margin: auto;
+        margin-top: 20px; /* Add some top margin for spacing */
     }
 
-    .card-body {
-        text-align: center;
+    .card {
+        margin-bottom: 20px; /* Add some bottom margin between cards */
     }
 
     #vehicle-image {
@@ -30,10 +31,10 @@
                 <img src="@Model.Image" class="card-img-top img-fluid" alt="Driver Image">
                 <div class="card-body">
                     <h5 class="card-title">@Model.FirstName @Model.LastName</h5>
-                    <p class="card-text">Email: @Model.Email</p>
-                    <p class="card-text">Phone Number: @Model.PhoneNumber</p>
-                    <p class="card-text">Rating: @Model.Rating</p>
-                    <p class="card-text">Location: @Model.Location</p>
+                    <p class="card-text"><strong>Email:</strong> @Model.Email</p>
+                    <p class="card-text"><strong>Phone Number:</strong> @Model.PhoneNumber</p>
+                    <p class="card-text"><strong>Rating:</strong> @Model.Rating</p>
+                    <p class="card-text"><strong>Location:</strong> @Model.Location</p>
                 </div>
             </div>
         </div>
@@ -43,10 +44,10 @@
                 <div class="card-body">
                     <h5 class="card-title">Vehicle Details</h5>
                     <img src="@Model.ViewVehicle.VehiclImageUrl" id="vehicle-image" class="img-fluid" alt="Vehicle Image">
-                    <p class="card-text">Make: @Model.ViewVehicle.Make</p>
-                    <p class="card-text">Model: @Model.ViewVehicle.Model</p>
-                    <p class="card-text">Plate Number: @Model.ViewVehicle.PlateNumber</p>
-                    <p class="card-text">Year: @Model.ViewVehicle.Year</p>
+                    <p class="card-text"><strong>Make:</strong> @Model.ViewVehicle.Make</p>
+                    <p class="card-text"><strong>Model:</strong> @Model.ViewVehicle.Model</p>
+                    <p class="card-text"><strong>Plate Number:</strong> @Model.ViewVehicle.PlateNumber</p>
+                    <p class="card-text"><strong>Year:</strong> @Model.ViewVehicle.Year</p>
                 </div>
             </div>
         </div>

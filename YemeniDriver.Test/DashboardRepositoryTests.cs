@@ -12,7 +12,7 @@ using YemeniDriver.Repository;
 
 namespace YemeniDriver.Test
 {
-    public class DashboardRepositoryTests : IClassFixture<WebApplicationFactory<TestStartup>>
+    public class DashboardRepositoryTests : IClassFixture<WebApplicationFactory<TestStartup>>, IDisposable
     {
         private readonly IUserRepository _userRepositoryMock;
         private readonly Mock<UserManager<ApplicationUser>> _userManagerMock;
@@ -34,14 +34,14 @@ namespace YemeniDriver.Test
 
             _dbContextMock = serviceProvider.GetRequiredService<ApplicationDbContext>();
             _dbContextMock.Database.EnsureDeleted(); // Ensure the database is deleted before each test
-            _dbContextMock.Database.EnsureCreated(); 
-                _users = AddTestData();
+            _dbContextMock.Database.EnsureCreated();
 
+            _users = AddTestData();
 
             _userRepositoryMock = new UserRepository(_dbContextMock, _userManagerMock.Object);
             _dashboardRepository = new DashboardRepository(_dbContextMock, _userManagerMock.Object, _userRepositoryMock);
 
-            
+
         }
 
         [Fact]
@@ -120,6 +120,11 @@ namespace YemeniDriver.Test
             // Save changes to the in-memory database
             _dbContextMock.SaveChanges();
             return _dbContextMock.Users.ToList();
+        }
+
+        public void Dispose()
+        {
+            _dbContextMock.Dispose(); // Dispose the DbContext after all tests
         }
     }
 }
