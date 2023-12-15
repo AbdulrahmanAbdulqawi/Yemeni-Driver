@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AspNetCoreHero.ToastNotification.Abstractions;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using System.Net;
@@ -16,18 +17,22 @@ namespace YemeniDriver.Controllers
     {
         private readonly IRequestRepository _requestRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IHubContext<RideHub> _hubContext;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IDriverAndRequestRepository _driverAndRequestRepository;
         private readonly ITripRepository _tripRepository;
-        public RequestController(IRequestRepository requestRepository, IHttpContextAccessor httpContextAccessor, IHubContext<RideHub> hubContext, UserManager<ApplicationUser> userManager, IDriverAndRequestRepository driverAndRequestRepository, ITripRepository tripRepository)
+        private readonly INotyfService _notyf;
+        private readonly IHubContext<NotificationHub> _hubContext;
+
+
+        public RequestController(IRequestRepository requestRepository, IHttpContextAccessor httpContextAccessor, UserManager<ApplicationUser> userManager, IDriverAndRequestRepository driverAndRequestRepository, ITripRepository tripRepository, INotyfService notyf, IHubContext<NotificationHub> hubContext)
         {
             _requestRepository = requestRepository;
             _httpContextAccessor = httpContextAccessor;
-            _hubContext = hubContext;
             _userManager = userManager;
             _driverAndRequestRepository = driverAndRequestRepository;
             _tripRepository = tripRepository;
+            _notyf = notyf;
+            _hubContext = hubContext;
         }
         [HttpPost("createRequest")]
         public async Task<IActionResult> CreateRequest([FromBody] CreateRequestViewModel createRequestVM)
@@ -38,7 +43,8 @@ namespace YemeniDriver.Controllers
         
             if (requests.Any(a => a.ApplicationUserId == passengerId && a.Status == Data.Enums.RequestStatus.Requested))
             {
-                return View(TempData["Error"] == "Request is in progress");
+                _notyf.Error("Request In Progress");
+                return View();
             }
             // Validate the incoming data (dropoff location, etc.) as needed
 
@@ -55,10 +61,9 @@ namespace YemeniDriver.Controllers
             };
 
             _requestRepository.Add(request);
-            await _hubContext.Clients.All.SendAsync("ReceiveRideRequestUpdate", "New ride request created!");
+            await _hubContext.Clients.User(request.DriverID).SendAsync("ReceiveRequestNotification", "New ride request!");
 
-            //await _hubContext.Clients.All.SendAsync("ReceiveNotification", "New ride request available!");
-
+            _notyf.Success("Request Sent!");
             // You might want to return some information about the created request
             return RedirectToAction("PassengerDashboard", "Dashboard");
         }
@@ -107,7 +112,7 @@ namespace YemeniDriver.Controllers
                 };
                 _tripRepository.Add(trip);
 
-
+                _notyf.Success("Request Accepted Succesfully");
 
                 return RedirectToAction("DriverDashboard", "Dashboard");
             }

@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YemeniDriver", "YemeniDrive
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YemeniDriver.Test", "YemeniDriver.Test\YemeniDriver.Test.csproj", "{5554152E-EAC7-41EF-8BD5-DA4C169D10C4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YemeniDriver.Client", "YemeniDriver.Client\YemeniDriver.Client.csproj", "{0CFC21E6-736E-44E9-A6CC-C230F357D2E7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{5554152E-EAC7-41EF-8BD5-DA4C169D10C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5554152E-EAC7-41EF-8BD5-DA4C169D10C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5554152E-EAC7-41EF-8BD5-DA4C169D10C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0CFC21E6-736E-44E9-A6CC-C230F357D2E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CFC21E6-736E-44E9-A6CC-C230F357D2E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CFC21E6-736E-44E9-A6CC-C230F357D2E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0CFC21E6-736E-44E9-A6CC-C230F357D2E7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

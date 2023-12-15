@@ -1,0 +1,109 @@
+﻿@using YemeniDriver.Data
+@using YemeniDriver.Data.Enums
+@using YemeniDriver.ViewModel.Account
+@model EditDriverDetailsViewModel
+@{
+    ViewData["Title"] = "Update Driver";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+
+            <h4 class="text-center">Hey Driver, create your account here!</h4>
+
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger">
+                    <strong>Sorry!</strong> - @TempData["Error"]
+                </div>
+            }
+
+            <form method="post" enctype="multipart/form-data">
+
+                <div class="form-group">
+                    <label for="FirstName">First Name:</label>
+                    <input type="text" asp-for="FirstName" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="LastName">Last Name:</label>
+                    <input type="text" asp-for="LastName" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="Email">Email:</label>
+                    <input type="email" asp-for="Email" class="form-control" required />
+                </div>
+
+
+                <div class="form-group">
+                    <label for="PhoneNumber">Phone Number:</label>
+                    <input type="PhoneNumber" asp-for="PhoneNumber" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Gender">Gender:</label>
+                    <select asp-for="Gender" asp-items="@Html.GetEnumSelectList<Gender>()" class="form-control">
+                        <option value="">----</option>
+                    </select>
+                    <span asp-validation-for="Gender" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ProfileImage">Profile Image</label>
+                    <input asp-for="ProfileImage" type="file" class="form-control">
+                    <span asp-validation-for="ProfileImage" class="text-danger"></span>
+                </div>
+
+                <!-- ... (previous code) ... -->
+                <br />
+                <h5>Vehicle Information:</h5>
+
+                <div class="form-group">
+                    <label for="Vehicle.VehicleId">Vehicle Id:</label>
+                    <input type="text" asp-for="Vehicle.VehicleId" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="Vehicle.Make">Make:</label>
+                    <input type="text" asp-for="Vehicle.Make" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="Vehicle.Model">Model:</label>
+                    <input type="text" asp-for="Vehicle.Model" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="Vehicle.Color">Color:</label>
+                    <input type="text" asp-for="Vehicle.Color" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="Vehicle.Capacity">Capacity:</label>
+                    <input type="number" asp-for="Vehicle.Capacity" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="Vehicle.PlateNumber">Plate Number:</label>
+                    <input type="text" asp-for="Vehicle.PlateNumber" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="Vehicle.Year">Year:</label>
+                    <input type="number" asp-for="Vehicle.Year" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label asp-for="VehicleImage">Vehicle Image</label>
+                    <input asp-for="VehicleImage" type="file" class="form-control">
+                    <span asp-validation-for="VehicleImage" class="text-danger"></span>
+                </div>
+                <!-- ... (remaining code) ... -->
+                <!-- Add other vehicle fields as needed -->
+                <br />
+                <button type="submit" class="btn btn-primary btn-block">Update</button>
+
+            </form>
+        </div>
+    </div>
+</div>

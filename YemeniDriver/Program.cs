@@ -1,3 +1,5 @@
+using AspNetCoreHero.ToastNotification;
+using AspNetCoreHero.ToastNotification.Extensions;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -5,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Yemeni_Driver.Interfaces;
 using Yemeni_Driver.Repository;
+using Yemeni_Driver.Service;
 using YemeniDriver.Data;
 using YemeniDriver.Helpers;
 using YemeniDriver.Interfaces;
@@ -23,8 +26,7 @@ builder.Services.AddScoped<IPhotoService, PhotoService>();
 builder.Services.AddScoped<IRequestRepository, RequestRepository>();
 builder.Services.AddScoped<IDriverAndRequestRepository, DriverAndRequestRepository>();
 builder.Services.AddScoped<ITripRepository, TripRepository>();
-
-
+builder.Services.AddNotyf(config => { config.DurationInSeconds = 10; config.IsDismissable = true; config.Position = NotyfPosition.BottomRight; });
 builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
 builder.Services.AddSignalR();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -60,6 +62,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+app.UseNotyf();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
@@ -67,7 +70,12 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapHub<RideHub>("/ridehub");
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapHub<NotificationHub>("/notificationHub");
+    endpoints.MapControllers();
+});
 
 app.MapControllerRoute(
     name: "default",

@@ -1,14 +1,16 @@
 ﻿using CloudinaryDotNet.Actions;
-using GoogleMapsApi.Entities.Directions.Response;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using YemeniDriver.Data;
 using YemeniDriver.Interfaces;
 using YemeniDriver.Models;
 using YemeniDriver.ViewModel.Account;
-using static System.Net.Mime.MediaTypeNames;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+using AspNetCoreHero.ToastNotification.Abstractions;
 
 namespace YemeniDriver.Controllers
 {
@@ -19,16 +21,24 @@ namespace YemeniDriver.Controllers
         private readonly IPhotoService _photoService;
         private readonly IUserRepository _userRepository;
         private readonly IVehicleRepository _vehicleRepository;
+        private readonly INotyfService _notyf;
 
 
-
-        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IHttpContextAccessor httpContextAccessor, IUserRepository userRepository, IPhotoService photoService, IVehicleRepository vehicleRepository)
+        public AccountController(
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
+            IHttpContextAccessor httpContextAccessor,
+            IUserRepository userRepository,
+            IPhotoService photoService,
+            IVehicleRepository vehicleRepository,
+            INotyfService notyf)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _photoService = photoService;
-            _userRepository = userRepository;
-            _vehicleRepository = vehicleRepository;
+            _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+            _signInManager = signInManager ?? throw new ArgumentNullException(nameof(signInManager));
+            _photoService = photoService ?? throw new ArgumentNullException(nameof(photoService));
+            _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+            _vehicleRepository = vehicleRepository ?? throw new ArgumentNullException(nameof(vehicleRepository));
+            _notyf = notyf;
         }
 
         public IActionResult Register()
@@ -49,18 +59,15 @@ namespace YemeniDriver.Controllers
             if (ModelState.IsValid)
             {
                 var userExists = await _userManager.FindByEmailAsync(registerVM.Email);
-                if(userExists == null)
+                if (userExists == null)
                 {
                     var appUser = new ApplicationUser { UserName = registerVM.Email, Email = registerVM.Email };
                     var result = await _userManager.CreateAsync(appUser, registerVM.Password);
 
                     if (result.Succeeded)
                     {
-                      
-                        //await _userManager.AddToRoleAsync(appUser, Roles.User);
-                        
                         await _signInManager.SignInAsync(appUser, isPersistent: false);
-                        return RedirectToAction("Index", "Home"); // Redirect to the home page after successful registration
+                        return RedirectToAction("Index", "Home");
                     }
 
                     foreach (var error in result.Errors)
@@ -70,47 +77,50 @@ namespace YemeniDriver.Controllers
                 }
                 else
                 {
-                    TempData["Error"] = "User already exist";
+                    TempData["Error"] = "User already exists";
                     return View(registerVM);
                 }
-                
             }
-            return (IActionResult)(TempData["Error"] = "Registeration Failed");
+            TempData["Error"] = "Registration failed";
+            return View(registerVM);
         }
 
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel loginVM)
         {
             if (!ModelState.IsValid) return View(loginVM);
+
             var user = await _userManager.FindByEmailAsync(loginVM.Email);
             var drivers = await _userManager.GetUsersInRoleAsync(Roles.Driver.ToString());
             var passengers = await _userManager.GetUsersInRoleAsync(Roles.Passenger.ToString());
-            if (user != null)
+
+            if (user != null && await _userManager.CheckPasswordAsync(user, loginVM.Password))
             {
-                var passwordCheck = await _userManager.CheckPasswordAsync(user, loginVM.Password);
-                if (passwordCheck)
+                var result = await _signInManager.PasswordSignInAsync(user, loginVM.Password, false, false);
+
+                if (result.Succeeded)
                 {
-                    var result = await _signInManager.PasswordSignInAsync(user, loginVM.Password, false, false);
-                    if (result.Succeeded)
+                    if (drivers.Contains(user))
                     {
-                        if(drivers.Contains(user))
-                        {
-                            return RedirectToAction("DriverDashboard", "Dashboard");
-                        }else if(passengers.Contains(user))
-                        {
-                            return RedirectToAction("PassengerDashboard", "Dashboard");
-                        }
-                        else
-                        {
-                            return RedirectToAction("AdminDashboard", "Dashboard");
-                        }
+                        _notyf.Success(user.FirstName + " is logged in");
+                        return RedirectToAction("DriverDashboard", "Dashboard");
                     }
+              
+                    else if (passengers.Contains(user))
+                    {
+                        _notyf.Success(user.FirstName + " is logged in"); 
+                        return RedirectToAction("PassengerDashboard", "Dashboard");
+                    }
+                    else
+                    {
+                        _notyf.Success(user.FirstName + " is logged in");
+                        return RedirectToAction("AdminDashboard", "Dashboard");
+                    }
+
                 }
-                //password doesnt match 
-                TempData["Error"] = "Wrong credentials. Please enter the correct credentials";
-                return View(loginVM);
             }
-            TempData["Error"] = "Wrong credentials. Please enter the correct credentials";
+
+            _notyf.Error("Wrong credentials. Please enter the correct credentials");
             return View(loginVM);
         }
 
@@ -125,25 +135,31 @@ namespace YemeniDriver.Controllers
         {
             var getDriver = await _userManager.FindByEmailAsync(driverRegisterVM.Email);
 
-            if (getDriver != null) {
-                TempData["Error"] = "User Already Exists!";
+            if (getDriver != null)
+            {
+                TempData["Error"] = "User already exists!";
                 return View(driverRegisterVM);
             }
+
             var profileImageUploadResult = await _photoService.AddPhotoAsync(driverRegisterVM.ProfileImage);
 
-
-            var appUser = new ApplicationUser { UserName = driverRegisterVM.Email, Email = driverRegisterVM.Email,
+            var appUser = new ApplicationUser
+            {
+                UserName = driverRegisterVM.Email,
+                Email = driverRegisterVM.Email,
                 DrivingLicenseNumber = driverRegisterVM.DrivingLicenseNumber,
-                FirstName = driverRegisterVM.FirstName, LastName = driverRegisterVM.LastName, Gender = driverRegisterVM.Gender, PhoneNumber = driverRegisterVM.PhoneNumber,
+                FirstName = driverRegisterVM.FirstName,
+                LastName = driverRegisterVM.LastName,
+                Gender = driverRegisterVM.Gender,
+                PhoneNumber = driverRegisterVM.PhoneNumber,
                 VehicleId = driverRegisterVM.VehicleId,
                 ProfileImageUrl = profileImageUploadResult.Url.ToString(),
                 Roles = Roles.Driver,
-                LiveLocationLatitude =10,
-                LiveLocationLongitude =10,
+                LiveLocationLatitude = 10,
+                LiveLocationLongitude = 10,
             };
 
-
-            var vehicleImageUploadResult = await _photoService.AddPhotoAsync(driverRegisterVM.ProfileImage);
+            var vehicleImageUploadResult = await _photoService.AddPhotoAsync(driverRegisterVM.VehicleImage);
 
             var newVehicle = new Models.Vehicle
             {
@@ -166,7 +182,8 @@ namespace YemeniDriver.Controllers
             {
                 await _userManager.AddToRoleAsync(appUser, Roles.Driver.ToString());
                 await _signInManager.SignInAsync(appUser, isPersistent: false);
-                return RedirectToAction("DriverDashboard", "Dashboard"); // Redirect to the home page after successful registration
+                _notyf.Success("driver account created successfully");
+                return RedirectToAction("DriverDashboard", "Dashboard");
             }
 
             foreach (var error in result.Errors)
@@ -174,11 +191,8 @@ namespace YemeniDriver.Controllers
                 ModelState.AddModelError(string.Empty, error.Description);
             }
 
-            return (IActionResult)(TempData["Error"] = "Registeration Failed");
-
-            //test
-
-
+            _notyf.Error("Registeration Failed");
+            return View(driverRegisterVM);
         }
 
         public IActionResult RegisterAsPassenger()
@@ -190,17 +204,17 @@ namespace YemeniDriver.Controllers
         [HttpPost]
         public async Task<IActionResult> RegisterAsPassenger(PassengerRegisterationViewModel registerVM)
         {
-            var getDriver = await _userManager.FindByEmailAsync(registerVM.Email);
+            var driverExists = await _userManager.FindByEmailAsync(registerVM.Email);
 
-            if (getDriver != null)
+            if (driverExists != null)
             {
-                TempData["Error"] = "User Already Exists!";
+                TempData["Error"] = "User already exists!";
                 return View(registerVM);
             }
 
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                TempData["Error"] = "entries are invalid!";
+                TempData["Error"] = "Entries are invalid!";
                 return View(registerVM);
             }
 
@@ -219,34 +233,35 @@ namespace YemeniDriver.Controllers
                 LiveLocationLongitude = 10,
                 LiveLocationLatitude = 10,
             };
+
             var result = await _userManager.CreateAsync(appUser, registerVM.Password);
 
             if (result.Succeeded)
             {
-
                 await _userManager.AddToRoleAsync(appUser, Roles.Passenger.ToString());
-
                 await _signInManager.SignInAsync(appUser, isPersistent: false);
-                return RedirectToAction("PassengerDashboard", "Dashboard"); // Redirect to the home page after successful registration
+                _notyf.Success("passenger account created successfully");
+                return RedirectToAction("PassengerDashboard", "Dashboard");
             }
 
             foreach (var error in result.Errors)
             {
                 ModelState.AddModelError(string.Empty, error.Description);
             }
-            return (IActionResult)(TempData["Error"] = "Registeration Failed");
 
+            _notyf.Error("Registeration Failed");
+            return View(registerVM);
         }
 
         public async Task<IActionResult> ViewDriverDetails(string driverId)
         {
             var driver = await _userRepository.GetByIdAsyncNoTracking(driverId);
             var vehicle = await _vehicleRepository.GetVehicleByOwner(driverId);
+
             if (driver == null)
             {
-                return NotFound(); // Handle the case where the driver is not found
+                return NotFound();
             }
-
 
             DriverDetailsViewModel driverVM = new DriverDetailsViewModel()
             {
@@ -276,12 +291,13 @@ namespace YemeniDriver.Controllers
         {
             var driver = await _userRepository.GetByIdAsyncNoTracking(driverId);
             var vehicle = await _vehicleRepository.GetVehicleByOwner(driverId);
-            
-            if(driver == null)
+
+            if (driver == null)
             {
                 return NotFound(driverId);
             }
-            var editDriverDetailesVM = new EditDriverDetailsViewModel()
+
+            var editDriverDetailsVM = new EditDriverDetailsViewModel()
             {
                 DrivingLicenseNumber = driver.DrivingLicenseNumber,
                 Email = driver.Email,
@@ -290,7 +306,7 @@ namespace YemeniDriver.Controllers
                 Gender = (Data.Enums.Gender)driver.Gender,
                 ProfileImageUrl = driver.ProfileImageUrl,
                 PhoneNumber = driver.PhoneNumber,
-                
+
                 Vehicle = new Models.Vehicle
                 {
                     VehicleId = vehicle.VehicleId,
@@ -305,7 +321,7 @@ namespace YemeniDriver.Controllers
                 }
             };
 
-            return View(editDriverDetailesVM);
+            return View(editDriverDetailsVM);
         }
 
         [HttpPost]
@@ -314,23 +330,25 @@ namespace YemeniDriver.Controllers
             var driver = await _userRepository.GetByIdAsyncNoTracking(driverId);
             var vehicle = await _vehicleRepository.GetVehicleByOwner(driverId);
             ModelState.Remove("Vehicle.ApplicationUser");
-            if(!ModelState.IsValid)
+
+            if (!ModelState.IsValid)
             {
                 ModelState.AddModelError("", "Failed to update driver");
                 return View("Error", editDriverDetailsViewModel);
             }
+
             try
             {
                 await _photoService.DeletePhotoAsync(driver.ProfileImageUrl);
-                if(vehicle.VehiclImageUrl != null)
+
+                if (vehicle.VehiclImageUrl != null)
                 {
                     await _photoService.DeletePhotoAsync(vehicle.VehiclImageUrl);
                 }
             }
             catch (Exception)
             {
-
-                ModelState.AddModelError("", "couldnt delete photo");
+                ModelState.AddModelError("", "Couldn't delete photo");
                 return View(editDriverDetailsViewModel);
             }
 
@@ -338,8 +356,6 @@ namespace YemeniDriver.Controllers
             {
                 var profileImageResult = await _photoService.AddPhotoAsync(editDriverDetailsViewModel.ProfileImage);
                 var vehicleImageResult = await _photoService.AddPhotoAsync(editDriverDetailsViewModel.VehicleImage);
-
-
 
                 driver.FirstName = editDriverDetailsViewModel.FirstName;
                 driver.LastName = editDriverDetailsViewModel.LastName;
@@ -349,26 +365,19 @@ namespace YemeniDriver.Controllers
                 driver.ProfileImageUrl = profileImageResult.Url.ToString();
                 _userRepository.Update(driver);
 
-
-                var vehicletoUpdate = editDriverDetailsViewModel.Vehicle;
-                vehicletoUpdate.ApplicationUserId = driverId;
-                vehicletoUpdate.VehicleId = vehicle.VehicleId;
-                vehicletoUpdate.VehiclImageUrl = vehicleImageResult.Url.ToString();
-                _vehicleRepository.Update(vehicletoUpdate);
-                
+                var vehicleToUpdate = editDriverDetailsViewModel.Vehicle;
+                vehicleToUpdate.ApplicationUserId = driverId;
+                vehicleToUpdate.VehicleId = vehicle.VehicleId;
+                vehicleToUpdate.VehiclImageUrl = vehicleImageResult.Url.ToString();
+                _vehicleRepository.Update(vehicleToUpdate);
+                _notyf.Success("Update Success");
                 return RedirectToAction("DriverDashboard", "Dashboard");
             }
             catch (Exception)
             {
-
+                // Handle exception appropriately
                 throw;
             }
-           
-
         }
-
-
-
-
     }
 }

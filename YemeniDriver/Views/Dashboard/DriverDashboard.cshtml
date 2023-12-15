@@ -200,19 +200,19 @@
             <div class="container mt-5">
                 <h2 class="text-center mb-4">Requests</h2>
                 <div class="drivers-container">
-                @if (Model.Requests.Count() > 0 )
+                @if (Model.Requests.Count() == 0 )
                     {
                             <div class="driver-card-body">
                                 <p class="driver-card-text">You dont have any request!</p>
 
-                            </div>
-                          
-                    }
-                    else{
-                        foreach (var request in Model.Requests)
-                        {
-                            var user = Model.Users.FirstOrDefault(a => a.Id == Model.Id);
-                            <div class="driver-card">
+                    </div>
+
+                }
+                else{
+                    foreach (var request in Model.Requests)
+                    {
+                        var user = Model.Users.Where(a => a.Id == request.ApplicationUserId).FirstOrDefault();
+                        <div class="driver-card">
                                 <div class="driver-card-body">
                                     @if (user != null)
                                     {
@@ -237,32 +237,30 @@
 
     </div>
 
+<div id="notificationContainer"></div>
+
+<!-- Include SignalR JavaScript library -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.10/signalr.min.js"></script>
 
-<!-- Your SignalR hub connection script -->
 <script>
-    // Define a connection to the SignalR hub
     const connection = new signalR.HubConnectionBuilder()
-        .withUrl("/ridehub")
+        .withUrl("/notificationHub")
         .build();
 
-    // Start the connection
     connection.start().then(() => {
-        console.log("Connected to the SignalR hub");
-    }).catch(err => console.error(err));
-
-    // Handle ride request updates
-    connection.on("ReceiveRideRequestUpdate", (message) => {
-        console.log(`New ride request: ${message}`);
-        // Update UI or take necessary actions
+        console.log("Connection established.");
+    }).catch(err => {
+        console.error(err.toString());
     });
 
-    // Handle driver location updates
-    connection.on("ReceiveDriverLocationUpdate", (driverId, latitude, longitude) => {
-        console.log(`Driver ${driverId} location update: (${latitude}, ${longitude})`);
-        // Update UI or take necessary actions
+    connection.on("ReceiveRequestNotification", (message) => {
+        // Handle the incoming request notification
+        console.log("Received request notification:", message);
+
+        // Update the UI or take any other actions
+        const notificationContainer = document.getElementById("notificationContainer");
+        const notificationElement = document.createElement("div");
+        notificationElement.innerHTML = `<p>New ride request: ${message}</p>`;
+        notificationContainer.appendChild(notificationElement);
     });
 </script>
-    <!-- Add your script tags for Google Maps and location updates -->
- 
-
