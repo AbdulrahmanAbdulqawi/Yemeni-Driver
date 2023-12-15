@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using YemeniDriver.Data;
 using YemeniDriver.Interfaces;
 using YemeniDriver.Models;
@@ -7,6 +8,7 @@ using YemeniDriver.ViewModel.Dashboard;
 
 namespace YemeniDriver.Controllers
 {
+    [Authorize]
     public class DashboardController : Controller
     {
         private readonly IDashboardRepository _dashboardRepository;
