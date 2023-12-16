@@ -11,6 +11,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using AspNetCoreHero.ToastNotification.Abstractions;
+using YemeniDriver.ViewModel.Account;
 
 namespace YemeniDriver.Controllers
 {
@@ -294,7 +295,31 @@ namespace YemeniDriver.Controllers
             return View(driverVM);
         }
 
-        public async Task<IActionResult> EditDriverDetails(string driverId)
+        public async Task<IActionResult> ViewPassengerDetails(string passengerId)
+        {
+            var driver = await _userRepository.GetByIdAsyncNoTracking(passengerId);
+
+            if (driver == null)
+            {
+                return NotFound();
+            }
+
+            PassengerDetailsViewModel passengerVM = new PassengerDetailsViewModel()
+            {
+                Email = driver.Email,
+                FirstName = driver.FirstName,
+                LastName = driver.LastName,
+                Image = driver.ProfileImageUrl,
+                Location = driver.Location,
+                PhoneNumber = driver.PhoneNumber,
+                Rating = 5,
+               
+            };
+
+            return View(passengerVM);
+        }
+
+        public async Task<IActionResult> EditDriverrDetails(string driverId)
         {
             var driver = await _userRepository.GetByIdAsyncNoTracking(driverId);
             var vehicle = await _vehicleRepository.GetVehicleByOwner(driverId);
@@ -379,6 +404,75 @@ namespace YemeniDriver.Controllers
                 _vehicleRepository.Update(vehicleToUpdate);
                 _notyf.Success("Update Success");
                 return RedirectToAction("DriverDashboard", "Dashboard");
+            }
+            catch (Exception)
+            {
+                // Handle exception appropriately
+                throw;
+            }
+        }
+
+        public async Task<IActionResult> EditPassengerDetails(string passengerId)
+        {
+            var passenger = await _userRepository.GetByIdAsyncNoTracking(passengerId);
+
+            if (passenger == null)
+            {
+                return NotFound(passengerId);
+            }
+
+            var editPassengerDetailsVM = new EditPassengerDetailsViewModel()
+            {
+                DrivingLicenseNumber = passenger.DrivingLicenseNumber,
+                Email = passenger.Email,
+                FirstName = passenger.FirstName,
+                LastName = passenger.LastName,
+                Gender = (Data.Enums.Gender)passenger.Gender,
+                ProfileImageUrl = passenger.ProfileImageUrl,
+                PhoneNumber = passenger.PhoneNumber,
+            };
+
+            return View(editPassengerDetailsVM);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditPassengerDetails(string passengerId, EditPassengerDetailsViewModel editPassengerDetailsViewModel)
+        {
+            var passenger = await _userRepository.GetByIdAsyncNoTracking(passengerId);
+
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError("", "Failed to update driver");
+                return View("Error", editPassengerDetailsViewModel);
+            }
+
+            try
+            {
+                await _photoService.DeletePhotoAsync(passenger.ProfileImageUrl);
+
+                
+            }
+            catch (Exception)
+            {
+                ModelState.AddModelError("", "Couldn't delete photo");
+                return View(editPassengerDetailsViewModel);
+            }
+
+            try
+            {
+                var profileImageResult = await _photoService.AddPhotoAsync(editPassengerDetailsViewModel.ProfileImage);
+
+                passenger.FirstName = editPassengerDetailsViewModel.FirstName;
+                passenger.LastName = editPassengerDetailsViewModel.LastName;
+                passenger.Email = editPassengerDetailsViewModel.Email;
+                passenger.Gender = editPassengerDetailsViewModel.Gender;
+                passenger.PhoneNumber = editPassengerDetailsViewModel.PhoneNumber;
+                passenger.ProfileImageUrl = profileImageResult.Url.ToString();
+                _userRepository.Update(passenger);
+
+              
+                _notyf.Success("Update Success");
+                return RedirectToAction("PassengerDashboard", "Dashboard");
             }
             catch (Exception)
             {

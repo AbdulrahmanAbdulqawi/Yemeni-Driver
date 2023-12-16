@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Yemeni_Driver.Interfaces;
-using Yemeni_Driver.ViewModel.Trip;
+using YemeniDriver.Interfaces;
+using YemeniDriver.ViewModel.Trip;
 using YemeniDriver.Interfaces;
 
-namespace Yemeni_Driver.Controllers
+namespace YemeniDriver.Controllers
 {
     public class TripController : Controller
     {

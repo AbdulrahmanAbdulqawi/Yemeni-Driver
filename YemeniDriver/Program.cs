@@ -5,9 +5,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Yemeni_Driver.Interfaces;
-using Yemeni_Driver.Repository;
-using Yemeni_Driver.Service;
+using YemeniDriver.Interfaces;
+using YemeniDriver.Repository;
+using YemeniDriver.Service;
 using YemeniDriver.Data;
 using YemeniDriver.Helpers;
 using YemeniDriver.Interfaces;
@@ -54,6 +54,7 @@ if (args.Length == 1 && args[0].ToLower() == "seeddata")
     //Seed.SeedData(app);
 }
 
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -61,6 +62,7 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
 
 app.UseNotyf();
 app.UseHttpsRedirection();

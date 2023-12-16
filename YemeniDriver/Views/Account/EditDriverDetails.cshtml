@@ -10,7 +10,6 @@
     <div class="row">
         <div class="col-md-6 offset-md-3">
 
-            <h4 class="text-center">Hey Driver, create your account here!</h4>
 
             @if (TempData["Error"] != null)
             {
@@ -19,36 +18,37 @@
                 </div>
             }
 
-            <form method="post" enctype="multipart/form-data">
+            <form method="post" enctype="multipart/form-data" class="mt-5">
+                <h1 class="h3 mb-3 fw-normal text-center">Update</h1>
 
-                <div class="form-group">
-                    <label for="FirstName">First Name:</label>
-                    <input type="text" asp-for="FirstName" class="form-control" required />
+                <div class="form-floating mb-3">
+                    <input type="text" asp-for="FirstName" class="form-control" id="floatingFirstName" placeholder="First Name" required>
+                    <label for="floatingFirstName">First Name</label>
                 </div>
 
-                <div class="form-group">
-                    <label for="LastName">Last Name:</label>
-                    <input type="text" asp-for="LastName" class="form-control" required />
+                <div class="form-floating mb-3">
+                    <input type="text" asp-for="LastName" class="form-control" id="floatingLastName" placeholder="Last Name" required>
+                    <label for="floatingLastName">Last Name</label>
                 </div>
 
-                <div class="form-group">
-                    <label for="Email">Email:</label>
-                    <input type="email" asp-for="Email" class="form-control" required />
+                <div class="form-floating mb-3">
+                    <input type="email" asp-for="Email" class="form-control" id="floatingEmail" placeholder="name@example.com" required>
+                    <label for="floatingEmail">Email address</label>
                 </div>
 
-
-                <div class="form-group">
-                    <label for="PhoneNumber">Phone Number:</label>
-                    <input type="PhoneNumber" asp-for="PhoneNumber" class="form-control" required />
+                <div class="form-floating mb-3">
+                    <input type="PhoneNumber" asp-for="PhoneNumber" class="form-control" id="floatingPhoneNumber" placeholder="Phone Number" required>
+                    <label for="floatingPhoneNumber">Phone Number</label>
                 </div>
 
                 <div class="form-group">
                     <label asp-for="Gender">Gender:</label>
-                    <select asp-for="Gender" asp-items="@Html.GetEnumSelectList<Gender>()" class="form-control">
-                        <option value="">----</option>
+                    <select asp-for="Gender" asp-items="@Html.GetEnumSelectList<Gender>()" class="dropdown-menu text-small border-0 shadow w-220px rounded-3 mx-0 w-220px" data-bs-theme="light">
+                        <option  value="">----</option>
                     </select>
                     <span asp-validation-for="Gender" class="text-danger"></span>
                 </div>
+
                 <div class="form-group">
                     <label asp-for="ProfileImage">Profile Image</label>
                     <input asp-for="ProfileImage" type="file" class="form-control">
@@ -59,51 +59,58 @@
                 <br />
                 <h5>Vehicle Information:</h5>
 
-                <div class="form-group">
-                    <label for="Vehicle.VehicleId">Vehicle Id:</label>
-                    <input type="text" asp-for="Vehicle.VehicleId" class="form-control" required />
+                <div class="form-floating mb-3">
+                    <input type="text" asp-for="Vehicle.VehicleId" class="form-control" id="floatingVehicleId" placeholder="Vehicle Id" required>
+                    <label for="floatingVehicleId">Vehicle Id</label>
                 </div>
 
-                <div class="form-group">
-                    <label for="Vehicle.Make">Make:</label>
-                    <input type="text" asp-for="Vehicle.Make" class="form-control" required />
+                <div class="form-floating mb-3">
+                    <input type="text" asp-for="Vehicle.Make" class="form-control" id="floatingMake" placeholder="Make" required>
+                    <label for="floatingMake">Make</label>
                 </div>
 
-                <div class="form-group">
-                    <label for="Vehicle.Model">Model:</label>
-                    <input type="text" asp-for="Vehicle.Model" class="form-control" required />
+                <div class="form-floating mb-3">
+                    <input type="text" asp-for="Vehicle.Model" class="form-control" id="floatingModel" placeholder="Model" required>
+                    <label for="floatingModel">Model</label>
                 </div>
 
-                <div class="form-group">
-                    <label for="Vehicle.Color">Color:</label>
-                    <input type="text" asp-for="Vehicle.Color" class="form-control" required />
+                <div class="form-floating mb-3">
+                    <input type="text" asp-for="Vehicle.Color" class="form-control" id="floatingColor" placeholder="Color" required>
+                    <label for="floatingColor">Color</label>
                 </div>
 
-                <div class="form-group">
-                    <label for="Vehicle.Capacity">Capacity:</label>
-                    <input type="number" asp-for="Vehicle.Capacity" class="form-control" required />
+                <div class="form-floating mb-3">
+                    <input type="number" asp-for="Vehicle.Capacity" class="form-control" id="floatingCapacity" placeholder="Capacity" required>
+                    <label for="floatingCapacity">Capacity</label>
                 </div>
 
-                <div class="form-group">
-                    <label for="Vehicle.PlateNumber">Plate Number:</label>
-                    <input type="text" asp-for="Vehicle.PlateNumber" class="form-control" required />
+                <div class="form-floating mb-3">
+                    <input type="text" asp-for="Vehicle.PlateNumber" class="form-control" id="floatingPlateNumber" placeholder="Plate Number" required>
+                    <label for="floatingPlateNumber">Plate Number</label>
                 </div>
 
-                <div class="form-group">
-                    <label for="Vehicle.Year">Year:</label>
-                    <input type="number" asp-for="Vehicle.Year" class="form-control" required />
+                <div class="form-floating mb-3">
+                    <input type="number" asp-for="Vehicle.Year" class="form-control" id="floatingYear" placeholder="Year" required>
+                    <label for="floatingYear">Year</label>
                 </div>
+
                 <div class="form-group">
                     <label asp-for="VehicleImage">Vehicle Image</label>
                     <input asp-for="VehicleImage" type="file" class="form-control">
                     <span asp-validation-for="VehicleImage" class="text-danger"></span>
                 </div>
-                <!-- ... (remaining code) ... -->
-                <!-- Add other vehicle fields as needed -->
-                <br />
-                <button type="submit" class="btn btn-primary btn-block">Update</button>
 
+                <div class="form-check text-start my-3">
+                    <input class="form-check-input" type="checkbox" value="remember-me" id="flexCheckDefault">
+                    <label class="form-check-label" for="flexCheckDefault">
+                        Remember me
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 py-2 mt-3">Update</button>
             </form>
+
+
         </div>
     </div>
 </div>

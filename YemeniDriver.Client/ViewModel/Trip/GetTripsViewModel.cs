@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
-namespace Yemeni_Driver.ViewModel.Trip
+namespace YemeniDriver.ViewModel.Trip
 {
     public class GetTripsViewModel
     {

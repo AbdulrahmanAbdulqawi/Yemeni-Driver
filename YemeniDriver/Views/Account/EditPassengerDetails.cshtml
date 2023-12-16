@@ -1,9 +1,10 @@
 ﻿@using YemeniDriver.Data
 @using YemeniDriver.Data.Enums
 @using YemeniDriver.ViewModel.Account
-@model PassengerRegisterationViewModel
+
+@model EditPassengerDetailsViewModel
 @{
-    ViewData["Title"] = "Passenger Registration";
+    ViewData["Title"] = "Update Passenger Profile";
 }
 
 <div class="container">
@@ -19,7 +20,7 @@
             }
 
             <form method="post" enctype="multipart/form-data" class="mt-5">
-                <h1 class="h3 mb-3 fw-normal text-center">Register</h1>
+                <h1 class="h3 mb-3 fw-normal text-center">Update</h1>
 
                 <div class="form-floating mb-3">
                     <input type="text" asp-for="FirstName" class="form-control" id="floatingFirstName" placeholder="First Name" required>
@@ -37,23 +38,13 @@
                 </div>
 
                 <div class="form-floating mb-3">
-                    <input type="password" asp-for="Password" class="form-control" id="floatingPassword" placeholder="Password" required>
-                    <label for="floatingPassword">Password</label>
-                </div>
-
-                <div class="form-floating mb-3">
-                    <input type="password" asp-for="ConfirmPassword" class="form-control" id="floatingConfirmPassword" placeholder="Confirm Password" required>
-                    <label for="floatingConfirmPassword">Confirm Password</label>
-                </div>
-
-                <div class="form-floating mb-3">
                     <input type="PhoneNumber" asp-for="PhoneNumber" class="form-control" id="floatingPhoneNumber" placeholder="Phone Number" required>
                     <label for="floatingPhoneNumber">Phone Number</label>
                 </div>
 
                 <div class="form-group">
                     <label asp-for="Gender">Gender:</label>
-                    <select asp-for="Gender" asp-items="@Html.GetEnumSelectList<Gender>()" class="form-control">
+                    <select asp-for="Gender" asp-items="@Html.GetEnumSelectList<Gender>()" class="dropdown-menu text-small border-0 shadow w-220px rounded-3 mx-0 w-220px" data-bs-theme="light">
                         <option value="">----</option>
                     </select>
                     <span asp-validation-for="Gender" class="text-danger"></span>
@@ -65,8 +56,12 @@
                     <span asp-validation-for="ProfileImage" class="text-danger"></span>
                 </div>
 
-                <button type="submit" class="btn btn-primary w-100 py-2 mt-3">Register</button>
+             
+
+                <button type="submit" class="btn btn-primary w-100 py-2 mt-3">Update</button>
             </form>
+
+
         </div>
     </div>
 </div>

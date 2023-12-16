@@ -1,0 +1,42 @@
+﻿@using YemeniDriver.ViewModel.Account
+@model PassengerDetailsViewModel
+
+<style>
+    /* Custom styles to set a maximum width for the container */
+    #custom-container {
+        max-width: 800px; /* Set your desired maximum width */
+        margin: auto;
+        margin-top: 20px; /* Add some top margin for spacing */
+    }
+
+    .card {
+        margin-bottom: 20px; /* Add some bottom margin between cards */
+    }
+
+    #vehicle-image {
+        max-width: 100%;
+        height: auto;
+        margin-bottom: 10px;
+    }
+</style>
+
+@{
+    ViewData["Title"] = "Driver Dashboard";
+}
+
+<div class="container" id="custom-container">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <img src="@Model.Image" class="card-img-top img-fluid" alt="Driver Image">
+                <div class="card-body">
+                    <h5 class="card-title">@Model.FirstName @Model.LastName</h5>
+                    <p class="card-text"><strong>Email:</strong> @Model.Email</p>
+                    <p class="card-text"><strong>Phone Number:</strong> @Model.PhoneNumber</p>
+                    <p class="card-text"><strong>Rating:</strong> @Model.Rating</p>
+                    <p class="card-text"><strong>Location:</strong> @Model.Location</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

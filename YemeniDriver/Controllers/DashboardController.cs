@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using YemeniDriver.ViewModel.Dashboard;
 using YemeniDriver.Data;
 using YemeniDriver.Interfaces;
 using YemeniDriver.Models;
@@ -60,6 +61,7 @@ namespace YemeniDriver.Controllers
 
             var passengerDashboardVM = new PassengerDashboardViewModel(orderdDrivers)
             {
+                Id = passengerDetailes.Id,
                 FirstName = passengerDetailes.FirstName,
                 Location = passengerDetailes.Location,
                 Image = passengerDetailes.ProfileImageUrl
@@ -92,5 +94,21 @@ namespace YemeniDriver.Controllers
 
             return View(driverDashboardVM);
         }
+
+        public async Task<IActionResult> AdminDashboard()
+        {
+            var drivers = await _dashboardRepository.GetDrivers();
+            var passengers = await _dashboardRepository.GetPassengers();
+
+
+            var adminDashboardVM = new AdminDashboardViewModel
+            {
+                Drivers = drivers.ToList(),
+                Passengers = passengers.ToList()
+            };
+
+            return View(adminDashboardVM);
+        }
+
     }
 }

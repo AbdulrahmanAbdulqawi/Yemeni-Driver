@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using System.Net;
-using Yemeni_Driver.Interfaces;
+using YemeniDriver.Interfaces;
 using YemeniDriver.Interfaces;
 using YemeniDriver.Models;
 using YemeniDriver.Service;
@@ -113,6 +113,8 @@ namespace YemeniDriver.Controllers
                 _tripRepository.Add(trip);
 
                 _notyf.Success("Request Accepted Succesfully");
+                await _hubContext.Clients.User(passengerId).SendAsync("ReceiveRequestNotification", "Your Ride Request Accepted!");
+
 
                 return RedirectToAction("DriverDashboard", "Dashboard");
             }

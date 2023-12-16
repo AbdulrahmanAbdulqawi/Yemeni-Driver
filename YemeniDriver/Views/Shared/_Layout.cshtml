@@ -1,4 +1,9 @@
-﻿<!DOCTYPE html>
+﻿@using System.Security.Claims
+@using Microsoft.AspNetCore.Identity
+@using YemeniDriver.Data
+@inject UserManager<ApplicationUser> UserManager
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -38,12 +43,97 @@
             }
         footer {
             flex-shrink: 0;
+            border-top: 1px solid; /* 2p
         }
     </style>
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+
+        <div class="container">
+            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+                <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 link-body-emphasis text-decoration-none">
+                    <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap"><use xlink:href="#bootstrap" /></svg>
+                </a>
+
+                <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                    <li><a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li><a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a></li>
+                   
+                </ul>
+
+                @if (User.Identity.IsAuthenticated)
+                {
+
+                    var userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                    var user = await UserManager.FindByIdAsync(userId);
+                    var profileUrl = user.ProfileImageUrl;
+                    if(User.IsInRole(Roles.Driver.ToString()))
+                    {
+                        <div class="dropdown text-end justify-content-center">
+                            <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img src="@profileUrl" width="32" height="32" class="rounded-circle" onerror="this.src='@Url.Content("~/Resources/emptyProfile.png")';">
+                            </a>
+                            <ul class="dropdown-menu text-small border-0 shadow w-220px rounded-3 mx-0 shadow w-220px" data-bs-theme="light">
+
+                                <li><a class="dropdown-item rounded-2" asp-controller="Account" asp-action="ViewDriverDetails" asp-route-driverId="@userId">Profile</a></li>
+                                <li><a class="dropdown-item rounded-2" asp-controller="Dashboard" asp-action="DriverDashboard" asp-route-driverId="@userId">Dashboard</a></li>
+                                <li><a class="dropdown-item rounded-2" asp-controller="Account" asp-action="EditDriverDetails" asp-route-driverId="@userId">Settings</a></li>
+                                <li><a class="dropdown-item rounded-2" asp-controller="Request" asp-action="GetDriverRequests" asp-route-driverId="@userId">Requests</a></li>
+                                <li><a class="dropdown-item rounded-2" asp-controller="Trip" asp-action="GetTrips" asp-route-driverId="@userId">Trips</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form asp-area="" asp-controller="Account" asp-action="Logout">
+                                        <button class="dropdown-item rounded-2">Logout</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    }else if(User.IsInRole(Roles.Passenger.ToString()))
+                    {
+                        <div class="dropdown text-end justify-content-center">
+                            <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img src="@profileUrl" width="32" height="32" class="rounded-circle" onerror="this.src='@Url.Content("~/Resources/emptyProfile.png")';">
+                            </a>
+                            <ul class="dropdown-menu text-small border-0 shadow w-220px rounded-3 mx-0 shadow w-220px" data-bs-theme="light">
+                                <li><a class="dropdown-item rounded-2" asp-controller="Account" asp-action="ViewPassengerDetails" asp-route-passengerId="@userId">Profile</a></li>
+                                <li><a class="dropdown-item rounded-2" asp-controller="Dashboard" asp-action="PassengerDashboard">Dashboard</a></li>
+                                <li><a class="dropdown-item rounded-2" asp-controller="Account" asp-action="EditPassengerDetails" asp-route-passengerId="@userId">Settings</a></li>
+
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form asp-area="" asp-controller="Account" asp-action="Logout">
+                                        <button class="dropdown-item rounded-2">Logout</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="dropdown text-end justify-content-center">
+                            <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img src="@profileUrl" width="32" height="32" class="rounded-circle" onerror="this.src='@Url.Content("~/Resources/emptyProfile.png")';">
+                            </a>
+                            <ul class="dropdown-menu text-small border-0 shadow w-220px rounded-3 mx-0 shadow w-220px" data-bs-theme="light">
+                                <li><a class="dropdown-item rounded-2" asp-controller="Account" asp-action="ViewAdminDetails" asp-route-adminId="@userId">Profile</a></li>
+                                <li><a class="dropdown-item rounded-2" asp-controller="Dashboard" asp-action="AdminDashboard">Dashboard</a></li>
+                                <li><a class="dropdown-item rounded-2" asp-controller="Account" asp-action="EditAdminDetails" asp-route-adminId="@userId">Settings</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form asp-area="" asp-controller="Account" asp-action="Logout">
+                                        <button class="dropdown-item rounded-2">Logout</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    }
+
+                }
+           
+            </div>
+        </div>
+       @*  <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Yemeni Driver</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -70,19 +160,19 @@
                     </ul>
                 </div>
             </div>
-        </nav>
+        </nav> *@
     </header>
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
-
-    <footer class="border-top footer text-muted">
+    <footer class="footer mt-auto py-3 bg-body-tertiary">
         <div class="container">
-            &copy; 2023 - Yemeni Driver - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            <span class="text-body-secondary"> &copy; 2023 - Yemeni Driver - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a></span>
         </div>
     </footer>
+    
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

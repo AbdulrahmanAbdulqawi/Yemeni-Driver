@@ -11,6 +11,7 @@ namespace YemeniDriver.ViewModel.Dashboard
         {
             AvailableDrivers = availableDrivers;
         }
+        public string Id {  get; set; }
         public string FirstName { get; set; }
         public string Location { get; set; }
         public string Image { get; set; }

@@ -1,6 +1,6 @@
 ﻿using YemeniDriver.Models;
 
-namespace Yemeni_Driver.Interfaces
+namespace YemeniDriver.Interfaces
 {
     public interface ITripRepository
     {

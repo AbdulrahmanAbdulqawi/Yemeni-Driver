@@ -135,43 +135,29 @@
         white-space: nowrap;
     }
 
+    #notificationIcon {
+        font-size: 1.5em;
+        margin-left: 10px;
+        cursor: pointer;
+    }
+
    
         
 
 
     </style>
     <head>
-    <!-- Bootstrap CSS -->
-
-
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <!-- Include SignalR JavaScript library -->
+   
     <script src="~/js/updateLiveLocation.js"></script>
 
 </head>
 
     <div class="container">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
-            <a class="navbar-brand" href="#">RideSharing App</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Home</a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Menu
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" asp-controller="Account" asp-action="ViewDriverDetails" asp-route-driverId="@Model.Id">Profile</a>
-                            <a class="dropdown-item" asp-controller="Request" asp-action="GetDriverRequests" asp-route-driverId="@Model.Id">Requests</a>
-                            <a class="dropdown-item" asp-controller="Trip" asp-action="GetTrips" asp-route-driverId="@Model.Id">Trips</a>
-                    </div>
-                    </li>
-                </ul>
-            </div>
-        </nav>
+
         <div class="card-container">
             <div class="card">
             @if (TempData["Error"] != null)
@@ -232,19 +218,14 @@
 
     </div>
 
-<div id="notificationContainer"></div>
 
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-
-<!-- Bootstrap JS and Popper.js -->
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-<!-- Include SignalR JavaScript library -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.10/signalr.min.js"></script>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
 <script>
+
+    function refreshPage() {
+        // Reload the current page
+        location.reload();
+    }
     const connection = new signalR.HubConnectionBuilder()
         .withUrl("/notificationHub")
         .build();
@@ -259,10 +240,16 @@
         // Handle the incoming request notification
         console.log("Received request notification:", message);
 
-        // Update the UI or take any other actions
-        const notificationContainer = document.getElementById("notificationContainer");
-        const notificationElement = document.createElement("div");
-        notificationElement.innerHTML = `<p>New ride request: ${message}</p>`;
-        notificationContainer.appendChild(notificationElement);
+        //Update the UI or take any other actions
+        // Toastify({
+        //     text: message,
+        //     duration: 5000,  // Duration in milliseconds
+        //     close: true,
+        //     gravity: "top",  // Toast position
+        // }).showToast();
+
+        refreshPage();
     });
 </script>
+
+

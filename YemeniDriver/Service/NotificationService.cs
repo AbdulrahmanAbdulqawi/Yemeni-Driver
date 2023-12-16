@@ -1,9 +1,9 @@
 ﻿using AspNetCoreHero.ToastNotification.Abstractions;
 using StackExchange.Redis;
 using System.Threading.Channels;
-using Yemeni_Driver.Interfaces;
+using YemeniDriver.Interfaces;
 
-namespace Yemeni_Driver.Service
+namespace YemeniDriver.Service
 {
     public class NotificationService : BackgroundService
     {

@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Yemeni_Driver.Interfaces;
+using YemeniDriver.Interfaces;
 using YemeniDriver.Data;
 using YemeniDriver.Models;
 
-namespace Yemeni_Driver.Repository
+namespace YemeniDriver.Repository
 {
     public class TripRepository : ITripRepository
     {

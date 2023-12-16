@@ -1,14 +1,14 @@
 ﻿using Microsoft.AspNetCore.SignalR;
-using Yemeni_Driver.Interfaces;
+using YemeniDriver.Interfaces;
 using YemeniDriver.Models;
 
 namespace YemeniDriver.Service
 {
     public class NotificationHub : Hub
     {
-        public async Task SendRequestNotification(string driverUserId, string message)
+        public async Task SendRequestNotification(string userId, string message)
         {
-            await Clients.User(driverUserId).SendAsync("ReceiveRequestNotification", message);
+            await Clients.User(userId).SendAsync("ReceiveRequestNotification", message);
         }
     }
 }

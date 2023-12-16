@@ -1,6 +1,6 @@
 ﻿using AspNetCoreHero.ToastNotification.Abstractions;
 
-namespace Yemeni_Driver.Interfaces
+namespace YemeniDriver.Interfaces
 {
     public interface INotificationSink
     {
