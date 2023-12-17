@@ -36,7 +36,6 @@
 
   <ItemGroup>
     <Folder Include="Scripts\" />
-    <Folder Include="wwwroot\js\DashboardViews\" />
   </ItemGroup>
 
   <ItemGroup>

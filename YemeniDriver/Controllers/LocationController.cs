@@ -23,11 +23,6 @@ namespace YemeniDriver.Controllers
         [HttpPost("updateLiveLocation")]
         public async Task<IActionResult> UpdateLiveLocation([FromBody] LiveLocationModel liveLocation)
         {
-            // Validate and update the live location in the database
-            // (Assuming you have a service or repository to handle database operations)
-
-            // For example:
-            // userService.UpdateLiveLocation(userId, liveLocation.Latitude, liveLocation.Longitude);
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (userId == null)
             {

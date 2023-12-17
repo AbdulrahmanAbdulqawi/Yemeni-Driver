@@ -38,13 +38,27 @@
             transition: background-color 0.3s; /* Add a smooth transition effect */
         }
 
-            button:hover {
-                background-color: #218838; /* Change the background color on hover */
-            }
+        button:hover {
+            background-color: #218838; /* Change the background color on hover */
+        }
+
         footer {
             flex-shrink: 0;
-            border-top: 1px solid; /* 2p
+            border-top: 1px solid;
         }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+
+            .logo-container img {
+                width: 100px; /* Increase the logo size as needed */
+                height: 100px; /* Increase the logo size as needed */
+                border-radius: 50%; /* Make the logo round */
+                margin-right: 10px; /* Adjust spacing */
+            }
+
     </style>
 </head>
 <body>
@@ -52,14 +66,16 @@
 
         <div class="container">
             <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-                <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 link-body-emphasis text-decoration-none">
-                    <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap"><use xlink:href="#bootstrap" /></svg>
-                </a>
+                <div class="logo-container">
+
+                    <a asp-action="Index" asp-controller="Home" class="logo">
+                        <img src="~/Resources/logo.png" alt="Your Logo">
+                    </a>
+                </div>
 
                 <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
                     <li><a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
                     <li><a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a></li>
-                   
                 </ul>
 
                 @if (User.Identity.IsAuthenticated)
@@ -68,11 +84,11 @@
                     var userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
                     var user = await UserManager.FindByIdAsync(userId);
                     var profileUrl = user.ProfileImageUrl;
-                    if(User.IsInRole(Roles.Driver.ToString()))
+                    if (User.IsInRole(Roles.Driver.ToString()))
                     {
                         <div class="dropdown text-end justify-content-center">
                             <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                <img src="@profileUrl" width="32" height="32" class="rounded-circle" onerror="this.src='@Url.Content("~/Resources/emptyProfile.png")';">
+                                <img src="@profileUrl" width="50" height="50" class="rounded-circle" onerror="this.src='@Url.Content("~/Resources/emptyProfile.png")';">
                             </a>
                             <ul class="dropdown-menu text-small border-0 shadow w-220px rounded-3 mx-0 shadow w-220px" data-bs-theme="light">
 
@@ -89,11 +105,12 @@
                                 </li>
                             </ul>
                         </div>
-                    }else if(User.IsInRole(Roles.Passenger.ToString()))
+                    }
+                    else if (User.IsInRole(Roles.Passenger.ToString()))
                     {
                         <div class="dropdown text-end justify-content-center">
                             <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                <img src="@profileUrl" width="32" height="32" class="rounded-circle" onerror="this.src='@Url.Content("~/Resources/emptyProfile.png")';">
+                                <img src="@profileUrl" width="50" height="50" class="rounded-circle" onerror="this.src='@Url.Content("~/Resources/emptyProfile.png")';">
                             </a>
                             <ul class="dropdown-menu text-small border-0 shadow w-220px rounded-3 mx-0 shadow w-220px" data-bs-theme="light">
                                 <li><a class="dropdown-item rounded-2" asp-controller="Account" asp-action="ViewPassengerDetails" asp-route-passengerId="@userId">Profile</a></li>
@@ -113,7 +130,7 @@
                     {
                         <div class="dropdown text-end justify-content-center">
                             <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                <img src="@profileUrl" width="32" height="32" class="rounded-circle" onerror="this.src='@Url.Content("~/Resources/emptyProfile.png")';">
+                                <img src="@profileUrl" width="50" height="50" class="rounded-circle" onerror="this.src='@Url.Content("~/Resources/emptyProfile.png")';">
                             </a>
                             <ul class="dropdown-menu text-small border-0 shadow w-220px rounded-3 mx-0 shadow w-220px" data-bs-theme="light">
                                 <li><a class="dropdown-item rounded-2" asp-controller="Account" asp-action="ViewAdminDetails" asp-route-adminId="@userId">Profile</a></li>
@@ -130,37 +147,9 @@
                     }
 
                 }
-           
+
             </div>
         </div>
-       @*  <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Yemeni Driver</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                        @if (User.Identity.IsAuthenticated)
-                        {
-                            <li class="nav-item">
-                                <form asp-area="" asp-controller="Account" asp-action="Logout">
-                                    <button class="btn btn-outline-danger">Logout</button>
-                                </form>
-                            </li>
-                        }
-                       
-                    </ul>
-                </div>
-            </div>
-        </nav> *@
     </header>
     <div class="container">
         <main role="main" class="pb-3">
@@ -172,7 +161,7 @@
             <span class="text-body-secondary"> &copy; 2023 - Yemeni Driver - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a></span>
         </div>
     </footer>
-    
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

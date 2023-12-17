@@ -2,8 +2,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
-using System.Net;
-using YemeniDriver.Interfaces;
 using YemeniDriver.Interfaces;
 using YemeniDriver.Models;
 using YemeniDriver.Service;

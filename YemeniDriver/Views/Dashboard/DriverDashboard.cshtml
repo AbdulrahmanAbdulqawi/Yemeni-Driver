@@ -1,160 +1,20 @@
 ﻿@using YemeniDriver.ViewModel.Dashboard
 @model DriverDashboardViewModel
+
+
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"]</title>
-    <style>
-       body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f8f9fa;
-            margin: 0;
-            padding: 0;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: auto;
-            padding: 20px;
-            text-align: center;
-        }
-
-        .welcome {
-            font-size: 2.5em;
-            margin-bottom: 20px;
-            color: #007bff;
-        }
-
-        .card-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .card {
-            width: 300px;
-            margin: 10px;
-            text-align: center;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease-in-out;
-        }
-
-        .card:hover {
-            transform: scale(1.05);
-        }
-
-        .card img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-bottom: 1px solid #dee2e6;
-        }
-
-        .card-body {
-            padding: 15px;
-        }
-
-        .card-text {
-            margin-bottom: 10px;
-            font-size: 1.2em;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        #map {
-            height: 400px;
-            margin-top: 20px;
-        }
-
-        #notificationSection {
-            margin-top: 20px;
-        }
-
-        #notificationList {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        #notificationList li {
-            border: 1px solid #dee2e6;
-            margin-bottom: 5px;
-            padding: 10px;
-        }
-
-        button {
-            background-color: #007bff;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
-
-        .drivers-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-    .driver-card {
-        flex: 0 0 300px;
-        margin: 10px;
-        text-align: center;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s ease-in-out;
-        background-color: #fff; /* Add a background color to separate cards visually */
-    }
-
-        .driver-card:hover {
-            transform: scale(1.05);
-        }
-
-        .driver-card img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-bottom: 1px solid #dee2e6;
-        }
-
-    .driver-card-body {
-        padding: 15px;
-    }
-
-    .driver-card-title {
-        font-size: 1.5em;
-        margin-bottom: 10px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    .driver-card-text {
-        margin-bottom: 10px;
-        font-size: 1.2em;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    #notificationIcon {
-        font-size: 1.5em;
-        margin-left: 10px;
-        cursor: pointer;
-    }
-
    
-        
-
-
-    </style>
     <head>
-    <!-- Bootstrap JS and Popper.js -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <!-- Include SignalR JavaScript library -->
-   
-    <script src="~/js/updateLiveLocation.js"></script>
+        <!-- Bootstrap JS and Popper.js -->
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <!-- Include SignalR JavaScript library -->
+        <link rel="stylesheet" href="~/css/Dashboard/DriverDashboardStyle.css" />
+        <script src="~/js/updateLiveLocation.js"></script>
 
-</head>
+    </head>
 
     <div class="container">
 
@@ -201,7 +61,7 @@
                                         <h5 class="driver-card-title">@user.FirstName @user.LastName</h5>
                                         <p class="driver-card-text">PickUp Location: @request.PickupLocation</p>
                                         <p class="driver-card-text">DropOff Location: @request.DropoffLocation</p>
-                                        <a asp-controller="request" asp-action="AcceptRequest" asp-route-requestId="@request.RequestId" asp-route-passengerId = "@user.Id" class="btn btn-primary">Accept</a>
+                                        <a asp-controller="Request"  asp-action="AcceptRequest" asp-route-requestId="@request.RequestId" asp-route-passengerId = "@user.Id" class="btn btn-primary">Accept</a>
 
                                     }
                                 </div>

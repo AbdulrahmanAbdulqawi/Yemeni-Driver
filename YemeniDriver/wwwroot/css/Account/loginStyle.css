@@ -1,0 +1,12 @@
+﻿body {
+}
+button {
+    background-color: #007bff; /* Use a green color for the button */
+    color: #fff;
+    padding: 10px 20px;
+    font-size: 1em;
+    cursor: pointer;
+    border: none; /* Remove the default button border */
+    transition: background-color 0.3s; /* Add transition for smooth color change */
+    margin-bottom: 10px;
+}

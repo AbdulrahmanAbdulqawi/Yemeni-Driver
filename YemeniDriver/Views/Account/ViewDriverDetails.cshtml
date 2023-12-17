@@ -1,28 +1,17 @@
 ﻿@using YemeniDriver.ViewModel.Account
 @model DriverDetailsViewModel
 
-<style>
-    /* Custom styles to set a maximum width for the container */
-    #custom-container {
-        max-width: 800px; /* Set your desired maximum width */
-        margin: auto;
-        margin-top: 20px; /* Add some top margin for spacing */
-    }
 
-    .card {
-        margin-bottom: 20px; /* Add some bottom margin between cards */
-    }
 
-    #vehicle-image {
-        max-width: 100%;
-        height: auto;
-        margin-bottom: 10px;
-    }
-</style>
 
 @{
     ViewData["Title"] = "Driver Dashboard";
 }
+
+
+<head>
+    <link rel="stylesheet" href="~/css/Account/viewDriverDetailsStyle.css" />
+</head>
 
 <div class="container" id="custom-container">
     <div class="row">

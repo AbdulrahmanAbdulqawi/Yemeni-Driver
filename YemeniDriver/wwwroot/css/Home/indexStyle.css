@@ -1,0 +1,49 @@
+﻿body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+    text-align: center;
+}
+
+.welcome {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+    color: #007bff;
+}
+
+.role-label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.account-register {
+    background-color: #007bff;
+    color: #fff;
+    padding: 15px 30px;
+    font-size: 1em;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s;
+    margin: 10px;
+    text-decoration: none; /* Remove default link underline */
+    display: inline-block;
+    width: 45%; /* Equal width for both buttons */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+    .account-register:hover {
+        background-color: #0056b3;
+        color: #fff;
+    }
+
+a {
+    text-decoration: none;
+}
+
