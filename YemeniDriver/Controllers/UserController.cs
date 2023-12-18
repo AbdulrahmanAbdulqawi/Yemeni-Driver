@@ -16,6 +16,7 @@ namespace YemeniDriver.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly HttpContextAccessor _contextAccessor;
 
         // Services for photo upload and notification
         private readonly IPhotoService _photoService;
@@ -44,7 +45,8 @@ namespace YemeniDriver.Controllers
             INotyfService notyf,
             IDriverAndRequestRepository driverAndRequestRepository,
             IRequestRepository requestRepository,
-            ITripRepository tripRepository)
+            ITripRepository tripRepository,
+            HttpContextAccessor contextAccessor)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _signInManager = signInManager ?? throw new ArgumentNullException(nameof(signInManager));
@@ -55,6 +57,7 @@ namespace YemeniDriver.Controllers
             _driverAndRequestRepository = driverAndRequestRepository;
             _requestRepository = requestRepository;
             _tripRepository = tripRepository;
+            _contextAccessor = contextAccessor;
         }
 
         public IActionResult Index()
@@ -376,34 +379,40 @@ namespace YemeniDriver.Controllers
         public async Task<IActionResult> DeleteUser(string userId)
         {
             var user = await _userRepository.GetByIdAsyncNoTracking(userId);
-            
+            var currentUserId = _contextAccessor.HttpContext.User.GetUserId();
+            var currentUser = await _userRepository.GetByIdAsyncNoTracking(currentUserId);
+
 
             try
             {
-                if (user.Roles == Roles.Driver)
+                if (currentUser.Roles != Roles.Admin)
                 {
-                    var vehicle = await _vehicleRepository.GetVehicleByOwner(userId);
-                    var driverAndRequest = _driverAndRequestRepository.GetDriverAndRequestAsync();
-                    var request = _requestRepository.GetByDriverId(userId);
-
-                    if (vehicle != null)
+                    if (user.Roles == Roles.Driver)
                     {
-                        await DeletePhotoAsync(vehicle.VehiclImageUrl);
-                        _vehicleRepository.Delete(vehicle);
+                        var vehicle = await _vehicleRepository.GetVehicleByOwner(userId);
+                        var driverAndRequest = _driverAndRequestRepository.GetDriverAndRequestAsync();
+                        var request = _requestRepository.GetByDriverId(userId);
+
+                        if (vehicle != null)
+                        {
+                            await DeletePhotoAsync(vehicle.VehiclImageUrl);
+                            _vehicleRepository.Delete(vehicle);
+                        }
+                        await DeletePhotoAsync(user.ProfileImageUrl);
+
+                        _userRepository.Delete(user);
+                        await _signInManager.SignOutAsync();
+
                     }
-                    await DeletePhotoAsync(user.ProfileImageUrl);
-
-                    _userRepository.Delete(user);
-                    await _signInManager.SignOutAsync();
+                    else if (user.Roles == Roles.Passenger)
+                    {
+                        _userRepository.Delete(user);
+                        await _signInManager.SignOutAsync();
+                    }
                     return RedirectToAction("Index", "Home");
 
                 }
-                else if (user.Roles == Roles.Passenger)
-                {
-                    _userRepository.Delete(user);
-                    await _signInManager.SignOutAsync();
-                    return RedirectToAction("Index", "Home");
-                }
+
                 else
                 {
                     _userRepository.Delete(user);
