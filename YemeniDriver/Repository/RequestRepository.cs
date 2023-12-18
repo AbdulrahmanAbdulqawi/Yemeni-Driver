@@ -59,5 +59,16 @@ namespace YemeniDriver.Repository
 
             return requests;
         }
+
+        public async Task<IEnumerable<Request>> GetByDriverId(string driverId)
+        {
+            return await _dbContext.Requests.Where(a => a.DriverID == driverId).ToListAsync();
+        }
+
+        public bool DeleteAllDriverRequests(IEnumerable<Request> requests)
+        {
+            _dbContext.Requests.RemoveRange(requests);
+            return Save();
+        }
     }
 }

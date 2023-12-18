@@ -24,6 +24,7 @@ namespace YemeniDriver.Repository
 
         public bool Delete(ApplicationUser user)
         {
+            _applicationDbContext.Entry(user).State = EntityState.Detached;
             _applicationDbContext.Remove(user);
             return Save();
         }
@@ -49,7 +50,7 @@ namespace YemeniDriver.Repository
 
             if(!drivers.Any(a => a.Roles == Roles.Driver))
             {
-                throw new Exception("No Driver Found");
+                return null;
             }
             return drivers.ToList();
         }
@@ -60,7 +61,7 @@ namespace YemeniDriver.Repository
 
             if (!passengers.Any(a => a.Roles == Roles.Driver))
             {
-                throw new Exception("No Passenger Found");
+                return null;
             }
             return passengers.ToList();
         }

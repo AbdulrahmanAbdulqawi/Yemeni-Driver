@@ -6,5 +6,6 @@ namespace YemeniDriver.ViewModel.Dashboard
     {
         public List<ApplicationUser> Drivers { get; set; }
         public List<ApplicationUser> Passengers { get; set; }
+
     }
 }

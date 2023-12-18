@@ -38,3 +38,26 @@
     float: left;
     width: 50%;
 }
+.head3 h3 {
+    text-align: center;
+    padding: 20px;
+    border-radius: 5px; /* Rounded corners for a softer look */
+    margin-bottom: 50px; /* Add some space below the message */
+
+}
+
+.no-users-message {
+    text-align: center;
+    padding: 20px;
+    border: 1px solid #0094ff; /* Border color for emphasis */
+    border-radius: 5px; /* Rounded corners for a softer look */
+    margin-bottom: 50px; /* Add some space below the message */
+    margin-top:30%;
+    margin-left:25%;
+    margin-right:25%;
+}
+
+.no-users-message h6 {
+    color: #721c24; /* Dark red text color for emphasis */
+    margin-bottom: 10px; /* Add space below the message */
+}

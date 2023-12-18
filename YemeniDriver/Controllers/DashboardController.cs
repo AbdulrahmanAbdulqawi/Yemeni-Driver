@@ -100,10 +100,28 @@ namespace YemeniDriver.Controllers
             var drivers = await _dashboardRepository.GetDrivers();
             var passengers = await _dashboardRepository.GetPassengers();
 
-
+            if (drivers == null || passengers == null)
+            {
+                // Handle the case where either drivers or passengers (or both) are null
+                // You can return an error view, redirect to an error page, or handle it as appropriate for your application
+                if(drivers == null)
+                {
+                    drivers = new List<ApplicationUser>();
+                }
+                else if(passengers == null) 
+                {
+                    passengers = new List<ApplicationUser>();
+                }
+                return View(new AdminDashboardViewModel
+                {
+                    Drivers = drivers.ToList(),
+                    Passengers = passengers.ToList(),
+                }); // Example: Return an "Error" view
+            }
             var adminDashboardVM = new AdminDashboardViewModel
             {
-                Drivers = drivers.ToList(),
+
+                Drivers = drivers.ToList() ,
                 Passengers = passengers.ToList()
             };
 

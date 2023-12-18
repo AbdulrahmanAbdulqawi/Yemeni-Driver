@@ -21,6 +21,9 @@ namespace YemeniDriver.Controllers
         private readonly IPhotoService _photoService;
         private readonly IUserRepository _userRepository;
         private readonly IVehicleRepository _vehicleRepository;
+        private readonly IDriverAndRequestRepository _driverAndRequestRepository;
+        private readonly IRequestRepository _requestRepository;
+        private readonly ITripRepository _tripRepository;
         private readonly INotyfService _notyf;
 
         /// <summary>
@@ -38,7 +41,10 @@ namespace YemeniDriver.Controllers
             IUserRepository userRepository,
             IPhotoService photoService,
             IVehicleRepository vehicleRepository,
-            INotyfService notyf)
+            INotyfService notyf,
+            IDriverAndRequestRepository driverAndRequestRepository,
+            IRequestRepository requestRepository,
+            ITripRepository tripRepository)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _signInManager = signInManager ?? throw new ArgumentNullException(nameof(signInManager));
@@ -46,6 +52,9 @@ namespace YemeniDriver.Controllers
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             _vehicleRepository = vehicleRepository ?? throw new ArgumentNullException(nameof(vehicleRepository));
             _notyf = notyf;
+            _driverAndRequestRepository = driverAndRequestRepository;
+            _requestRepository = requestRepository;
+            _tripRepository = tripRepository;
         }
 
         public IActionResult Index()
@@ -82,12 +91,14 @@ namespace YemeniDriver.Controllers
 
             // Create a new ApplicationUser object for the driver
             var appUser = await CreateApplicationUserAsync(driverRegisterVM);
+            appUser.Roles = Roles.Driver;
 
-            // Create a new Vehicle object for the driver
+// Create a new Vehicle object for the driver
             var newVehicle = await CreateVehicleAsync(driverRegisterVM, appUser.Id);
 
             // Attempt to create the user and assign the driver role
             var result = await CreateUserAndAssignRoleAsync(appUser, newVehicle, Roles.Driver, driverRegisterVM.Password);
+
 
             if (result.Succeeded)
             {
@@ -164,6 +175,9 @@ namespace YemeniDriver.Controllers
         {
             // Retrieve user and vehicle details for the specified driver ID
             var driver = await GetUserDetailsAsync(driverId);
+            var vehicle = await _vehicleRepository.GetVehicleByOwner(driverId);
+            driver.Vehicle = vehicle;
+
 
             if (driver == null)
             {
@@ -245,7 +259,6 @@ namespace YemeniDriver.Controllers
         {
             // Retrieve user and vehicle details for the specified driver ID
             var driver = await _userRepository.GetByIdAsyncNoTracking(driverId);
-            var vehicle = await _vehicleRepository.GetVehicleByOwner(driverId);
 
             if (driver == null)
             {
@@ -358,6 +371,53 @@ namespace YemeniDriver.Controllers
                 throw;
             }
         }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteUser(string userId)
+        {
+            var user = await _userRepository.GetByIdAsyncNoTracking(userId);
+            
+
+            try
+            {
+                if (user.Roles == Roles.Driver)
+                {
+                    var vehicle = await _vehicleRepository.GetVehicleByOwner(userId);
+                    var driverAndRequest = _driverAndRequestRepository.GetDriverAndRequestAsync();
+                    var request = _requestRepository.GetByDriverId(userId);
+
+                    if (vehicle != null)
+                    {
+                        await DeletePhotoAsync(vehicle.VehiclImageUrl);
+                        _vehicleRepository.Delete(vehicle);
+                    }
+                    await DeletePhotoAsync(user.ProfileImageUrl);
+
+                    _userRepository.Delete(user);
+                    await _signInManager.SignOutAsync();
+                    return RedirectToAction("Index", "Home");
+
+                }
+                else if (user.Roles == Roles.Passenger)
+                {
+                    _userRepository.Delete(user);
+                    await _signInManager.SignOutAsync();
+                    return RedirectToAction("Index", "Home");
+                }
+                else
+                {
+                    _userRepository.Delete(user);
+                    return RedirectToAction("AdminDashboard", "Dashboard");
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+          
+        }
+
         /// <summary>
         /// Retrieves user details based on the provided user ID asynchronously.
         /// </summary>
@@ -559,6 +619,7 @@ namespace YemeniDriver.Controllers
 
             return new YemeniDriver.Models.Vehicle
             {
+                VehicleId = $"{DateTime.Now:yyyyMMddHHmmssfff}-{RandomString(4)}",
                 ApplicationUserId = userId,
                 Capacity = driverRegisterVM.Capacity,
                 Color = driverRegisterVM.Color,
@@ -601,6 +662,13 @@ namespace YemeniDriver.Controllers
             {
                 ModelState.AddModelError(string.Empty, error.Description);
             }
+        }
+
+        private static string RandomString(int length)
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            return new string(Enumerable.Repeat(chars, length)
+                .Select(s => s[new Random().Next(s.Length)]).ToArray());
         }
 
     }

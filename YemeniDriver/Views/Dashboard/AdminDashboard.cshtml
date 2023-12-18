@@ -5,47 +5,84 @@
     <link rel="stylesheet" href="~/css/Dashboard/AdminDashboardStyle.css" />
 </head>
 
-<h2>Drivers and Passengers</h2>
 
 <div class="row">
     <div class="column">
-        <h3>Drivers</h3>
+        <div class="head3">
+            <h3>Drivers</h3>
+        </div>
         <div class="card-deck">
-            @foreach (var driver in Model.Drivers)
+            @if (Model.Drivers.Count() == 0)
             {
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="text-center">@driver.FirstName @driver.LastName</h4>
-                        <p class="text-center">@driver.Location</p>
-                        <img src="@driver.ProfileImageUrl" onerror="this.src='@Url.Content("~/Resources/emptyProfile.png")';">
-                    </div>
-                    <div class="card-body">
-                        <p class="card-text">Gender: @driver.Gender</p>
-                        <!-- Add more driver information as needed -->
-                        <a asp-controller="User" asp-action="ViewDriverDetails" asp-route-driverId="@driver.Id" class="btn btn-primary">View Details</a>
-                    </div>
+                <div class="no-users-message">
+                    <h6>No Drivers Found</h6>
+                    <p>It looks like there are currently no drivers registered.</p>
+                    <!-- You can add additional content or styling here -->
                 </div>
             }
+            else
+            {
+                @foreach (var driver in Model.Drivers)
+                {
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="text-center">@driver.FirstName @driver.LastName</h4>
+                            <p class="text-center">@driver.Location</p>
+                            <img src="@driver.ProfileImageUrl" onerror="this.src='@Url.Content("~/Resources/emptyProfile.png")';">
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">Gender: @driver.Gender</p>
+                            <!-- Add more driver information as needed -->
+                            <a asp-controller="User" asp-action="ViewDriverDetails" asp-route-driverId="@driver.Id" class="btn btn-primary">View</a>
+                            <a asp-controller="User" asp-action="EditDriverDetails" asp-route-driverId="@driver.Id" class="btn btn-primary">Edit</a>
+                            <form method="post">
+                                <button type="submit" asp-controller="User" asp-action="DeleteUser" asp-route-userId="@driver.Id" class="btn btn-primary">Delete</button>
+                            </form>
+
+                        </div>
+                    </div>
+                }
+            }
+           
         </div>
     </div>
 
     <div class="column">
-        <h3>Passengers</h3>
+        <div class="head3">
+            <h3>Passengers</h3>
+        </div>
         <div class="card-deck">
-            @foreach (var passenger in Model.Passengers)
+            @if (Model.Passengers.Count() == 0)
             {
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="text-center">@passenger.FirstName @passenger.LastName</h4>
-                        <p class="text-center">@passenger.Location</p>
-                        <img src="@passenger.ProfileImageUrl" onerror="this.src='@Url.Content("~/Resources/emptyProfile.png")';">
-                    </div>
-                    <div class="card-body">
-                        <!-- Add more passenger information as needed -->
-                        <a asp-controller="User" asp-action="ViewPassengerDetails" asp-route-passengerId="@passenger.Id" class="btn btn-primary">View Details</a>
-                    </div>
+                <div class="no-users-message">
+                    <h6>No Passengers Found</h6>
+                    <p>There are currently no registered passengers.</p>
+                    <!-- You can add additional content or styling here -->
                 </div>
             }
+            else
+            {
+                @foreach (var passenger in Model.Passengers)
+                {
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="text-center">@passenger.FirstName @passenger.LastName</h4>
+                            <p class="text-center">@passenger.Location</p>
+                            <img src="@passenger.ProfileImageUrl" onerror="this.src='@Url.Content("~/Resources/emptyProfile.png")';">
+                        </div>
+                        <div class="card-body">
+                            <!-- Add more passenger information as needed -->
+                            <a asp-controller="User" asp-action="ViewPassengerDetails" asp-route-passengerId="@passenger.Id" class="btn btn-primary">View</a>
+                            <a asp-controller="User" asp-action="EditPassengerDetails" asp-route-passengerId="@passenger.Id" class="btn btn-primary">Edit</a>
+
+                            <form method="post">
+                                <button type="submit" asp-controller="User" asp-action="DeleteUser" asp-route-userId="@passenger.Id" class="btn btn-primary">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                }
+            }
+          
         </div>
     </div>
 </div>

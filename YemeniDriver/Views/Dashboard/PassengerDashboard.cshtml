@@ -26,6 +26,9 @@
                 <div class="card-buttons">
                     <a asp-controller="User" asp-action="EditPassengerDetails" asp-route-passengerId="@Model.Id" class="btn btn-primary">Edit</a>
                     <a asp-controller="User" asp-action="ViewPassengerDetails" asp-route-passengerId="@Model.Id" class="btn btn-primary">View</a>
+                    <form method="post">
+                        <button type="submit" asp-controller="User" asp-action="DeleteUser" asp-route-userId="@Model.Id" class="btn btn-primary">Delete</button>
+                    </form>
                 </div>
             </div>
             <div class="card-body">
