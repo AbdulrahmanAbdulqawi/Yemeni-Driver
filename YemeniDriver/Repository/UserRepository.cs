@@ -54,9 +54,15 @@ namespace YemeniDriver.Repository
             return drivers.ToList();
         }
 
-        public Task<IEnumerable<ApplicationUser>> GetPassengers()
+        public async Task<IEnumerable<ApplicationUser>> GetPassengers()
         {
-            throw new NotImplementedException();
+            var passengers = await _userManager.GetUsersInRoleAsync(Roles.Passenger.ToString());
+
+            if (!passengers.Any(a => a.Roles == Roles.Driver))
+            {
+                throw new Exception("No Passenger Found");
+            }
+            return passengers.ToList();
         }
 
         public async Task<List<(double?, double?)>> GetUserLocation(string userId)

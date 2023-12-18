@@ -2,7 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using YemeniDriver.Data.Enums;
 
-namespace YemeniDriver.ViewModel.Account
+namespace YemeniDriver.ViewModel.User
 {
     public class PassengerRegisterationViewModel : RegisterationBaseViewModel
     {

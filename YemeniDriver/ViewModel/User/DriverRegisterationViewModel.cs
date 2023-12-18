@@ -2,11 +2,11 @@
 using System.Diagnostics.CodeAnalysis;
 using YemeniDriver.Data.Enums;
 
-namespace YemeniDriver.ViewModel.Account
+namespace YemeniDriver.ViewModel.User
 {
     public class DriverRegisterationViewModel : RegisterationBaseViewModel
     {
-     
+
         [Required]
         public string DrivingLicenseNumber { get; set; }
 

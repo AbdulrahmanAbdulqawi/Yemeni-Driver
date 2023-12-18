@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using YemeniDriver.Data.Enums;
 
-namespace YemeniDriver.ViewModel.Account
+namespace YemeniDriver.ViewModel.User
 {
     public class EditPassengerDetailsViewModel
     {

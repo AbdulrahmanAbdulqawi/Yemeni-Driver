@@ -22,7 +22,7 @@
                     <div class="card-body">
                         <p class="card-text">Gender: @driver.Gender</p>
                         <!-- Add more driver information as needed -->
-                        <a asp-controller="Account" asp-action="ViewDriverDetails" asp-route-driverId="@driver.Id" class="btn btn-primary">View Details</a>
+                        <a asp-controller="User" asp-action="ViewDriverDetails" asp-route-driverId="@driver.Id" class="btn btn-primary">View Details</a>
                     </div>
                 </div>
             }
@@ -42,7 +42,7 @@
                     </div>
                     <div class="card-body">
                         <!-- Add more passenger information as needed -->
-                        <a asp-controller="Account" asp-action="ViewPassengerDetails" asp-route-passengerId="@passenger.Id" class="btn btn-primary">View Details</a>
+                        <a asp-controller="User" asp-action="ViewPassengerDetails" asp-route-passengerId="@passenger.Id" class="btn btn-primary">View Details</a>
                     </div>
                 </div>
             }

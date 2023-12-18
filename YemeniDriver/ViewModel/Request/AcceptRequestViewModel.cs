@@ -1,4 +1,4 @@
-﻿namespace Yemeni_Driver.ViewModel.Request
+﻿namespace YemeniDriver.ViewModel.Request
 {
     public class AcceptRequestViewModel
     {

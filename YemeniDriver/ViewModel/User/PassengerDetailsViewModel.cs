@@ -1,4 +1,4 @@
-﻿namespace YemeniDriver.ViewModel.Account
+﻿namespace YemeniDriver.ViewModel.User
 {
     public class PassengerDetailsViewModel
     {

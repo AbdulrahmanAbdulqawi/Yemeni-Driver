@@ -24,8 +24,8 @@
                 <p class="card-text">@Model.Location</p>
 
                 <div class="card-buttons">
-                    <a asp-controller="Account" asp-action="EditPassengerDetails" asp-route-passengerId="@Model.Id" class="btn btn-primary">Edit</a>
-                    <a asp-controller="Account" asp-action="ViewPassengerDetails" asp-route-passengerId="@Model.Id" class="btn btn-primary">View</a>
+                    <a asp-controller="User" asp-action="EditPassengerDetails" asp-route-passengerId="@Model.Id" class="btn btn-primary">Edit</a>
+                    <a asp-controller="User" asp-action="ViewPassengerDetails" asp-route-passengerId="@Model.Id" class="btn btn-primary">View</a>
                 </div>
             </div>
             <div class="card-body">
@@ -41,7 +41,7 @@
                                     <p class="driver-card-text">Gender: @driver.Gender</p>
                                     <p class="driver-card-text">Address: @driver.Location</p>
                                     <img class="card-img-top" src="@driver.ProfileImageUrl" alt="Card image cap">
-                                    <a asp-controller="Account" asp-action="ViewDriverDetails" asp-route-driverId="@driver.Id" class="btn btn-primary">View</a>
+                                    <a asp-controller="User" asp-action="ViewDriverDetails" asp-route-driverId="@driver.Id" class="btn btn-primary">View</a>
                                 </div>
                             </div>
                         }

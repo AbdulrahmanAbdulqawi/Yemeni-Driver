@@ -22,7 +22,7 @@ namespace YemeniDriver.Repository
         }
         public async Task<ApplicationUser> GetDriverByIdAsync(string driverId)
         {
-            var driver = await _userRepository.GetByIdAsync(driverId);
+            var driver = await _userRepository.GetByIdAsyncNoTracking(driverId);
             if (driver != null)
             {
                 return driver;

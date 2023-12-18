@@ -4,7 +4,7 @@ using YemeniDriver.Data.Enums;
 using YemeniDriver.Models;
 using YemeniDriver.ViewModel.Vehicle;
 
-namespace YemeniDriver.ViewModel.Account
+namespace YemeniDriver.ViewModel.User
 {
     public class EditDriverDetailsViewModel
     {
@@ -28,7 +28,7 @@ namespace YemeniDriver.ViewModel.Account
         [Required]
         public IFormFile ProfileImage { get; set; }
 
-        public string? ProfileImageUrl { get; set; }     
+        public string? ProfileImageUrl { get; set; }
         public Models.Vehicle Vehicle { get; set; }
         public IFormFile VehicleImage { get; set; }
     }
