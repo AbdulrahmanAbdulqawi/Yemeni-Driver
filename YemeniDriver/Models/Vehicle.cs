@@ -15,7 +15,7 @@ namespace YemeniDriver.Models
         public string? Color { get; set; }
         public string? PlateNumber { get; set; }
         public string? VehiclImageUrl { get; set; }
-        public string? ApplicationUserId {  get; set; }
-        public virtual ApplicationUser ApplicationUser { get; set; }
+        public string? DriverId {  get; set; }
+        public virtual ApplicationUser Driver { get; set; }
     }
 }

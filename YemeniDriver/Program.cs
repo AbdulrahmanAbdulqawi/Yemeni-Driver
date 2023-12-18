@@ -3,17 +3,12 @@ using AspNetCoreHero.ToastNotification.Extensions;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using YemeniDriver.Interfaces;
 using YemeniDriver.Repository;
 using YemeniDriver.Service;
 using YemeniDriver.Data;
 using YemeniDriver.Helpers;
-using YemeniDriver.Interfaces;
 using YemeniDriver.Models;
-using YemeniDriver.Repository;
-using YemeniDriver.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,7 +19,7 @@ builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
 builder.Services.AddScoped<IDashboardRepository, DashboardRepository>();
 builder.Services.AddScoped<IPhotoService, PhotoService>();
 builder.Services.AddScoped<IRequestRepository, RequestRepository>();
-builder.Services.AddScoped<IDriverAndRequestRepository, DriverAndRequestRepository>();
+//builder.Services.AddScoped<IDriverAndRequestRepository, DriverAndRequestRepository>();
 builder.Services.AddScoped<ITripRepository, TripRepository>();
 builder.Services.AddNotyf(config => { config.DurationInSeconds = 10; config.IsDismissable = true; config.Position = NotyfPosition.BottomRight; });
 builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));

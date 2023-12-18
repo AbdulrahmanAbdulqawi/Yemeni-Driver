@@ -39,7 +39,7 @@ namespace YemeniDriver.Controllers
                 // Map the ViewModel to the Entity
                 var newVehicle = new Vehicle
                 {
-                    ApplicationUserId = updateVehicleVM.UserId,
+                    DriverId = updateVehicleVM.UserId,
                     VehicleId = vehicle.VehicleId,
                     Model = updateVehicleVM.Model,
                     Make = updateVehicleVM.Make,

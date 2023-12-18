@@ -41,6 +41,15 @@ namespace YemeniDriver.Repository
             return await _dbContext.Trips.AsNoTracking().FirstOrDefaultAsync(a => a.TripId == id);
         }
 
+        public async Task<IEnumerable<Trip>> GetByUserId(string userId, Roles role)
+        {
+            if (role == Roles.Driver)
+            {
+                return await _dbContext.Trips.Where(a => a.DriverId == userId).ToListAsync();
+            }
+            return await _dbContext.Trips.Where(a => a.PassengerId == userId).ToListAsync();
+        }
+
         public bool Save()
         {
             var saved = _dbContext.SaveChanges();
@@ -50,6 +59,12 @@ namespace YemeniDriver.Repository
         public bool Update(Trip trip)
         {
             _dbContext.Trips.Update(trip);
+            return Save();
+        }
+
+        public bool DeleteRange(List<Trip> trips)
+        {
+            _dbContext.Trips.RemoveRange(trips);
             return Save();
         }
     }

@@ -5,6 +5,7 @@ namespace YemeniDriver.ViewModel.Request
     public class GetRequestsViewModel
     {
         public string ApplicationUserId { get; set; }
+        public string PassengerName {  get; set; }
         public DateTime PickupTime { get; set; }
         public string PickupLocation { get; set; }
         public string DropoffLocation { get; set; }

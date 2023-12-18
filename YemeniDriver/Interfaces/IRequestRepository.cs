@@ -1,4 +1,5 @@
-﻿using YemeniDriver.Data.Enums;
+﻿using YemeniDriver.Data;
+using YemeniDriver.Data.Enums;
 using YemeniDriver.Models;
 
 namespace YemeniDriver.Interfaces
@@ -9,10 +10,14 @@ namespace YemeniDriver.Interfaces
         Task<Request> GetByIdAsync(string id);
         Task<Request> GetByIdAsyncNoTracking(string id);
         Task<IEnumerable<Request>> GetByStatus(RequestStatus requestStatus);
-        Task<IEnumerable<Request>> GetByDriverId(string driverId);
+        Task<IEnumerable<Request>> GetByUserId(string userId, Roles role);
+
+
         bool Add(Request request);
         bool Update(Request request);
         bool Delete(Request request);
+        bool DeleteRange(List<Request> requests);
+
         bool DeleteAllDriverRequests(IEnumerable<Request> requests);
         bool Save();
     }

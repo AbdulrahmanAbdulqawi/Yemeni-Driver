@@ -2,17 +2,17 @@
 
 #nullable disable
 
-namespace YemeniDriver.Migrations
+namespace Yemeni_Driver.Migrations
 {
     /// <inheritdoc />
-    public partial class intital3 : Migration
+    public partial class newStart_MakeTripIdNullable : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<string>(
-                name: "ApplicationUserId",
-                table: "Vehicles",
+                name: "TripId",
+                table: "Requests",
                 type: "nvarchar(max)",
                 nullable: true,
                 oldClrType: typeof(string),
@@ -23,8 +23,8 @@ namespace YemeniDriver.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<string>(
-                name: "ApplicationUserId",
-                table: "Vehicles",
+                name: "TripId",
+                table: "Requests",
                 type: "nvarchar(max)",
                 nullable: false,
                 defaultValue: "",

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using YemeniDriver.Data;
 using YemeniDriver.Interfaces;
 using YemeniDriver.Models;
 using YemeniDriver.Service;
@@ -16,33 +17,32 @@ namespace YemeniDriver.Controllers
         private readonly IRequestRepository _requestRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IDriverAndRequestRepository _driverAndRequestRepository;
         private readonly ITripRepository _tripRepository;
         private readonly INotyfService _notyf;
         private readonly IHubContext<NotificationHub> _hubContext;
+        private readonly IUserRepository _userRepository;
 
-
-        public RequestController(IRequestRepository requestRepository, IHttpContextAccessor httpContextAccessor, UserManager<ApplicationUser> userManager, IDriverAndRequestRepository driverAndRequestRepository, ITripRepository tripRepository, INotyfService notyf, IHubContext<NotificationHub> hubContext)
+        public RequestController(IRequestRepository requestRepository, IHttpContextAccessor httpContextAccessor, UserManager<ApplicationUser> userManager, ITripRepository tripRepository, INotyfService notyf, IHubContext<NotificationHub> hubContext, IUserRepository userRepository)
         {
             _requestRepository = requestRepository;
             _httpContextAccessor = httpContextAccessor;
             _userManager = userManager;
-            _driverAndRequestRepository = driverAndRequestRepository;
             _tripRepository = tripRepository;
             _notyf = notyf;
             _hubContext = hubContext;
+            _userRepository = userRepository;
         }
         [HttpPost("createRequest")]
         public async Task<IActionResult> CreateRequest([FromBody] CreateRequestViewModel createRequestVM)
         {
             var passengerId = _httpContextAccessor.HttpContext.User.GetUserId();
-            var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
-            var requests = await _requestRepository.GetAll();
+            var user = await _userRepository.GetByIdAsyncNoTracking(passengerId);
+            var requests = await _requestRepository.GetByUserId(passengerId, Roles.Passenger);
         
-            if (requests.Any(a => a.ApplicationUserId == passengerId && a.Status == Data.Enums.RequestStatus.Requested))
+            if (requests != null && requests.Any(a => a.Status == Data.Enums.RequestStatus.Requested))
             {
-                _notyf.Error("Request In Progress");
-                return View();
+                _notyf.Information("Request In Progress");
+                return RedirectToAction("PassengerDashboard", "Dashboard");
             }
             // Validate the incoming data (dropoff location, etc.) as needed
 
@@ -51,11 +51,12 @@ namespace YemeniDriver.Controllers
                 RequestId = $"{DateTime.Now:yyyyMMddHHmmssfff}-{RandomString(4)}",
                 PickupLocation = user.Location, // Assuming you have a Location property in the ApplicationUser model
                 DropoffLocation = createRequestVM.DropoffLocation,
-                EstimationPrice = DistanceService.EstimatePrice(user.Location, createRequestVM.DropoffLocation),
-                ApplicationUserId = passengerId,
+                EstimationPrice = Math.Round(DistanceService.EstimatePrice(user.Location, createRequestVM.DropoffLocation),2),
+                PassengerId = passengerId,
                 PickupTime = DateTime.Now,
                 Status = Data.Enums.RequestStatus.Requested,
                 DriverID = createRequestVM.DriverId,
+
             };
 
             _requestRepository.Add(request);
@@ -88,25 +89,22 @@ namespace YemeniDriver.Controllers
             {
                 request.Status = Data.Enums.RequestStatus.Accepted;
                 _requestRepository.Update(request);
-                var requestAndDriver = new DriverAndRequest
-                {
-                    ApplicationUserId = driverId,
-                    RequestId = requestId
-                };
-                _driverAndRequestRepository.Add(requestAndDriver);
+
                 var trip = new Trip
                 {
                     TripId = $"{DateTime.Now:yyyyMMddHHmmssfff}-{RandomString(4)}",
-                    ApplicationUserId = passengerId,
+                    DriverId = driverId,
                     RequestId = requestId,
                     StartTime = DateTime.UtcNow,
                     EndTime = DateTime.UtcNow.AddMinutes(60),
                     Duration = 60,
-                    Price = request.EstimationPrice,
+                    Price = Math.Round(request.EstimationPrice, 2),
                     DriverRating = 5,
                     PassengerRating = 5,
                     Comment = "I like the driver",
-                    DriverId = driverId
+                    PassengerId = passengerId,
+                    DropoffLocation = request.DropoffLocation,
+                    PickupLocation = request.PickupLocation,
                 };
                 _tripRepository.Add(trip);
 
@@ -123,18 +121,19 @@ namespace YemeniDriver.Controllers
         [HttpPost("getDriverRequests")]
         public async Task<IActionResult> GetDriverRequests(string driverId)
         {
-            var requests = await _driverAndRequestRepository.GetDriverAndRequestAsync();
+            var requests = await _requestRepository.GetByUserId(driverId, Roles.Driver);
 
-            var driverRequests = requests.Where(a => a.ApplicationUserId == driverId).ToList();
             List<GetRequestsViewModel> requestsList = [];
-            foreach (var request in driverRequests)
+            foreach (var request in requests)
             {
                 var requestDetails = await _requestRepository.GetByIdAsyncNoTracking(request.RequestId);
+                var passenger = await _userRepository.GetByIdAsyncNoTracking(request.PassengerId);
                 requestsList.Add(new GetRequestsViewModel
                 {
+                    PassengerName = passenger.FirstName + " " + passenger.LastName,
                     Status = requestDetails.Status,
                     NumberOfSeats = requestDetails.NumberOfSeats,
-                    ApplicationUserId = requestDetails.ApplicationUserId,
+                    ApplicationUserId = requestDetails.PassengerId,
                     DropoffLocation = requestDetails.DropoffLocation,
                     PickupLocation = requestDetails.PickupLocation,
                     EstimationPrice = requestDetails.EstimationPrice,

@@ -25,6 +25,11 @@ namespace YemeniDriver.Repository
             return Save();
         }
 
+        public bool DeleteRange(List<Request> requests)
+        {
+            _dbContext.Requests.RemoveRange(requests);
+            return Save();
+        }
         public async Task<IEnumerable<Request>> GetAll()
         {
             return await _dbContext.Requests.ToListAsync();
@@ -60,10 +65,17 @@ namespace YemeniDriver.Repository
             return requests;
         }
 
-        public async Task<IEnumerable<Request>> GetByDriverId(string driverId)
+        public async Task<IEnumerable<Request>> GetByUserId(string userId, Roles role)
         {
-            return await _dbContext.Requests.Where(a => a.DriverID == driverId).ToListAsync();
+            if(role == Roles.Driver)
+            {
+                return await _dbContext.Requests.Where(a => a.DriverID == userId).ToListAsync();
+            }
+            return await _dbContext.Requests.Where(a => a.PassengerId == userId).ToListAsync();
+
         }
+        
+
 
         public bool DeleteAllDriverRequests(IEnumerable<Request> requests)
         {

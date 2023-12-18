@@ -18,13 +18,16 @@ namespace YemeniDriver.Models
         public double? LiveLocationLongitude { get; set; }
         public string? Location { get; set; }
         public string? ProfileImageUrl { get; set; }
-        [ForeignKey("Vehicle")]
         public string? VehicleId { get; set; }
         public Roles? Roles { get; set; }
         public virtual Vehicle Vehicle { get; set; }
-        public virtual ICollection<DriverAndRequest> DriverAndRequests { get; set; }
-        public virtual Trip Trip { get; set; }
-        public virtual CancelRequest CancelRequest { get; set; }
-        public virtual ICollection<Request> Requests { get; set; }
+        public virtual ICollection<Trip> DriverTrips { get; set; }
+        public virtual ICollection<Trip> PassengerTrips { get; set; }
+
+
+        //public virtual CancelRequest CancelRequest { get; set; }
+        public virtual ICollection<Request> DriverRequests { get; set; }
+        public virtual ICollection<Request> PassengerRequests { get; set; }
+
     }
 }

@@ -12,7 +12,8 @@ else
     <table class="table">
         <thead>
             <tr>
-                <th>Pickup Time</th>
+                <th>Passenger Name</th>
+                <th>Request Time</th>
                 <th>Pickup Location</th>
                 <th>Dropoff Location</th>
                 <th>Estimation Price</th>
@@ -24,6 +25,7 @@ else
             @foreach (var request in Model)
             {
                 <tr>
+                    <td>@request.PassengerName</td>
                     <td>@request.PickupTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
                     <td>@request.PickupLocation</td>
                     <td>@request.DropoffLocation</td>
