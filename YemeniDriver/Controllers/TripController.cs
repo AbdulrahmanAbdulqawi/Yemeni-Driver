@@ -2,6 +2,7 @@
 using YemeniDriver.Interfaces;
 using YemeniDriver.ViewModel.Trip;
 using YemeniDriver.Interfaces;
+using YemeniDriver.Data;
 
 namespace YemeniDriver.Controllers
 {
@@ -9,13 +10,11 @@ namespace YemeniDriver.Controllers
     {
         private readonly ITripRepository _tripRepository;
         private readonly IUserRepository _userRepository;
-        private readonly IDriverAndRequestRepository _driverAndRequestRepository;
 
-        public TripController(ITripRepository tripRepository, IUserRepository userRepository, IDriverAndRequestRepository driverAndRequestRepository)
+        public TripController(ITripRepository tripRepository, IUserRepository userRepository)
         {
             _tripRepository = tripRepository;
             _userRepository = userRepository;
-            _driverAndRequestRepository = driverAndRequestRepository;
         }
 
         public IActionResult Index()
@@ -25,14 +24,15 @@ namespace YemeniDriver.Controllers
 
         public async Task<IActionResult> GetTrips(string driverId)
         {
-            var trips = await _tripRepository.GetAll();
-            var driverTrips = trips.Where(a => a.DriverId == driverId);
+            var trips = await _tripRepository.GetByUserId(driverId, Roles.Driver);
+            var driver = await _userRepository.GetByIdAsyncNoTracking(driverId);
+
+
             List<GetTripsViewModel> tripsVM = [];
-            foreach (var trip in driverTrips)
+            foreach (var trip in trips)
             {
-                var passenger = await _userRepository.GetByIdAsyncNoTracking(trip.ApplicationUserId);
+                var passenger = await _userRepository.GetByIdAsync(trip.PassengerId);
                 //var driverId = await _driverAndRequestRepository.GetDriverIdByRequestId(trip.RequestId);
-                var driver = await _userRepository.GetByIdAsyncNoTracking(driverId);
 
                 var tripVM = new GetTripsViewModel
                 {
@@ -40,13 +40,16 @@ namespace YemeniDriver.Controllers
                     //DriverName = driver.FirstName + " " + driver.LastName,
                     StartTime = trip.StartTime,
                     EndTime = trip.EndTime,
-                    ApplicationUserId = trip.ApplicationUserId,
+                    ApplicationUserId = trip.DriverId,
                     Comment = trip.Comment,
                     DriverRating = trip.DriverRating,
                     Duration = trip.Duration,
                     PassengerRating = trip.PassengerRating,
                     Price = Math.Round(trip.Price, 2),
                     RequestId = trip.RequestId,
+                    DropoffLocation = trip.DropoffLocation,
+                    PickupLocation = trip.PickupLocation,
+
                 };
                 tripsVM.Add(tripVM);
             }

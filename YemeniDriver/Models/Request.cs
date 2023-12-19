@@ -8,9 +8,9 @@ namespace YemeniDriver.Models
     {
         [Key]
         public string RequestId { get; set; }
-        [ForeignKey("ApplicationUser")]
-        public string ApplicationUserId { get; set; }
+        public string PassengerId { get; set; }
         public string DriverID { get; set; }
+        public string? TripId { get; set; }
         public DateTime PickupTime { get; set; }
         public string PickupLocation { get; set; }
         public string DropoffLocation { get; set; }
@@ -18,10 +18,12 @@ namespace YemeniDriver.Models
         public int NumberOfSeats { get; set; }
         public RequestStatus Status { get; set; }
 
-        public virtual ApplicationUser ApplicationUser { get; set; }
-        public virtual ICollection<DriverAndRequest> DriverAndRequests { get; set; }
+        public virtual ApplicationUser Driver { get; set; }
+        public virtual ApplicationUser Passenger { get; set; }
         public virtual Trip Trip { get; set; }
-        public virtual CancelRequest CancelRequest { get; set; }
+       // public virtual CancelRequest CancelRequest { get; set; }
+
+
 
     }
 }

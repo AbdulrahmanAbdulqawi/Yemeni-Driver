@@ -9,11 +9,11 @@ using YemeniDriver.Data;
 
 #nullable disable
 
-namespace YemeniDriver.Migrations
+namespace Yemeni_Driver.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231128010922_intital1")]
-    partial class intital1
+    [Migration("20231218212507_newStart")]
+    partial class newStart
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -158,7 +158,7 @@ namespace YemeniDriver.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Yemeni_Driver.Models.ApplicationUser", b =>
+            modelBuilder.Entity("YemeniDriver.Models.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -169,11 +169,6 @@ namespace YemeniDriver.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasMaxLength(21)
-                        .HasColumnType("nvarchar(21)");
 
                     b.Property<string>("DrivingLicenseNumber")
                         .HasColumnType("nvarchar(max)");
@@ -192,6 +187,15 @@ namespace YemeniDriver.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("LastName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double?>("LiveLocationLatitude")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("LiveLocationLongitude")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Location")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
@@ -217,11 +221,21 @@ namespace YemeniDriver.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<string>("ProfileImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("Rating")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Roles")
                         .HasColumnType("int");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TripId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
@@ -231,7 +245,6 @@ namespace YemeniDriver.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("VehicleId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -244,72 +257,19 @@ namespace YemeniDriver.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
+                    b.HasIndex("TripId");
+
                     b.ToTable("AspNetUsers", (string)null);
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("ApplicationUser");
-
-                    b.UseTphMappingStrategy();
                 });
 
-            modelBuilder.Entity("Yemeni_Driver.Models.CancelRequest", b =>
+            modelBuilder.Entity("YemeniDriver.Models.Request", b =>
                 {
                     b.Property<string>("RequestId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("ApplicationUserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("CancelTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CancelledBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Penalty")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Reason")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("RequestId", "ApplicationUserId");
-
-                    b.HasIndex("ApplicationUserId")
-                        .IsUnique();
-
-                    b.HasIndex("RequestId")
-                        .IsUnique();
-
-                    b.ToTable("CancelRequests");
-                });
-
-            modelBuilder.Entity("Yemeni_Driver.Models.DriverAndRequest", b =>
-                {
-                    b.Property<string>("RequestId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ApplicationUserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("RequestId", "ApplicationUserId");
-
-                    b.HasIndex("ApplicationUserId");
-
-                    b.ToTable("DriversAndRequests");
-                });
-
-            modelBuilder.Entity("Yemeni_Driver.Models.Request", b =>
-                {
-                    b.Property<string>("RequestId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ApplicationUserId")
+                    b.Property<string>("DriverID")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("DateTime")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("DropoffLocation")
                         .IsRequired()
@@ -321,35 +281,52 @@ namespace YemeniDriver.Migrations
                     b.Property<int>("NumberOfSeats")
                         .HasColumnType("int");
 
+                    b.Property<string>("PassengerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("PickupLocation")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("RideType")
+                    b.Property<DateTime>("PickupTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
                         .HasColumnType("int");
+
+                    b.Property<string>("TripId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("RequestId");
 
-                    b.HasIndex("ApplicationUserId");
+                    b.HasIndex("DriverID");
+
+                    b.HasIndex("PassengerId");
 
                     b.ToTable("Requests");
                 });
 
-            modelBuilder.Entity("Yemeni_Driver.Models.Trip", b =>
+            modelBuilder.Entity("YemeniDriver.Models.Trip", b =>
                 {
                     b.Property<string>("TripId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ApplicationUserId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Comment")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("DriverId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<int>("DriverRating")
                         .HasColumnType("int");
+
+                    b.Property<string>("DropoffLocation")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Duration")
                         .HasColumnType("int");
@@ -357,8 +334,16 @@ namespace YemeniDriver.Migrations
                     b.Property<DateTime>("EndTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("PassengerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<int>("PassengerRating")
                         .HasColumnType("int");
+
+                    b.Property<string>("PickupLocation")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("Price")
                         .HasColumnType("float");
@@ -372,8 +357,9 @@ namespace YemeniDriver.Migrations
 
                     b.HasKey("TripId");
 
-                    b.HasIndex("ApplicationUserId")
-                        .IsUnique();
+                    b.HasIndex("DriverId");
+
+                    b.HasIndex("PassengerId");
 
                     b.HasIndex("RequestId")
                         .IsUnique();
@@ -381,54 +367,42 @@ namespace YemeniDriver.Migrations
                     b.ToTable("Trips");
                 });
 
-            modelBuilder.Entity("Yemeni_Driver.Models.Vehicle", b =>
+            modelBuilder.Entity("YemeniDriver.Models.Vehicle", b =>
                 {
                     b.Property<string>("VehicleId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("ApplicationUserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Capacity")
+                    b.Property<int?>("Capacity")
                         .HasColumnType("int");
 
                     b.Property<string>("Color")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("DriverId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Make")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Model")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PlateNumber")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Year")
+                    b.Property<string>("VehiclImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("Year")
                         .HasColumnType("int");
 
                     b.HasKey("VehicleId");
 
+                    b.HasIndex("DriverId")
+                        .IsUnique()
+                        .HasFilter("[DriverId] IS NOT NULL");
+
                     b.ToTable("Vehicles");
-                });
-
-            modelBuilder.Entity("Yemeni_Driver.Models.Driver", b =>
-                {
-                    b.HasBaseType("Yemeni_Driver.Models.ApplicationUser");
-
-                    b.HasDiscriminator().HasValue("Driver");
-                });
-
-            modelBuilder.Entity("Yemeni_Driver.Models.Passenger", b =>
-                {
-                    b.HasBaseType("Yemeni_Driver.Models.ApplicationUser");
-
-                    b.HasDiscriminator().HasValue("Passenger");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -442,7 +416,7 @@ namespace YemeniDriver.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("Yemeni_Driver.Models.ApplicationUser", null)
+                    b.HasOne("YemeniDriver.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -451,7 +425,7 @@ namespace YemeniDriver.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("Yemeni_Driver.Models.ApplicationUser", null)
+                    b.HasOne("YemeniDriver.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -466,7 +440,7 @@ namespace YemeniDriver.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Yemeni_Driver.Models.ApplicationUser", null)
+                    b.HasOne("YemeniDriver.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -475,111 +449,96 @@ namespace YemeniDriver.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("Yemeni_Driver.Models.ApplicationUser", null)
+                    b.HasOne("YemeniDriver.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Yemeni_Driver.Models.CancelRequest", b =>
+            modelBuilder.Entity("YemeniDriver.Models.ApplicationUser", b =>
                 {
-                    b.HasOne("Yemeni_Driver.Models.ApplicationUser", "ApplicationUser")
-                        .WithOne("CancelRequest")
-                        .HasForeignKey("Yemeni_Driver.Models.CancelRequest", "ApplicationUserId")
-                        .IsRequired();
-
-                    b.HasOne("Yemeni_Driver.Models.Request", "Request")
-                        .WithOne("CancelRequest")
-                        .HasForeignKey("Yemeni_Driver.Models.CancelRequest", "RequestId")
-                        .IsRequired();
-
-                    b.Navigation("ApplicationUser");
-
-                    b.Navigation("Request");
-                });
-
-            modelBuilder.Entity("Yemeni_Driver.Models.DriverAndRequest", b =>
-                {
-                    b.HasOne("Yemeni_Driver.Models.ApplicationUser", "ApplicationUser")
-                        .WithMany("DriverAndRequests")
-                        .HasForeignKey("ApplicationUserId")
+                    b.HasOne("YemeniDriver.Models.Trip", "Trip")
+                        .WithMany()
+                        .HasForeignKey("TripId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Yemeni_Driver.Models.Request", "Request")
-                        .WithMany("DriverAndRequests")
-                        .HasForeignKey("RequestId")
-                        .IsRequired();
-
-                    b.Navigation("ApplicationUser");
-
-                    b.Navigation("Request");
+                    b.Navigation("Trip");
                 });
 
-            modelBuilder.Entity("Yemeni_Driver.Models.Request", b =>
+            modelBuilder.Entity("YemeniDriver.Models.Request", b =>
                 {
-                    b.HasOne("Yemeni_Driver.Models.ApplicationUser", "ApplicationUser")
-                        .WithMany("Requests")
-                        .HasForeignKey("ApplicationUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                    b.HasOne("YemeniDriver.Models.ApplicationUser", "Driver")
+                        .WithMany("DriverRequests")
+                        .HasForeignKey("DriverID")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("ApplicationUser");
+                    b.HasOne("YemeniDriver.Models.ApplicationUser", "Passenger")
+                        .WithMany("PassengerRequests")
+                        .HasForeignKey("PassengerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Driver");
+
+                    b.Navigation("Passenger");
                 });
 
-            modelBuilder.Entity("Yemeni_Driver.Models.Trip", b =>
+            modelBuilder.Entity("YemeniDriver.Models.Trip", b =>
                 {
-                    b.HasOne("Yemeni_Driver.Models.ApplicationUser", "ApplicationUser")
+                    b.HasOne("YemeniDriver.Models.ApplicationUser", "Driver")
+                        .WithMany("DriverTrips")
+                        .HasForeignKey("DriverId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("YemeniDriver.Models.ApplicationUser", "Passenger")
+                        .WithMany("PassengerTrips")
+                        .HasForeignKey("PassengerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("YemeniDriver.Models.Request", "Request")
                         .WithOne("Trip")
-                        .HasForeignKey("Yemeni_Driver.Models.Trip", "ApplicationUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("YemeniDriver.Models.Trip", "RequestId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Yemeni_Driver.Models.Request", "Request")
-                        .WithOne("Trip")
-                        .HasForeignKey("Yemeni_Driver.Models.Trip", "RequestId")
-                        .IsRequired();
+                    b.Navigation("Driver");
 
-                    b.Navigation("ApplicationUser");
+                    b.Navigation("Passenger");
 
                     b.Navigation("Request");
                 });
 
-            modelBuilder.Entity("Yemeni_Driver.Models.Vehicle", b =>
+            modelBuilder.Entity("YemeniDriver.Models.Vehicle", b =>
                 {
-                    b.HasOne("Yemeni_Driver.Models.ApplicationUser", "ApplicationUser")
+                    b.HasOne("YemeniDriver.Models.ApplicationUser", "Driver")
                         .WithOne("Vehicle")
-                        .HasForeignKey("Yemeni_Driver.Models.Vehicle", "VehicleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("YemeniDriver.Models.Vehicle", "DriverId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
-                    b.Navigation("ApplicationUser");
+                    b.Navigation("Driver");
                 });
 
-            modelBuilder.Entity("Yemeni_Driver.Models.ApplicationUser", b =>
+            modelBuilder.Entity("YemeniDriver.Models.ApplicationUser", b =>
                 {
-                    b.Navigation("CancelRequest")
-                        .IsRequired();
+                    b.Navigation("DriverRequests");
 
-                    b.Navigation("DriverAndRequests");
+                    b.Navigation("DriverTrips");
 
-                    b.Navigation("Requests");
+                    b.Navigation("PassengerRequests");
 
-                    b.Navigation("Trip")
-                        .IsRequired();
+                    b.Navigation("PassengerTrips");
 
                     b.Navigation("Vehicle")
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Yemeni_Driver.Models.Request", b =>
+            modelBuilder.Entity("YemeniDriver.Models.Request", b =>
                 {
-                    b.Navigation("CancelRequest")
-                        .IsRequired();
-
-                    b.Navigation("DriverAndRequests");
-
                     b.Navigation("Trip")
                         .IsRequired();
                 });

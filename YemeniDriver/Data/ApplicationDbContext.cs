@@ -12,140 +12,104 @@ namespace YemeniDriver.Data
         {
         }
 
-        public DbSet<Driver> Drivers { get; set; }
-        public DbSet<Passenger> Passengers { get; set; }
+        public DbSet<ApplicationUser> Users { get; set; }
         public DbSet<Trip> Trips { get; set; }
         public DbSet<Request> Requests { get; set; }
         public DbSet<Vehicle> Vehicles { get; set; }
-        public DbSet<DriverAndRequest> DriversAndRequests { get; set; }
-        public DbSet<CancelRequest> CancelRequests { get; set; }
+
+        //public DbSet<CancelRequest> CancelRequests { get; set; }
 
 
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Vehicle
-            modelBuilder.Entity<Vehicle>()
-                .HasKey(v => v.VehicleId);
+            base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Vehicle>()
-                .HasOne(v => v.ApplicationUser)
-                .WithOne(d => d.Vehicle)
-                .HasForeignKey<ApplicationUser>(v => v.VehicleId);
-
-            // Driver
-           
-
-            modelBuilder.Entity<ApplicationUser>()
-                .HasOne(d => d.Vehicle)
-                .WithOne(v => v.ApplicationUser)
-                .HasForeignKey<Vehicle>(v => v.VehicleId);
-
-            modelBuilder.Entity<DriverAndRequest>()
-                .HasKey(dr => new { dr.RequestId, dr.ApplicationUserId });
-
-            modelBuilder.Entity<DriverAndRequest>()
-                .HasOne(dr => dr.Request)
-                .WithMany(r => r.DriverAndRequests)
-                .HasForeignKey(dr => dr.RequestId)
-                .OnDelete(DeleteBehavior.ClientSetNull);
-
-            modelBuilder.Entity<DriverAndRequest>()
-                .HasOne(dr => dr.ApplicationUser)
-                .WithMany(d => d.DriverAndRequests)
-                .HasForeignKey(dr => dr.ApplicationUserId);
-
-            modelBuilder.Entity<ApplicationUser>()
-                .HasOne(d => d.Trip)
-                .WithOne(t => t.ApplicationUser)
-                .HasForeignKey<Trip>(t => t.ApplicationUserId);
-
-          
-
-
-            // Request
+            // Define relationship: Request -> ApplicationUser (Driver)
             modelBuilder.Entity<Request>()
-                .HasKey(r => r.RequestId);
+                .HasOne(r => r.Driver)
+                .WithMany(u => u.DriverRequests)
+                .HasForeignKey(r => r.DriverID) // Foreign key linking to ApplicationUser.Id
+                .OnDelete(DeleteBehavior.Restrict); // Restrict deletion if there are related requests
 
+            // Define relationship: Request -> ApplicationUser (Passenger)
             modelBuilder.Entity<Request>()
-                .HasOne(r => r.ApplicationUser)
-                .WithMany(p => p.Requests)
-                .HasForeignKey(r => r.ApplicationUserId);
+                .HasOne(r => r.Passenger)
+                .WithMany(u => u.PassengerRequests)
+                .HasForeignKey(r => r.PassengerId) // Foreign key linking to ApplicationUser.Id
+                .OnDelete(DeleteBehavior.Restrict); // Restrict deletion if there are related requests
 
-            modelBuilder.Entity<Request>()
-                .HasMany(r => r.DriverAndRequests)
-                .WithOne(dr => dr.Request)
-                .HasForeignKey(dr => dr.RequestId);
-
+            // Define relationship: Request -> Trip
             modelBuilder.Entity<Request>()
                 .HasOne(r => r.Trip)
                 .WithOne(t => t.Request)
-                .HasForeignKey<Trip>(t => t.RequestId);
+                .HasForeignKey<Trip>(t => t.RequestId) // Foreign key linking to Request.RequestId
+                .OnDelete(DeleteBehavior.Restrict); // Restrict deletion if there is a related trip
 
-            // CancelRequest
-            modelBuilder.Entity<CancelRequest>()
-                .HasKey(cr => new { cr.RequestId, cr.ApplicationUserId});
-
-            modelBuilder.Entity<CancelRequest>()
-                .HasOne(cr => cr.Request)
-                .WithOne(r => r.CancelRequest)
-                .HasForeignKey<CancelRequest>(r => r.RequestId)
-                .OnDelete(DeleteBehavior.ClientSetNull); ;
-
-            modelBuilder.Entity<CancelRequest>()
-                .HasOne(cr => cr.ApplicationUser)
-                .WithOne(p => p.CancelRequest)
-                .HasForeignKey <CancelRequest>(cr => cr.ApplicationUserId)
-                .OnDelete(DeleteBehavior.ClientSetNull); ;
-
-            modelBuilder.Entity<CancelRequest>()
-                .HasOne(cr => cr.ApplicationUser)
-                .WithOne(d => d.CancelRequest)
-                .HasForeignKey<CancelRequest>(cr => cr.ApplicationUserId)
-                .OnDelete(DeleteBehavior.ClientSetNull);;
-
-            // Trip
+            // Define relationship: Trip -> ApplicationUser (Driver)
             modelBuilder.Entity<Trip>()
-                .HasKey(t => t.TripId);
+                .HasOne(t => t.Driver)
+                .WithMany(u => u.DriverTrips)
+                .HasForeignKey(t => t.DriverId) // Foreign key linking to ApplicationUser.Id
+                .OnDelete(DeleteBehavior.Restrict); // Restrict deletion if there are related trips
 
+            // Define relationship: Trip -> ApplicationUser (Passenger)
             modelBuilder.Entity<Trip>()
-                .HasOne(t => t.Request)
-                .WithOne(r => r.Trip)
-                .HasForeignKey<Trip>(t => t.RequestId)
-                .OnDelete(DeleteBehavior.ClientSetNull);
+                .HasOne(t => t.Passenger)
+                .WithMany(u => u.PassengerTrips)
+                .HasForeignKey(t => t.PassengerId) // Foreign key linking to ApplicationUser.Id
+                .OnDelete(DeleteBehavior.Restrict); // Restrict deletion if there are related trips
 
-            modelBuilder.Entity<Trip>()
-                .HasOne(t => t.ApplicationUser)
-                .WithOne(d => d.Trip)
-                .HasForeignKey<Trip>(t => t.ApplicationUserId);
+            // Define relationship: Vehicle -> ApplicationUser (Driver)
+            modelBuilder.Entity<Vehicle>()
+                .HasOne(v => v.Driver)
+                .WithOne(u => u.Vehicle)
+                .HasForeignKey<ApplicationUser>(u => u.VehicleId) // Foreign key linking to Vehicle.VehicleId
+                .OnDelete(DeleteBehavior.Restrict); // Restrict deletion if there is a related vehicle
 
-            modelBuilder.Entity<Trip>()
-               .HasIndex(e => e.ApplicationUserId)
-               .IsUnique(false);
-
-            // Passenger
-
+            // Define relationship: ApplicationUser (Driver) -> Trip (DriverTrips)
             modelBuilder.Entity<ApplicationUser>()
-                .HasMany(p => p.Requests)
-                .WithOne(r => r.ApplicationUser)
-                .HasForeignKey(r => r.ApplicationUserId);
+                .HasMany(u => u.DriverTrips)
+                .WithOne(t => t.Driver)
+                .HasForeignKey(t => t.DriverId) // Foreign key linking to ApplicationUser.Id
+                .OnDelete(DeleteBehavior.Restrict); // Restrict deletion if there are related driver trips
+
+            // Define relationship: ApplicationUser (Passenger) -> Trip (PassengerTrips)
+            modelBuilder.Entity<ApplicationUser>()
+                .HasMany(u => u.PassengerTrips)
+                .WithOne(t => t.Passenger)
+                .HasForeignKey(t => t.PassengerId) // Foreign key linking to ApplicationUser.Id
+                .OnDelete(DeleteBehavior.Restrict); // Restrict deletion if there are related passenger trips
+
+            // Define relationship: ApplicationUser (Driver) -> Request (DriverRequests)
+            modelBuilder.Entity<ApplicationUser>()
+                .HasMany(u => u.DriverRequests)
+                .WithOne(r => r.Driver)
+                .HasForeignKey(r => r.DriverID) // Foreign key linking to ApplicationUser.Id
+                .OnDelete(DeleteBehavior.Restrict); // Restrict deletion if there are related driver requests
+
+            // Define relationship: ApplicationUser (Passenger) -> Request (PassengerRequests)
+            modelBuilder.Entity<ApplicationUser>()
+                .HasMany(u => u.PassengerRequests)
+                .WithOne(r => r.Passenger)
+                .HasForeignKey(r => r.PassengerId) // Foreign key linking to ApplicationUser.Id
+                .OnDelete(DeleteBehavior.Restrict); // Restrict deletion if there are related passenger requests
+
+            // Define relationship: ApplicationUser (Driver) -> Vehicle
+            modelBuilder.Entity<ApplicationUser>()
+                .HasOne(u => u.Vehicle)
+                .WithOne(v => v.Driver)
+                .HasForeignKey<Vehicle>(v => v.DriverId) // Foreign key linking to ApplicationUser.Id
+                .OnDelete(DeleteBehavior.Restrict); // Restrict deletion if there is a related vehicle
 
 
 
-
-          
-
-            // Other configurations...
-
-            //ApplicationUser
-
-          
-           
-         
-
-            base.OnModelCreating(modelBuilder);
         }
+
+
+
+
 
     }
 }

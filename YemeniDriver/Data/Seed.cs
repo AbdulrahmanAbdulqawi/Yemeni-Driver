@@ -39,40 +39,40 @@ namespace YemeniDriver.Data
                     await userManager.AddToRoleAsync(newAdminUser, Roles.Admin.ToString());
                 }
 
-                string appPassngerUserEmail = "passenger@gmail.com";
+                //string appPassngerUserEmail = "passenger@gmail.com";
 
-                var appPassengerUser = await userManager.FindByEmailAsync(appPassngerUserEmail);
-                if (appPassengerUser == null)
-                {
-                    var newAppUser = new ApplicationUser()
-                    {
-                        UserName = "passenger-user",
-                        Email = appPassngerUserEmail,
-                        EmailConfirmed = true,
-                        Roles = Roles.Passenger
+                //var appPassengerUser = await userManager.FindByEmailAsync(appPassngerUserEmail);
+                //if (appPassengerUser == null)
+                //{
+                //    var newAppUser = new ApplicationUser()
+                //    {
+                //        UserName = "passenger-user",
+                //        Email = appPassngerUserEmail,
+                //        EmailConfirmed = true,
+                //        Roles = Roles.Passenger
 
-                    };
-                    await userManager.CreateAsync(newAppUser, "123456aA@");
-                    await userManager.AddToRoleAsync(newAppUser, Roles.Passenger.ToString());
-                }
+                //    };
+                //    await userManager.CreateAsync(newAppUser, "123456aA@");
+                //    await userManager.AddToRoleAsync(newAppUser, Roles.Passenger.ToString());
+                //}
 
-                string appDriverUserEmail = "driver@gmail.com";
+                //string appDriverUserEmail = "driver@gmail.com";
 
-                var appDriverUser = await userManager.FindByEmailAsync(appDriverUserEmail);
-                if (appDriverUser == null)
-                {
-                    var newAppUser = new ApplicationUser()
-                    {
-                        UserName = "driver-user",
-                        Email = appDriverUserEmail,
-                        EmailConfirmed = true,
-                        VehicleId = "123AA",
-                        Roles = Roles.Driver
-                    };
-                    await userManager.CreateAsync(newAppUser, "123456aA@");
-                    await userManager.AddToRoleAsync(newAppUser, Roles.Driver.ToString());
+                //var appDriverUser = await userManager.FindByEmailAsync(appDriverUserEmail);
+                //if (appDriverUser == null)
+                //{
+                //    var newAppUser = new ApplicationUser()
+                //    {
+                //        UserName = "driver-user",
+                //        Email = appDriverUserEmail,
+                //        EmailConfirmed = true,
+                //        VehicleId = "123AA",
+                //        Roles = Roles.Driver
+                //    };
+                //    await userManager.CreateAsync(newAppUser, "123456aA@");
+                //    await userManager.AddToRoleAsync(newAppUser, Roles.Driver.ToString());
 
-                }
+                //}
             }
         }
     }

@@ -56,7 +56,7 @@
                 else{
                     foreach (var request in Model.Requests)
                     {
-                        var user = Model.Users.Where(a => a.Id == request.ApplicationUserId).FirstOrDefault();
+                        var user = Model.Users.Where(a => a.Id == request.PassengerId).FirstOrDefault();
                         <div class="driver-card">
                                 <div class="driver-card-body">
                                     @if (user != null)

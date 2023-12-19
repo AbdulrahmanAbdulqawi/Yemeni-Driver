@@ -13,9 +13,11 @@ else
         <thead>
             <tr>
                 <th>Passenger Name</th>
-                <th>StartTime</th>
-                <th>EndTime</th>
+                <th>Start Time</th>
+                <th>End Time</th>
                 <th>Duration</th>
+                <th>Pickup Location</th>
+                <th>Dropoff Location</th>
                 <th>Price</th>
                 <th>Driver Rating</th>
                 <th>Passenger Rating</th>
@@ -30,6 +32,8 @@ else
                     <td>@trip.StartTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
                     <td>@trip.EndTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
                     <td>@trip.Duration Mins</td>
+                    <td>@trip.PickupLocation</td>
+                    <td>@trip.DropoffLocation</td>
                     <td>@trip.Price$</td>
                     <td>@trip.DriverRating</td>
                     <td>@trip.PassengerRating</td>

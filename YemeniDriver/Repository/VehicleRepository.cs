@@ -35,7 +35,7 @@ namespace YemeniDriver.Repository
         {
        
 
-            return await _applicationDbContext.Vehicles.AsNoTracking().Include(a => a.ApplicationUser).AsNoTracking().FirstOrDefaultAsync(a => a.ApplicationUserId == ownerId);
+            return await _applicationDbContext.Vehicles.AsNoTracking().Include(a => a.Driver).AsNoTracking().FirstOrDefaultAsync(a => a.DriverId == ownerId);
         }
 
         public async Task<IEnumerable<Vehicle>> GetVehiclesAsync()
