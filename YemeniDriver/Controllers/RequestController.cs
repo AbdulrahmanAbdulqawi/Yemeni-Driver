@@ -145,6 +145,34 @@ namespace YemeniDriver.Controllers
            
         }
 
+        [Route("api/request/getPassengerRequests")]
+        [HttpPost("getPassengerRequests")]
+        public async Task<IActionResult> GetPassengerRequests(string passengerId)
+        {
+            var requests = await _requestRepository.GetByUserId(passengerId, Roles.Passenger);
+
+            List<GetRequestsViewModel> requestsList = [];
+            foreach (var request in requests)
+            {
+                var requestDetails = await _requestRepository.GetByIdAsyncNoTracking(request.RequestId);
+                var driver = await _userRepository.GetByIdAsyncNoTracking(request.PassengerId);
+                requestsList.Add(new GetRequestsViewModel
+                {
+                    DriverName = driver.FirstName + " " + driver.LastName,
+                    Status = requestDetails.Status,
+                    NumberOfSeats = requestDetails.NumberOfSeats,
+                    ApplicationUserId = requestDetails.PassengerId,
+                    DropoffLocation = requestDetails.DropoffLocation,
+                    PickupLocation = requestDetails.PickupLocation,
+                    EstimationPrice = requestDetails.EstimationPrice,
+                    PickupTime = requestDetails.PickupTime
+                });
+            }
+
+            return View(requestsList);
+
+        }
+
         private static string RandomString(int length)
         {
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";

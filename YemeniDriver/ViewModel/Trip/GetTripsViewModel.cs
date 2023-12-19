@@ -7,6 +7,7 @@ namespace YemeniDriver.ViewModel.Trip
     {
         public string RequestId { get; set; }
         public string ApplicationUserId { get; set; }
+        public string DriverName { get; set; }
         public string PassengerName {  get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }

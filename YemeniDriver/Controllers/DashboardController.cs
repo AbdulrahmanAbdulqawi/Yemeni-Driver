@@ -54,10 +54,8 @@ namespace YemeniDriver.Controllers
 
             var orderdDrivers = new List<ApplicationUser>();
 
-            foreach (var item in closestDriver.Values)
-            {
-                orderdDrivers.Add(item);
-            }
+            orderdDrivers.AddRange(closestDriver.Values);
+
 
             var passengerDashboardVM = new PassengerDashboardViewModel(orderdDrivers)
             {
@@ -74,16 +72,16 @@ namespace YemeniDriver.Controllers
 
         public async Task<IActionResult> DriverDashboard()
         {
-            var user = _httpContextAccessor.HttpContext.User.GetUserId();
-            var driverDetails = await _dashboardRepository.GetDriverByIdAsync(user);
+            var driverId = _httpContextAccessor.HttpContext.User.GetUserId();
+            var driverDetails = await _dashboardRepository.GetDriverByIdAsync(driverId);
 
             // Ensure the above asynchronous call is awaited to get the actual result
 
-            var requests = await _requestRepository.GetByStatus(Data.Enums.RequestStatus.Requested);
-            var driverRequests = requests.Where(a => a.DriverID == user);
+            var requests = await _requestRepository.GetByUserId(driverId, Roles.Driver);
+            var requestedRequests = requests.Where(a => a.Status == Data.Enums.RequestStatus.Requested);
 
             var driverDashboardVM = new DriverDashboardViewModel(
-                driverRequests,
+                requestedRequests,
                 await _dashboardRepository.GetPassengers())
                 {
                     Id = driverDetails.Id,

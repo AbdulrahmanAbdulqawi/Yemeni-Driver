@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using YemeniDriver.Interfaces;
 using YemeniDriver.ViewModel.Trip;
-using YemeniDriver.Interfaces;
 using YemeniDriver.Data;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace YemeniDriver.Controllers
 {
@@ -22,39 +24,94 @@ namespace YemeniDriver.Controllers
             return View();
         }
 
-        public async Task<IActionResult> GetTrips(string driverId)
+        public async Task<IActionResult> GetDriverTrips(string driverId)
         {
-            var trips = await _tripRepository.GetByUserId(driverId, Roles.Driver);
-            var driver = await _userRepository.GetByIdAsyncNoTracking(driverId);
-
-
-            List<GetTripsViewModel> tripsVM = [];
-            foreach (var trip in trips)
+            try
             {
-                var passenger = await _userRepository.GetByIdAsync(trip.PassengerId);
-                //var driverId = await _driverAndRequestRepository.GetDriverIdByRequestId(trip.RequestId);
+                // Retrieve trips for the specified driver
+                var trips = await _tripRepository.GetByUserId(driverId, Roles.Driver);
 
-                var tripVM = new GetTripsViewModel
+                // Retrieve driver information
+
+                List<GetTripsViewModel> tripsVM = new List<GetTripsViewModel>();
+
+                foreach (var trip in trips)
                 {
-                    PassengerName = passenger.FirstName + " " +  passenger.LastName,
-                    //DriverName = driver.FirstName + " " + driver.LastName,
-                    StartTime = trip.StartTime,
-                    EndTime = trip.EndTime,
-                    ApplicationUserId = trip.DriverId,
-                    Comment = trip.Comment,
-                    DriverRating = trip.DriverRating,
-                    Duration = trip.Duration,
-                    PassengerRating = trip.PassengerRating,
-                    Price = Math.Round(trip.Price, 2),
-                    RequestId = trip.RequestId,
-                    DropoffLocation = trip.DropoffLocation,
-                    PickupLocation = trip.PickupLocation,
+                    // Retrieve passenger information
+                    var passenger = await _userRepository.GetByIdAsync(trip.PassengerId);
 
-                };
-                tripsVM.Add(tripVM);
+                    // Map data to view model
+                    var tripVM = new GetTripsViewModel
+                    {
+                        PassengerName = $"{passenger.FirstName} {passenger.LastName}",
+                        StartTime = trip.StartTime,
+                        EndTime = trip.EndTime,
+                        ApplicationUserId = trip.DriverId,
+                        Comment = trip.Comment,
+                        DriverRating = trip.DriverRating,
+                        Duration = trip.Duration,
+                        PassengerRating = trip.PassengerRating,
+                        Price = Math.Round(trip.Price, 2),
+                        RequestId = trip.RequestId,
+                        DropoffLocation = trip.DropoffLocation,
+                        PickupLocation = trip.PickupLocation,
+                    };
+
+                    tripsVM.Add(tripVM);
+                }
+
+                return View(tripsVM);
             }
-            
-            return View(tripsVM);
+            catch (Exception ex)
+            {
+                // Handle exceptions appropriately (log or show an error page)
+                return View("Error");
+            }
+        }
+
+        public async Task<IActionResult> GetPassengerTrips(string passengerId)
+        {
+            try
+            {
+                // Retrieve trips for the specified driver
+                var trips = await _tripRepository.GetByUserId(passengerId, Roles.Passenger);
+
+                // Retrieve driver information
+
+                List<GetTripsViewModel> tripsVM = new List<GetTripsViewModel>();
+
+                foreach (var trip in trips)
+                {
+                    // Retrieve passenger information
+                    var driver = await _userRepository.GetByIdAsync(trip.DriverId);
+
+                    // Map data to view model
+                    var tripVM = new GetTripsViewModel
+                    {
+                        PassengerName = $"{driver.FirstName} {driver.LastName}",
+                        StartTime = trip.StartTime,
+                        EndTime = trip.EndTime,
+                        ApplicationUserId = trip.DriverId,
+                        Comment = trip.Comment,
+                        DriverRating = trip.DriverRating,
+                        Duration = trip.Duration,
+                        PassengerRating = trip.PassengerRating,
+                        Price = Math.Round(trip.Price, 2),
+                        RequestId = trip.RequestId,
+                        DropoffLocation = trip.DropoffLocation,
+                        PickupLocation = trip.PickupLocation,
+                    };
+
+                    tripsVM.Add(tripVM);
+                }
+
+                return View(tripsVM);
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions appropriately (log or show an error page)
+                return View("Error");
+            }
         }
     }
 }
