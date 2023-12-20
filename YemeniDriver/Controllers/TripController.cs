@@ -1,29 +1,40 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using YemeniDriver.Data;
 using YemeniDriver.Interfaces;
 using YemeniDriver.ViewModel.Trip;
-using YemeniDriver.Data;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace YemeniDriver.Controllers
 {
+    /// <summary>
+    /// Controller responsible for handling trip-related actions and views.
+    /// </summary>
     public class TripController : Controller
     {
         private readonly ITripRepository _tripRepository;
         private readonly IUserRepository _userRepository;
+        private readonly ILogger<TripController> _logger;
 
-        public TripController(ITripRepository tripRepository, IUserRepository userRepository)
+        /// <summary>
+        /// Constructor for the TripController.
+        /// </summary>
+        public TripController(ITripRepository tripRepository, IUserRepository userRepository, ILogger<TripController> logger)
         {
             _tripRepository = tripRepository;
             _userRepository = userRepository;
+            _logger = logger;
         }
 
+        /// <summary>
+        /// Default action for the TripController.
+        /// </summary>
         public IActionResult Index()
         {
             return View();
         }
 
+        /// <summary>
+        /// Action to get trips for a specific driver.
+        /// </summary>
         public async Task<IActionResult> GetDriverTrips(string driverId)
         {
             try
@@ -64,11 +75,14 @@ namespace YemeniDriver.Controllers
             }
             catch (Exception ex)
             {
-                // Handle exceptions appropriately (log or show an error page)
+                _logger.LogError(ex, "Error getting driver trips.");
                 return View("Error");
             }
         }
 
+        /// <summary>
+        /// Action to get trips for a specific passenger.
+        /// </summary>
         public async Task<IActionResult> GetPassengerTrips(string passengerId)
         {
             try
@@ -109,7 +123,7 @@ namespace YemeniDriver.Controllers
             }
             catch (Exception ex)
             {
-                // Handle exceptions appropriately (log or show an error page)
+                _logger.LogError(ex, "Error getting passenger trips.");
                 return View("Error");
             }
         }

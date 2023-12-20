@@ -1,15 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging; // Import the ILogger
 using YemeniDriver.Data.Enums;
 using YemeniDriver.Interfaces;
 using YemeniDriver.Models;
 using YemeniDriver.Service;
 using YemeniDriver.ViewModel.Dashboard;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using YemeniDriver.Data;
 
 namespace YemeniDriver.Controllers
@@ -87,7 +82,7 @@ namespace YemeniDriver.Controllers
             try
             {
                 var driverId = _httpContextAccessor.HttpContext.User.GetUserId();
-                var driverDetails = await _dashboardRepository.GetDriverByIdAsync(driverId);
+                var driverDetails = await _dashboardRepository.GetDriverByIdAsyncNoTracking(driverId);
 
                 // Retrieve requested requests for the driver
                 var requests = await _requestRepository.GetByUserId(driverId, Roles.Driver);

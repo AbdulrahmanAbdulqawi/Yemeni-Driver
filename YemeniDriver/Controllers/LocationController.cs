@@ -1,11 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging; // Import the ILogger
-using System;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using YemeniDriver.Data;
 using YemeniDriver.Interfaces;
-using YemeniDriver.Models;
 using YemeniDriver.Service;
 
 namespace YemeniDriver.Controllers

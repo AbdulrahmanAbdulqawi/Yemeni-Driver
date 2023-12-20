@@ -1,61 +1,141 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
+﻿using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using System.IO;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using YemeniDriver.Data;
 using YemeniDriver.Interfaces;
 using YemeniDriver.Models;
 
 namespace YemeniDriver.Repository
 {
+    /// <summary>
+    /// Repository for handling dashboard-related data operations.
+    /// </summary>
     public class DashboardRepository : IDashboardRepository
     {
-        private readonly ApplicationDbContext _dbContext;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IUserRepository _userRepository;
+        private readonly ILogger _logger;
 
-        public DashboardRepository(ApplicationDbContext dbContext, UserManager<ApplicationUser> userManager, IUserRepository userRepository)
+        /// <summary>
+        /// Constructor for the DashboardRepository.
+        /// </summary>
+        public DashboardRepository( UserManager<ApplicationUser> userManager, IUserRepository userRepository, ILogger logger)
         {
-            _dbContext = dbContext;
             _userManager = userManager;
             _userRepository = userRepository;
+            _logger = logger;
         }
+
+        /// <inheritdoc/>
         public async Task<ApplicationUser> GetDriverByIdAsync(string driverId)
         {
-            var driver = await _userRepository.GetByIdAsyncNoTracking(driverId);
-            if (driver != null)
+            try
             {
-                return driver;
+                var driver = await _userRepository.GetByIdAsync(driverId);
+                if (driver != null)
+                {
+                    return driver;
+                }
+                throw new Exception("Driver not found");
             }
-            throw new Exception("Driver not found");
-
+            catch (Exception ex)
+            {
+                // Log the exception
+                _logger.LogError(ex, "Error retrieving driver by ID");
+                throw;
+            }
         }
 
-        public Task<ApplicationUser> GetDriverByIdAsyncNoTracking(string driverId)
+        /// <inheritdoc/>
+        public async Task<ApplicationUser> GetDriverByIdAsyncNoTracking(string driverId)
         {
-            throw new NotImplementedException();
+            // Implement this method if needed
+            try
+            {
+                var driver = await _userRepository.GetByIdAsyncNoTracking(driverId);
+                if (driver != null)
+                {
+                    return driver;
+                }
+                throw new Exception("Driver not found");
+            }
+            catch (Exception ex)
+            {
+                // Log the exception
+                _logger.LogError(ex, "Error retrieving driver by ID");
+                throw;
+            }
         }
 
+        /// <inheritdoc/>
         public async Task<IEnumerable<ApplicationUser>> GetDrivers()
         {
-           return await _userRepository.GetDrivers();
+            try
+            {
+                return await _userRepository.GetDrivers();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving list of drivers");
+                throw;
+            }
         }
 
+        /// <inheritdoc/>
         public async Task<ApplicationUser> GetPassengerByIdAsync(string passengerId)
         {
-            var passenger = _userManager.GetUsersInRoleAsync(Roles.Passenger.ToString()).Result.FirstOrDefault(a => a.Id == passengerId);
-            if (passenger != null) return passenger;
-            throw new Exception("passenger not found");
+            try
+            {
+                var passenger = await _userRepository.GetByIdAsync(passengerId);
+                if (passenger != null)
+                {
+                    return passenger;
+                }
+                throw new Exception("Passenger not found");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving passenger by ID");
+                throw;
+            }
         }
 
-        public Task<ApplicationUser> GetPassengerByIdAsyncNoTracking(string passengerId)
+        /// <inheritdoc/>
+        public async Task<ApplicationUser> GetPassengerByIdAsyncNoTracking(string passengerId)
         {
-            throw new NotImplementedException();
+            // Implement this method if needed
+            try
+            {
+                var passenger = await _userRepository.GetByIdAsyncNoTracking(passengerId);
+                if (passenger != null)
+                {
+                    return passenger;
+                }
+                throw new Exception("Passenger not found");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving passenger by ID");
+                throw;
+            }
         }
 
+        /// <inheritdoc/>
         public async Task<IEnumerable<ApplicationUser>> GetPassengers()
         {
-            return await _userManager.GetUsersInRoleAsync(Roles.Passenger.ToString());
+            try
+            {
+                return await _userRepository.GetPassengers();
+            }
+            catch (Exception ex)
+            {
+                // Log the exception
+                _logger.LogError(ex, "Error retrieving list of passengers");
+                throw;
+            }
         }
     }
 }

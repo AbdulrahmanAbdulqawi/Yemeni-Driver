@@ -5,7 +5,6 @@ using YemeniDriver.Interfaces;
 using YemeniDriver.Models;
 using YemeniDriver.ViewModel.Account;
 using AspNetCoreHero.ToastNotification.Abstractions;
-using Microsoft.AspNetCore.Authorization;
 
 namespace YemeniDriver.Controllers
 {/// <summary>

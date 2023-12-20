@@ -6,10 +6,7 @@ using YemeniDriver.Interfaces;
 using YemeniDriver.ViewModel.Vehicle;
 using YemeniDriver.Data;
 using YemeniDriver.Data.Enums;
-using Microsoft.EntityFrameworkCore;
-using GoogleMapsApi.Entities.Directions.Response;
 using YemeniDriver.ViewModel.User;
-using YemeniDriver.Interfaces;
 
 namespace YemeniDriver.Controllers
 {
