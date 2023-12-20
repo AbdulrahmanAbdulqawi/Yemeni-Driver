@@ -109,10 +109,11 @@ namespace YemeniDriver.Controllers
                 _tripRepository.Add(trip);
 
                 _notyf.Success("Request Accepted Succesfully");
-                await _hubContext.Clients.User(passengerId).SendAsync("ReceiveRequestNotification", "Your Ride Request Accepted!");
+                await _hubContext.Clients.User(passengerId).SendAsync("ReceiveRequestNotification", "Your Ride Request Accepted!", driverId, trip.TripId);
 
 
                 return RedirectToAction("DriverDashboard", "Dashboard");
+
             }
             return NotFound(new { Error = "Request not found" });
         }

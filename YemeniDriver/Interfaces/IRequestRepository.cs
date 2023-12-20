@@ -17,8 +17,6 @@ namespace YemeniDriver.Interfaces
         bool Update(Request request);
         bool Delete(Request request);
         bool DeleteRange(List<Request> requests);
-
-        bool DeleteAllDriverRequests(IEnumerable<Request> requests);
         bool Save();
     }
 }

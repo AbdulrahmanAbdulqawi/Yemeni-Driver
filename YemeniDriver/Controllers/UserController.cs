@@ -9,6 +9,7 @@ using YemeniDriver.Data.Enums;
 using Microsoft.EntityFrameworkCore;
 using GoogleMapsApi.Entities.Directions.Response;
 using YemeniDriver.ViewModel.User;
+using YemeniDriver.Interfaces;
 
 namespace YemeniDriver.Controllers
 {
@@ -25,6 +26,7 @@ namespace YemeniDriver.Controllers
         private readonly ITripRepository _tripRepository;
         private readonly INotyfService _notyf;
         private readonly IHttpContextAccessor _contextAccessor;
+        private readonly IRatingReposiotry _driverRatingRepository;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AccountController"/> class.
@@ -44,7 +46,8 @@ namespace YemeniDriver.Controllers
             INotyfService notyf,
             IRequestRepository requestRepository,
             ITripRepository tripRepository,
-            IHttpContextAccessor contextAccessor)
+            IHttpContextAccessor contextAccessor,
+            IRatingReposiotry driverRatingRepository)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _signInManager = signInManager ?? throw new ArgumentNullException(nameof(signInManager));
@@ -55,6 +58,7 @@ namespace YemeniDriver.Controllers
             _requestRepository = requestRepository;
             _tripRepository = tripRepository;
             _contextAccessor = contextAccessor;
+            _driverRatingRepository = driverRatingRepository;
         }
 
         public IActionResult Index()
@@ -563,7 +567,7 @@ namespace YemeniDriver.Controllers
                 Image = driver.ProfileImageUrl,
                 Location = driver.Location,
                 PhoneNumber = driver.PhoneNumber,
-                Rating = 5,
+                Rating = (int?)driver.Rating ?? 5,
                 ViewVehicle = new ViewVehicleViewModel
                 {
                     Capacity = driver.Vehicle?.Capacity,
@@ -582,7 +586,7 @@ namespace YemeniDriver.Controllers
         /// </summary>
         private PassengerDetailsViewModel MapToPassengerDetailsViewModel(ApplicationUser passenger)
         {
-            return new PassengerDetailsViewModel()
+            var passengerVM =  new PassengerDetailsViewModel()
             {
                 Email = passenger.Email,
                 FirstName = passenger.FirstName,
@@ -590,8 +594,11 @@ namespace YemeniDriver.Controllers
                 Image = passenger.ProfileImageUrl,
                 Location = passenger.Location,
                 PhoneNumber = passenger.PhoneNumber,
-                Rating = 5,
+                Rating = (int?)passenger.Rating ?? 5,
+
             };
+
+            return passengerVM;
         }
 
         /// <summary>

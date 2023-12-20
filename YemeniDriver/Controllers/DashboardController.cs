@@ -1,88 +1,99 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using YemeniDriver.ViewModel.Dashboard;
-using YemeniDriver.Data;
+using Microsoft.Extensions.Logging; // Import the ILogger
+using YemeniDriver.Data.Enums;
 using YemeniDriver.Interfaces;
 using YemeniDriver.Models;
 using YemeniDriver.Service;
 using YemeniDriver.ViewModel.Dashboard;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using YemeniDriver.Data;
 
 namespace YemeniDriver.Controllers
 {
+    /// <summary>
+    /// Controller responsible for handling the dashboard for different user roles.
+    /// </summary>
     [Authorize]
     public class DashboardController : Controller
     {
         private readonly IDashboardRepository _dashboardRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IRequestRepository _requestRepository;
-        public DashboardController(IDashboardRepository dashboardRepository, IHttpContextAccessor httpContextAccessor, IRequestRepository requestRepository)
+        private readonly ILogger<DashboardController> _logger; // Add ILogger
+
+        public DashboardController(
+            IDashboardRepository dashboardRepository,
+            IHttpContextAccessor httpContextAccessor,
+            IRequestRepository requestRepository,
+            ILogger<DashboardController> logger) // Inject ILogger in the constructor
         {
             _dashboardRepository = dashboardRepository;
             _httpContextAccessor = httpContextAccessor;
             _requestRepository = requestRepository;
-        }
-        public IActionResult Index()
-        {
-            return View();
+            _logger = logger; // Assign ILogger in the constructor
         }
 
+        /// <summary>
+        /// Display the passenger dashboard view.
+        /// </summary>
         public async Task<IActionResult> PassengerDashboard()
         {
-            var user = _httpContextAccessor.HttpContext.User.GetUserId();
-            var passengerDetailes = await _dashboardRepository.GetPassengerByIdAsync(user);
-            
-            if(passengerDetailes.LiveLocationLatitude == null || passengerDetailes.LiveLocationLongitude == null)
+            try
             {
-                passengerDetailes.LiveLocationLongitude = 10.5;
-                passengerDetailes.LiveLocationLatitude = 10.5;
-            }
-            var drivers = _dashboardRepository.GetDrivers().Result.Where(a => a.FirstName != null).ToList();
-            
-            Dictionary<double, ApplicationUser> closestDriver = [];
-            foreach (var driver in drivers) {
-                var claculateDistance = DistanceService
-              .CalculateDistance((double)passengerDetailes.LiveLocationLatitude, (double)passengerDetailes.LiveLocationLongitude,
-              (double)driver.LiveLocationLatitude, (double)driver.LiveLocationLongitude);
-                if(closestDriver.ContainsKey(claculateDistance))
+                var userId = _httpContextAccessor.HttpContext.User.GetUserId();
+                var passengerDetails = await _dashboardRepository.GetPassengerByIdAsync(userId);
+
+                // Set default location if live location is not available
+                if (passengerDetails.LiveLocationLatitude == null || passengerDetails.LiveLocationLongitude == null)
                 {
-                    claculateDistance++;
+                    passengerDetails.LiveLocationLongitude = 10.5;
+                    passengerDetails.LiveLocationLatitude = 10.5;
                 }
-                closestDriver.Add(claculateDistance, driver);
+
+                // Get a list of drivers
+                var drivers = (await _dashboardRepository.GetDrivers()).Where(driver => driver.FirstName != null).ToList();
+
+                // Calculate distance from passenger to each driver and select the closest 5
+                var closestDrivers = CalculateClosestDrivers(passengerDetails, drivers, 5);
+
+                var passengerDashboardVM = new PassengerDashboardViewModel(closestDrivers)
+                {
+                    Id = passengerDetails.Id,
+                    FirstName = passengerDetails.FirstName,
+                    Location = passengerDetails.Location,
+                    Image = passengerDetails.ProfileImageUrl
+                };
+
+                return View(passengerDashboardVM);
             }
-
-            closestDriver.OrderByDescending(a => a.Key).Take(5);
-
-            var orderdDrivers = new List<ApplicationUser>();
-
-            orderdDrivers.AddRange(closestDriver.Values);
-
-
-            var passengerDashboardVM = new PassengerDashboardViewModel(orderdDrivers)
+            catch (Exception ex)
             {
-                Id = passengerDetailes.Id,
-                FirstName = passengerDetailes.FirstName,
-                Location = passengerDetailes.Location,
-                Image = passengerDetailes.ProfileImageUrl
-                
-            };
-            
-           
-            return View(passengerDashboardVM);
+                // Log the exception
+                _logger.LogError(ex, "Error in PassengerDashboard method.");
+                // Optionally handle the exception and return an error view or redirect
+                return View("Error");
+            }
         }
 
+        /// <summary>
+        /// Display the driver dashboard view.
+        /// </summary>
         public async Task<IActionResult> DriverDashboard()
         {
-            var driverId = _httpContextAccessor.HttpContext.User.GetUserId();
-            var driverDetails = await _dashboardRepository.GetDriverByIdAsync(driverId);
+            try
+            {
+                var driverId = _httpContextAccessor.HttpContext.User.GetUserId();
+                var driverDetails = await _dashboardRepository.GetDriverByIdAsync(driverId);
 
-            // Ensure the above asynchronous call is awaited to get the actual result
+                // Retrieve requested requests for the driver
+                var requests = await _requestRepository.GetByUserId(driverId, Roles.Driver);
+                var requestedRequests = requests.Where(request => request.Status == RequestStatus.Requested);
 
-            var requests = await _requestRepository.GetByUserId(driverId, Roles.Driver);
-            var requestedRequests = requests.Where(a => a.Status == Data.Enums.RequestStatus.Requested);
-
-            var driverDashboardVM = new DriverDashboardViewModel(
-                requestedRequests,
-                await _dashboardRepository.GetPassengers())
+                var driverDashboardVM = new DriverDashboardViewModel(requestedRequests, await _dashboardRepository.GetPassengers())
                 {
                     Id = driverDetails.Id,
                     FirstName = driverDetails.FirstName,
@@ -90,41 +101,91 @@ namespace YemeniDriver.Controllers
                     Image = driverDetails.ProfileImageUrl
                 };
 
-            return View(driverDashboardVM);
+                return View(driverDashboardVM);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception
+                _logger.LogError(ex, "Error in DriverDashboard method.");
+                // Optionally handle the exception and return an error view or redirect
+                return View("Error");
+            }
         }
 
+        /// <summary>
+        /// Display the admin dashboard view.
+        /// </summary>
         public async Task<IActionResult> AdminDashboard()
         {
-            var drivers = await _dashboardRepository.GetDrivers();
-            var passengers = await _dashboardRepository.GetPassengers();
-
-            if (drivers == null || passengers == null)
+            try
             {
-                // Handle the case where either drivers or passengers (or both) are null
-                // You can return an error view, redirect to an error page, or handle it as appropriate for your application
-                if(drivers == null)
+                var drivers = await _dashboardRepository.GetDrivers();
+                var passengers = await _dashboardRepository.GetPassengers();
+
+                if (drivers == null || passengers == null)
                 {
-                    drivers = new List<ApplicationUser>();
+                    // Handle the case where either drivers or passengers (or both) are null
+                    if (drivers == null)
+                    {
+                        drivers = new List<ApplicationUser>();
+                    }
+                    else if (passengers == null)
+                    {
+                        passengers = new List<ApplicationUser>();
+                    }
+
+                    return View(new AdminDashboardViewModel
+                    {
+                        Drivers = drivers.ToList(),
+                        Passengers = passengers.ToList(),
+                    }); // Example: Return an "Error" view
                 }
-                else if(passengers == null) 
-                {
-                    passengers = new List<ApplicationUser>();
-                }
-                return View(new AdminDashboardViewModel
+
+                var adminDashboardVM = new AdminDashboardViewModel
                 {
                     Drivers = drivers.ToList(),
-                    Passengers = passengers.ToList(),
-                }); // Example: Return an "Error" view
+                    Passengers = passengers.ToList()
+                };
+
+                return View(adminDashboardVM);
             }
-            var adminDashboardVM = new AdminDashboardViewModel
+            catch (Exception ex)
             {
-
-                Drivers = drivers.ToList() ,
-                Passengers = passengers.ToList()
-            };
-
-            return View(adminDashboardVM);
+                // Log the exception
+                _logger.LogError(ex, "Error in AdminDashboard method.");
+                // Optionally handle the exception and return an error view or redirect
+                return View("Error");
+            }
         }
 
+
+
+        // This method calculates the closest drivers to a passenger
+        public static List<ApplicationUser> CalculateClosestDrivers(ApplicationUser passenger, List<ApplicationUser> drivers, int count)
+        {
+            var closestDrivers = new Dictionary<double, ApplicationUser>();
+
+            foreach (var driver in drivers)
+            {
+                var calculateDistance = DistanceService.CalculateDistance(
+                    passenger.LiveLocationLatitude.GetValueOrDefault(),
+                    passenger.LiveLocationLongitude.GetValueOrDefault(),
+                    driver.LiveLocationLatitude.GetValueOrDefault(),
+                    driver.LiveLocationLongitude.GetValueOrDefault());
+
+                while (closestDrivers.ContainsKey(calculateDistance))
+                {
+                    calculateDistance += 0.0001; // Increment to handle duplicates (adjust as needed)
+                }
+
+                closestDrivers.Add(calculateDistance, driver);
+            }
+
+            // Order by distance and take the closest N drivers
+            var orderedDrivers = closestDrivers.OrderBy(pair => pair.Key).Take(count);
+
+            // Return the ordered list of drivers
+            return orderedDrivers.Select(pair => pair.Value).ToList();
+        }
     }
 }

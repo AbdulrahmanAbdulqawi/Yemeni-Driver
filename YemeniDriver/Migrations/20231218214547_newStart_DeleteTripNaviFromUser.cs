@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace Yemeni_Driver.Migrations
+namespace YemeniDriver.Migrations
 {
     /// <inheritdoc />
     public partial class newStart_DeleteTripNaviFromUser : Migration

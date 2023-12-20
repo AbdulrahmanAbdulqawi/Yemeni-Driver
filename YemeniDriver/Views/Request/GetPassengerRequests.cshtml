@@ -12,26 +12,26 @@ else
     <table class="table">
         <thead>
             <tr>
-                <th>Driver Name</th>
-                <th>Request Time</th>
-                <th>Pickup Location</th>
-                <th>Dropoff Location</th>
-                <th>Estimation Price</th>
-                <th>Number of Seats</th>
-                <th>Status</th>
+                <th scope="col">Driver Name</th>
+                <th scope="col">Request Time</th>
+                <th scope="col">Pickup Location</th>
+                <th scope="col">Dropoff Location</th>
+                <th scope="col">Estimation Price</th>
+                <th scope="col">Number of Seats</th>
+                <th scope="col">Status</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var request in Model)
             {
                 <tr>
-                    <td>@request.DriverName</td>
-                    <td>@request.PickupTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
-                    <td>@request.PickupLocation</td>
-                    <td>@request.DropoffLocation</td>
-                    <td>@request.EstimationPrice$</td>
-                    <td>@request.NumberOfSeats</td>
-                    <td>@request.Status</td>
+                    <td scope="col">@request.DriverName</td>
+                    <td scope="col">@request.PickupTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                    <td scope="col">@request.PickupLocation</td>
+                    <td scope="col">@request.DropoffLocation</td>
+                    <td scope="col">@request.EstimationPrice$</td>
+                    <td scope="col">@request.NumberOfSeats</td>
+                    <td scope="col">@request.Status</td>
                 </tr>
             }
         </tbody>

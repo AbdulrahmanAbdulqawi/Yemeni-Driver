@@ -8,7 +8,7 @@ using YemeniDriver.Data;
 
 #nullable disable
 
-namespace Yemeni_Driver.Migrations
+namespace YemeniDriver.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot
@@ -395,6 +395,126 @@ namespace Yemeni_Driver.Migrations
                     b.ToTable("Vehicles");
                 });
 
+            modelBuilder.Entity("Yemeni_Driver.Models.DriverRating", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DriverId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RatingValue")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TripId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TripId");
+
+                    b.ToTable("DriverRatings");
+                });
+
+            modelBuilder.Entity("Yemeni_Driver.Models.DriverReview", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DriverId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RatingValue")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TripId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TripId");
+
+                    b.ToTable("DriverReviews");
+                });
+
+            modelBuilder.Entity("Yemeni_Driver.Models.PassengerRating", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PassengerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RatingValue")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TripId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TripId");
+
+                    b.ToTable("PassengerRatings");
+                });
+
+            modelBuilder.Entity("Yemeni_Driver.Models.PassengerReview", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PassengerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RatingValue")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TripId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TripId");
+
+                    b.ToTable("PassengerReviews");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -502,6 +622,50 @@ namespace Yemeni_Driver.Migrations
                     b.Navigation("Driver");
                 });
 
+            modelBuilder.Entity("Yemeni_Driver.Models.DriverRating", b =>
+                {
+                    b.HasOne("YemeniDriver.Models.Trip", "Trip")
+                        .WithMany("DriverRatings")
+                        .HasForeignKey("TripId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Trip");
+                });
+
+            modelBuilder.Entity("Yemeni_Driver.Models.DriverReview", b =>
+                {
+                    b.HasOne("YemeniDriver.Models.Trip", "Trip")
+                        .WithMany("DriverReviews")
+                        .HasForeignKey("TripId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Trip");
+                });
+
+            modelBuilder.Entity("Yemeni_Driver.Models.PassengerRating", b =>
+                {
+                    b.HasOne("YemeniDriver.Models.Trip", "Trip")
+                        .WithMany("PassengerRatings")
+                        .HasForeignKey("TripId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Trip");
+                });
+
+            modelBuilder.Entity("Yemeni_Driver.Models.PassengerReview", b =>
+                {
+                    b.HasOne("YemeniDriver.Models.Trip", "Trip")
+                        .WithMany("PassengerReviews")
+                        .HasForeignKey("TripId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Trip");
+                });
+
             modelBuilder.Entity("YemeniDriver.Models.ApplicationUser", b =>
                 {
                     b.Navigation("DriverRequests");
@@ -520,6 +684,17 @@ namespace Yemeni_Driver.Migrations
                 {
                     b.Navigation("Trip")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("YemeniDriver.Models.Trip", b =>
+                {
+                    b.Navigation("DriverRatings");
+
+                    b.Navigation("DriverReviews");
+
+                    b.Navigation("PassengerRatings");
+
+                    b.Navigation("PassengerReviews");
                 });
 #pragma warning restore 612, 618
         }

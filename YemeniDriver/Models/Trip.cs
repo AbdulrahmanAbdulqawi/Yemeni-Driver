@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using YemeniDriver.Models;
 
 namespace YemeniDriver.Models
 {
@@ -24,6 +25,12 @@ namespace YemeniDriver.Models
         public virtual Request Request { get; set; }
         public virtual ApplicationUser Driver { get; set; }
         public virtual ApplicationUser Passenger { get; set; }
+
+        public virtual ICollection<DriverRating> DriverRatings { get; set; }
+        public virtual ICollection<PassengerRating> PassengerRatings { get; set; }
+        public virtual ICollection<DriverReview> DriverReviews { get; set; }
+        public virtual ICollection<PassengerReview> PassengerReviews { get; set; }
+
 
 
     }

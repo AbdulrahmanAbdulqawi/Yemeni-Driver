@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using YemeniDriver.Models;
+using YemeniDriver.Models;
 
 namespace YemeniDriver.Data
 {
@@ -16,6 +17,11 @@ namespace YemeniDriver.Data
         public DbSet<Trip> Trips { get; set; }
         public DbSet<Request> Requests { get; set; }
         public DbSet<Vehicle> Vehicles { get; set; }
+        public DbSet<DriverRating> DriverRatings { get; set; }
+        public DbSet<DriverReview> DriverReviews { get; set; }
+
+        public DbSet<PassengerRating> PassengerRatings { get; set; }
+        public DbSet<PassengerReview> PassengerReviews { get; set; }
 
         //public DbSet<CancelRequest> CancelRequests { get; set; }
 
@@ -61,6 +67,26 @@ namespace YemeniDriver.Data
                 .HasForeignKey(t => t.PassengerId) // Foreign key linking to ApplicationUser.Id
                 .OnDelete(DeleteBehavior.Restrict); // Restrict deletion if there are related trips
 
+
+            modelBuilder.Entity<Trip>()
+               .HasMany(t => t.DriverRatings)
+               .WithOne(dr => dr.Trip)
+               .HasForeignKey(dr => dr.TripId);
+
+            modelBuilder.Entity<Trip>()
+                .HasMany(t => t.PassengerRatings)
+                .WithOne(pr => pr.Trip)
+                .HasForeignKey(pr => pr.TripId);
+
+            modelBuilder.Entity<Trip>()
+                .HasMany(t => t.DriverReviews)
+                .WithOne(dr => dr.Trip)
+                .HasForeignKey(dr => dr.TripId);
+
+            modelBuilder.Entity<Trip>()
+                .HasMany(t => t.PassengerReviews)
+                .WithOne(pr => pr.Trip)
+                .HasForeignKey(pr => pr.TripId);
             // Define relationship: Vehicle -> ApplicationUser (Driver)
             modelBuilder.Entity<Vehicle>()
                 .HasOne(v => v.Driver)

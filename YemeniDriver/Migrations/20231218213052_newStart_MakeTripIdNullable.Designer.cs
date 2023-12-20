@@ -9,7 +9,7 @@ using YemeniDriver.Data;
 
 #nullable disable
 
-namespace Yemeni_Driver.Migrations
+namespace YemeniDriver.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("20231218213052_newStart_MakeTripIdNullable")]

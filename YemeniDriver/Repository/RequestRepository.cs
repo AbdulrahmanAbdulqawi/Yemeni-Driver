@@ -74,13 +74,6 @@ namespace YemeniDriver.Repository
             return await _dbContext.Requests.Where(a => a.PassengerId == userId).ToListAsync();
 
         }
-        
-
-
-        public bool DeleteAllDriverRequests(IEnumerable<Request> requests)
-        {
-            _dbContext.Requests.RemoveRange(requests);
-            return Save();
-        }
+       
     }
 }

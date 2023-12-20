@@ -21,6 +21,10 @@ builder.Services.AddScoped<IPhotoService, PhotoService>();
 builder.Services.AddScoped<IRequestRepository, RequestRepository>();
 //builder.Services.AddScoped<IDriverAndRequestRepository, DriverAndRequestRepository>();
 builder.Services.AddScoped<ITripRepository, TripRepository>();
+builder.Services.AddScoped<IDriverRatingReposiotry, RatingRepository>();
+builder.Services.AddScoped<IRatingReposiotry, RatingRepository>();
+
+
 builder.Services.AddNotyf(config => { config.DurationInSeconds = 10; config.IsDismissable = true; config.Position = NotyfPosition.BottomRight; });
 builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
 builder.Services.AddSignalR();

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Yemeni_Driver.Migrations
+namespace YemeniDriver.Migrations
 {
     /// <inheritdoc />
     public partial class newStart : Migration
