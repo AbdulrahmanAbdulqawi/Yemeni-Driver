@@ -123,9 +123,10 @@ namespace YemeniDriver.Api.Controllers
                 {
                     requestedRequests = requests.Where(request => request.Status == RequestStatus.Requested);
                 }
-               
 
-                var driverDashboardVM = new DriverDashboardViewModel(requestedRequests, await _dashboardRepository.GetPassengers())
+                var passengers = await _dashboardRepository.GetPassengers();
+
+                var driverDashboardVM = new DriverDashboardViewModel(requestedRequests, passengers)
                 {
                     Id = driverDetails.Id,
                     FirstName = driverDetails.FirstName,

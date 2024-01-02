@@ -24,7 +24,6 @@ namespace YemeniDriver.Api.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ITripRepository _tripRepository;
-        private readonly INotyfService _notyf;
         private readonly IHubContext<NotificationHub> _hubContext;
         private readonly IUserRepository _userRepository;
         private readonly ILogger<RequestController> _logger;
@@ -34,7 +33,6 @@ namespace YemeniDriver.Api.Controllers
             IHttpContextAccessor httpContextAccessor,
             UserManager<ApplicationUser> userManager,
             ITripRepository tripRepository,
-            INotyfService notyf,
             IHubContext<NotificationHub> hubContext,
             IUserRepository userRepository,
             ILogger<RequestController> logger)
@@ -43,7 +41,6 @@ namespace YemeniDriver.Api.Controllers
             _httpContextAccessor = httpContextAccessor;
             _userManager = userManager;
             _tripRepository = tripRepository;
-            _notyf = notyf;
             _hubContext = hubContext;
             _userRepository = userRepository;
             _logger = logger;
@@ -67,7 +64,6 @@ namespace YemeniDriver.Api.Controllers
 
                 if (existingRequests?.Any(a => a.Status == Data.Enums.RequestStatus.Requested) == true)
                 {
-                    _notyf.Information("Request In Progress");
                     return Conflict(new { Message = "Request in progress" });
                 }
 
@@ -86,14 +82,11 @@ namespace YemeniDriver.Api.Controllers
                 _requestRepository.Add(request);
                 await _hubContext.Clients.User(request.DriverID).SendAsync("ReceiveRequestNotification", "New ride request!");
 
-                _notyf.Success("Request Sent!");
-
                 return CreatedAtAction(nameof(CreateRequest), new { requestId = request.RequestId }, new { Message = "Request Created" });
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error creating ride request.");
-                _notyf.Error("Error creating ride request.");
                 return StatusCode(500, new { Message = "Internal Server Error" });
             }
         }
@@ -154,7 +147,6 @@ namespace YemeniDriver.Api.Controllers
 
                     _tripRepository.Add(trip);
 
-                    _notyf.Success("Request Accepted Successfully");
                     await _hubContext.Clients.User(request.PassengerId).SendAsync("ReceiveRequestNotification", "Your Ride Request Accepted!", driverId, trip.TripId);
 
                     return Ok("Request Accepted");

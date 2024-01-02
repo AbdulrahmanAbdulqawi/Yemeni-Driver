@@ -39,7 +39,7 @@ namespace YemeniDriver.Test
             _users = AddTestData();
 
             _userRepositoryMock = new UserRepository(_dbContextMock, _userManagerMock.Object);
-            _dashboardRepository = new DashboardRepository(_dbContextMock, _userManagerMock.Object, _userRepositoryMock);
+            //_dashboardRepository = new DashboardRepository(_dbContextMock, _userManagerMock.Object, _userRepositoryMock);
 
 
         }

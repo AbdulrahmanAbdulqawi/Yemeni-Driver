@@ -94,18 +94,21 @@ namespace YemeniDriver.Api.Controllers
                     // Update trip, request, and driver information
                     UpdateTrip(trip, (int)rateVM.RatingValue, rateVM?.Comment);
                     UpdateRequest(request);
+
+
                     driver.Rating = await CalcDriverRatingsAverage(driver.Id);
                     _userRepository.Update(driver);
                     _userRepository.Save();
 
                     // Redirect to a thank-you page or any other desired page
-                    return RedirectToAction("PassengerDashboard", "Dashboard");
+                    return Ok();
                 }
             }
             catch (Exception ex)
             {
                 // Handle exceptions or log errors
                 ModelState.AddModelError("", "An error occurred while processing your request.");
+                return BadRequest(ex);
             }
 
             // If there are validation errors or other issues, return the view with the ViewModel

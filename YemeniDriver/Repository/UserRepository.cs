@@ -75,7 +75,7 @@ namespace YemeniDriver.Repository
         {
             var passengers = await _userManager.GetUsersInRoleAsync(Roles.Passenger.ToString());
 
-            if (!passengers.Any(a => a.Roles == Roles.Driver))
+            if (!passengers.Any(a => a.Roles == Roles.Passenger))
             {
                 return null;
             }

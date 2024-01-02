@@ -86,9 +86,15 @@ namespace YemeniDriver.Controllers
 
                 // Retrieve requested requests for the driver
                 var requests = await _requestRepository.GetByUserId(driverId, Roles.Driver);
-                var requestedRequests = requests.Where(request => request.Status == RequestStatus.Requested);
+                IEnumerable<Request> requestedRequests = [];
 
-                var driverDashboardVM = new DriverDashboardViewModel(requestedRequests, await _dashboardRepository.GetPassengers())
+                if (requests != null)
+                {
+                    requestedRequests = requests.Where(request => request.Status == RequestStatus.Requested);
+                }
+
+                var passengers = await _dashboardRepository.GetPassengers();
+                var driverDashboardVM = new DriverDashboardViewModel(requestedRequests,passengers.ToList())
                 {
                     Id = driverDetails.Id,
                     FirstName = driverDetails.FirstName,

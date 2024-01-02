@@ -17,12 +17,12 @@ namespace YemeniDriver.Repository
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IUserRepository _userRepository;
-        private readonly ILogger _logger;
+        private readonly ILogger<DashboardRepository> _logger;
 
         /// <summary>
         /// Constructor for the DashboardRepository.
         /// </summary>
-        public DashboardRepository( UserManager<ApplicationUser> userManager, IUserRepository userRepository, ILogger logger)
+        public DashboardRepository( UserManager<ApplicationUser> userManager, IUserRepository userRepository, ILogger<DashboardRepository> logger)
         {
             _userManager = userManager;
             _userRepository = userRepository;

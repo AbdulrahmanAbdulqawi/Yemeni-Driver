@@ -26,9 +26,7 @@ namespace YemeniDriver.Api.Controllers
         private readonly IVehicleRepository _vehicleRepository;
         private readonly IRequestRepository _requestRepository;
         private readonly ITripRepository _tripRepository;
-        private readonly INotyfService _notyf;
         private readonly IHttpContextAccessor _contextAccessor;
-        private readonly IRatingReposiotry _driverRatingRepository;
 
         public UserController(
             UserManager<ApplicationUser> userManager,
@@ -36,22 +34,18 @@ namespace YemeniDriver.Api.Controllers
             IUserRepository userRepository,
             IPhotoService photoService,
             IVehicleRepository vehicleRepository,
-            INotyfService notyf,
             IRequestRepository requestRepository,
             ITripRepository tripRepository,
-            IHttpContextAccessor contextAccessor,
-            IRatingReposiotry driverRatingRepository)
+            IHttpContextAccessor contextAccessor)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _signInManager = signInManager ?? throw new ArgumentNullException(nameof(signInManager));
             _photoService = photoService ?? throw new ArgumentNullException(nameof(photoService));
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             _vehicleRepository = vehicleRepository ?? throw new ArgumentNullException(nameof(vehicleRepository));
-            _notyf = notyf;
             _requestRepository = requestRepository;
             _tripRepository = tripRepository;
             _contextAccessor = contextAccessor;
-            _driverRatingRepository = driverRatingRepository;
         } 
 
         [HttpGet]
@@ -79,12 +73,10 @@ namespace YemeniDriver.Api.Controllers
 
             if (result.Succeeded)
             {
-                _notyf.Success("Driver account created successfully");
                 return Ok("Driver account created successfully");
             }
 
             AddErrorsToModelState(result.Errors);
-            _notyf.Error("Registration Failed");
             return BadRequest("Registration Failed");
         }
 
@@ -109,12 +101,10 @@ namespace YemeniDriver.Api.Controllers
 
             if (result.Succeeded)
             {
-                _notyf.Success("Passenger account created successfully");
                 return Ok("Passenger account created successfully");
             }
 
             AddErrorsToModelState(result.Errors);
-            _notyf.Error("Registration Failed");
             return BadRequest("Registration Failed");
         }
         
@@ -212,7 +202,6 @@ namespace YemeniDriver.Api.Controllers
 
                 UpdateDriverAndVehicle(driver, editDriverDetailsViewModel, profileImageResult.Url.ToString(), vehicleImageResult.Url.ToString());
 
-                _notyf.Success("Update Success");
                 return Ok("Update Success");
             }
             catch (Exception)
@@ -264,7 +253,6 @@ namespace YemeniDriver.Api.Controllers
 
                 UpdatePassenger(passenger, editPassengerDetailsViewModel, profileImageResult.Url.ToString());
 
-                _notyf.Success("Update Success");
                 return Ok("Update Success");
             }
             catch (Exception)

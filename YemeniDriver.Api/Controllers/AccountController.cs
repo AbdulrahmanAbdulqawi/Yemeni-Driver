@@ -19,22 +19,19 @@ namespace YemeniDriver.Api.Controllers
         private readonly IPhotoService _photoService;
         private readonly IUserRepository _userRepository;
         private readonly IVehicleRepository _vehicleRepository;
-        private readonly INotyfService _notyf;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             IUserRepository userRepository,
             IPhotoService photoService,
-            IVehicleRepository vehicleRepository,
-            INotyfService notyf)
+            IVehicleRepository vehicleRepository)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _signInManager = signInManager ?? throw new ArgumentNullException(nameof(signInManager));
             _photoService = photoService ?? throw new ArgumentNullException(nameof(photoService));
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             _vehicleRepository = vehicleRepository ?? throw new ArgumentNullException(nameof(vehicleRepository));
-            _notyf = notyf;
         }
 
         [HttpPost("Register")]
@@ -83,12 +80,10 @@ namespace YemeniDriver.Api.Controllers
 
                 if (result.Succeeded)
                 {
-                    _notyf.Success($"{user.FirstName} is logged in");
                     return Ok("Login successfully");
                 }
             }
 
-            _notyf.Error("Wrong credentials. Please enter the correct credentials");
             return BadRequest(new { Message = "Login failed" });
         }
 

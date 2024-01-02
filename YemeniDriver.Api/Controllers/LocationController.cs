@@ -13,14 +13,12 @@ namespace YemeniDriver.Api.Controllers
     public class LocationController : Controller
     {
         private readonly IUserRepository _userRepository;
-        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<LocationController> _logger; // Add ILogger
 
         // Constructor with dependency injection
-        public LocationController(IUserRepository userRepository, IHttpContextAccessor httpContextAccessor, ILogger<LocationController> logger) // Inject ILogger in the constructor
+        public LocationController(IUserRepository userRepository, ILogger<LocationController> logger) // Inject ILogger in the constructor
         {
             _userRepository = userRepository;
-            _httpContextAccessor = httpContextAccessor;
             _logger = logger; // Assign ILogger in the constructor
         }
 
