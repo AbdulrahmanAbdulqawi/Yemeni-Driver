@@ -1,21 +1,15 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using AspNetCoreHero.ToastNotification.Abstractions;
 using YemeniDriver.Api.ViewModel.User;
 using YemeniDriver.Api.Models;
 using YemeniDriver.Api.Interfaces;
 using YemeniDriver.Api.Data.Enums;
 using YemeniDriver.Api.ViewModel.Vehicle;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 
 namespace YemeniDriver.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/user")]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -54,7 +48,7 @@ namespace YemeniDriver.Api.Controllers
             return Ok("Hello from UserController!");
         }
 
-        [HttpPost("RegisterAsDriver")]
+        [HttpPost("registerAsDriver")]
         public async Task<IActionResult> RegisterAsDriver(DriverRegisterationViewModel driverRegisterVM)
         {
             var userExists = await CheckIfUserExistsAsync(driverRegisterVM.Email);
@@ -76,11 +70,10 @@ namespace YemeniDriver.Api.Controllers
                 return Ok("Driver account created successfully");
             }
 
-            AddErrorsToModelState(result.Errors);
             return BadRequest("Registration Failed");
         }
 
-        [HttpPost("RegisterAsPassenger")]
+        [HttpPost("registerAsPassenger")]
         public async Task<IActionResult> RegisterAsPassenger(PassengerRegisterationViewModel registerVM)
         {
             var userExists = await CheckIfUserExistsAsync(registerVM.Email);
@@ -104,12 +97,11 @@ namespace YemeniDriver.Api.Controllers
                 return Ok("Passenger account created successfully");
             }
 
-            AddErrorsToModelState(result.Errors);
             return BadRequest("Registration Failed");
         }
         
 
-        [HttpGet("ViewDriverDetails/{driverId}")]
+        [HttpGet("viewDriverDetails/{driverId}")]
         [Authorize(Roles = "Driver")] // Add this attribute to make the method accessible only by users with the "Passenger" role
         public async Task<IActionResult> ViewDriverDetails(string driverId)
         {
@@ -133,7 +125,7 @@ namespace YemeniDriver.Api.Controllers
             return Ok(driverVM);
         }
 
-        [HttpGet("ViewPassengerDetails/{passengerId}")]
+        [HttpGet("viewPassengerDetails/{passengerId}")]
         [Authorize(Roles = "Passenger")] // Add this attribute to make the method accessible only by users with the "Passenger" role
         public async Task<IActionResult> ViewPassengerDetails(string passengerId)
         {
@@ -149,7 +141,7 @@ namespace YemeniDriver.Api.Controllers
             return Ok(passengerVM);
         }
 
-        [HttpGet("EditDriverDetails/{driverId}")]
+        [HttpGet("editDriverDetails/{driverId}")]
         [Authorize(Roles = "Driver")] // Add this attribute to make the method accessible only by users with the "Passenger" role
         public async Task<IActionResult> EditDriverDetails(string driverId)
         {
@@ -166,14 +158,12 @@ namespace YemeniDriver.Api.Controllers
                 driver.Vehicle = vehicle;
             }
 
-           
-
             var editDriverDetailsVM = MapToEditDriverDetailsViewModel(driver);
 
             return Ok(editDriverDetailsVM);
         }
 
-        [HttpPost("EditDriverDetails/{driverId}")]
+        [HttpPost("editDriverDetails/{driverId}")]
         [Authorize(Roles = "Driver")] // Add this attribute to make the method accessible only by users with the "Passenger" role
         public async Task<IActionResult> EditDriverDetails(string driverId, EditDriverDetailsViewModel editDriverDetailsViewModel)
         {
@@ -183,9 +173,6 @@ namespace YemeniDriver.Api.Controllers
             {
                 return NotFound($"{driverId} does not exist");
             }
-
-            ModelState.Remove("Vehicle.ApplicationUser");
-            ModelState.Remove("Vehicle.Driver");
 
             if (!ModelState.IsValid)
             {
@@ -206,14 +193,13 @@ namespace YemeniDriver.Api.Controllers
             }
             catch (Exception)
             {
-                // Handle exceptions appropriately
                 throw;
             }
 
         }
 
-        [HttpGet("EditPassengerDetails/{passengerId}")]
-        [Authorize(Roles = "Passenger")] // Add this attribute to make the method accessible only by users with the "Passenger" role
+        [HttpGet("editPassengerDetails/{passengerId}")]
+        [Authorize(Roles = "Passenger")] 
         public async Task<IActionResult> EditPassengerDetails(string passengerId)
         {
             var passenger = await _userRepository.GetPassengerById(passengerId);
@@ -228,8 +214,8 @@ namespace YemeniDriver.Api.Controllers
             return Ok(editPassengerDetailsVM);
         }
 
-        [HttpPost("EditPassengerDetails/{passengerId}")]
-        [Authorize(Roles = "Passenger")] // Add this attribute to make the method accessible only by users with the "Passenger" role
+        [HttpPost("editPassengerDetails/{passengerId}")]
+        [Authorize(Roles = "Passenger")] 
         public async Task<IActionResult> EditPassengerDetails(string passengerId, EditPassengerDetailsViewModel editPassengerDetailsViewModel)
         {
             var passenger = await _userRepository.GetPassengerById(passengerId);
@@ -257,18 +243,19 @@ namespace YemeniDriver.Api.Controllers
             }
             catch (Exception)
             {
-                // Handle exceptions appropriately
                 throw;
             }
         }
 
-        [HttpPost("DeleteUser/{userId}")]
+        [HttpPost("deleteUser/{userId}")]
         [Authorize]
         public async Task<IActionResult> DeleteUser(string userId)
         {
             var user = await GetUserDetailsAsync(userId);
-            ApplicationUser currentUser = null;
-            if(_contextAccessor.HttpContext.User.Identity.IsAuthenticated == true)
+            ApplicationUser? currentUser = null;
+
+            var isAuthenticated = _contextAccessor.HttpContext.User.Identity.IsAuthenticated;
+            if (isAuthenticated == true)
             {
                 var currentUserId = _contextAccessor.HttpContext.User.GetUserId();
                 currentUser = await GetUserDetailsAsync(currentUserId);
@@ -284,11 +271,11 @@ namespace YemeniDriver.Api.Controllers
                     {
                         var trips = await _tripRepository.GetByUserId(userId, Roles.Driver);
 
-                        if (trips != null) _tripRepository.DeleteRange(trips.ToList());
+                        if (trips != null) _tripRepository.DeleteTrips(trips.ToList());
 
                         var requests = await _requestRepository.GetByUserId(userId, Roles.Driver);
 
-                        if (requests != null) _requestRepository.DeleteRange(requests.ToList());
+                        if (requests != null) _requestRepository.DeleteRequests(requests.ToList());
 
                         if (vehicle != null)
                         {
@@ -305,11 +292,11 @@ namespace YemeniDriver.Api.Controllers
                     {
                         var trips = await _tripRepository.GetByUserId(userId, Roles.Passenger);
 
-                        if (trips != null) _tripRepository.DeleteRange(trips.ToList());
+                        if (trips != null) _tripRepository.DeleteTrips(trips.ToList());
 
                         var requests = await _requestRepository.GetByUserId(userId, Roles.Passenger);
 
-                        if (requests != null) _requestRepository.DeleteRange(requests.ToList());
+                        if (requests != null) _requestRepository.DeleteRequests(requests.ToList());
 
                         _userRepository.Delete(user);
                         await _signInManager.SignOutAsync();
@@ -323,11 +310,11 @@ namespace YemeniDriver.Api.Controllers
                     {
                         var trips = await _tripRepository.GetByUserId(userId, Roles.Driver);
 
-                        if (trips != null) _tripRepository.DeleteRange(trips.ToList());
+                        if (trips != null) _tripRepository.DeleteTrips(trips.ToList());
 
                         var requests = await _requestRepository.GetByUserId(userId, Roles.Driver);
 
-                        if (requests != null) _requestRepository.DeleteRange(requests.ToList());
+                        if (requests != null) _requestRepository.DeleteRequests(requests.ToList());
 
                         if (vehicle != null)
                         {
@@ -343,11 +330,11 @@ namespace YemeniDriver.Api.Controllers
                     {
                         var trips = await _tripRepository.GetByUserId(userId, Roles.Passenger);
 
-                        if (trips != null) _tripRepository.DeleteRange(trips.ToList());
+                        if (trips != null) _tripRepository.DeleteTrips(trips.ToList());
 
                         var requests = await _requestRepository.GetByUserId(userId, Roles.Passenger);
 
-                        if (requests != null) _requestRepository.DeleteRange(requests.ToList());
+                        if (requests != null) _requestRepository.DeleteRequests(requests.ToList());
 
                         _userRepository.Delete(user);
                     }
@@ -390,7 +377,10 @@ namespace YemeniDriver.Api.Controllers
         /// </summary>
         private async Task DeletePhotosAsync(string profileImageUrl, string vehicleImageUrl)
         {
-            await DeletePhotoAsync(profileImageUrl);
+            if(profileImageUrl != null)
+            {
+                await DeletePhotoAsync(profileImageUrl);
+            }
             if (vehicleImageUrl != null)
             {
                 await DeletePhotoAsync(vehicleImageUrl);
@@ -410,12 +400,16 @@ namespace YemeniDriver.Api.Controllers
             driver.ProfileImageUrl = profileImageUrl;
             _userRepository.Update(driver);
 
-
             var vehicletoUpdate = editDriverDetailsViewModel.Vehicle;
-            vehicletoUpdate.DriverId = driver.Id;
-            vehicletoUpdate.VehicleId = vehicletoUpdate.VehicleId;
-            vehicletoUpdate.VehiclImageUrl = vehicleImageUrl;
-            _vehicleRepository.Update(vehicletoUpdate);
+
+            Vehicle vehicle = new Vehicle
+            {
+                VehicleId = vehicletoUpdate.VehicleId,
+                DriverId = vehicletoUpdate.DriverId,
+                VehiclImageUrl = vehicleImageUrl
+            };
+
+            _vehicleRepository.Update(vehicle);
         }
 
         /// <summary>
@@ -495,7 +489,7 @@ namespace YemeniDriver.Api.Controllers
                 ProfileImageUrl = driver.ProfileImageUrl,
                 PhoneNumber = driver.PhoneNumber,
 
-                Vehicle = new Vehicle
+                Vehicle = new ViewVehicleViewModel
                 {
                     VehicleId = driver.Vehicle?.VehicleId,
                     DriverId = driver.Vehicle?.DriverId,

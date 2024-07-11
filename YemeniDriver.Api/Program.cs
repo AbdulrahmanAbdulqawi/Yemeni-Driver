@@ -2,11 +2,8 @@ using AspNetCoreHero.ToastNotification;
 using AspNetCoreHero.ToastNotification.Extensions;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
-using System.Globalization;
 using YemeniDriver.Api.Data;
 using YemeniDriver.Api.Helpers;
 using YemeniDriver.Api.Interfaces;
@@ -28,7 +25,11 @@ builder.Services.AddScoped<IRequestRepository, RequestRepository>();
 builder.Services.AddScoped<ITripRepository, TripRepository>();
 builder.Services.AddScoped<IDriverRatingReposiotry, RatingRepository>();
 builder.Services.AddScoped<IRatingReposiotry, RatingRepository>();
-
+builder.Services.AddScoped<IGeocodingService>(provider =>
+{
+    var apiKey = Environment.GetEnvironmentVariable("GoogleApiKey"); // Replace with the actual configuration key for your API key
+    return new GeocodingService(apiKey);
+});
 builder.Services.AddNotyf(config => { config.DurationInSeconds = 10; config.IsDismissable = true; config.Position = NotyfPosition.BottomRight; });
 builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
 builder.Services.AddSignalR();

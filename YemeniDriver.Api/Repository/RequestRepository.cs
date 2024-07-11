@@ -37,7 +37,7 @@ namespace YemeniDriver.Api.Repository
         }
 
         /// <inheritdoc/>
-        public bool DeleteRange(List<Request> requests)
+        public bool DeleteRequests(List<Request> requests)
         {
             _dbContext.Requests.RemoveRange(requests);
             return Save();

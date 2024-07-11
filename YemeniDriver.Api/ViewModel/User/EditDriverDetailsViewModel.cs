@@ -1,14 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using YemeniDriver.Api.Data.Enums;
+using YemeniDriver.Api.ViewModel.Vehicle;
 
 namespace YemeniDriver.Api.ViewModel.User
 {
     public class EditDriverDetailsViewModel
     {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
 
-        public string Email { get; set; }
+        public string? Email { get; set; }
 
         //public string Password { get; set; }
         //[Required]
@@ -26,7 +27,7 @@ namespace YemeniDriver.Api.ViewModel.User
         public IFormFile ProfileImage { get; set; }
 
         public string? ProfileImageUrl { get; set; }
-        public Models.Vehicle Vehicle { get; set; }
+        public ViewVehicleViewModel? Vehicle { get; set; }
         public IFormFile VehicleImage { get; set; }
     }
 }

@@ -1,16 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using YemeniDriver.Api.Data.Enums;
 using YemeniDriver.Api.Interfaces;
 using YemeniDriver.Api.Models;
 using YemeniDriver.Api.Service;
 using YemeniDriver.Api.ViewModel.Dashboard;
-using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Http;
 
 namespace YemeniDriver.Api.Controllers
 {
@@ -19,7 +13,7 @@ namespace YemeniDriver.Api.Controllers
     /// </summary>
     [Authorize]
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/dashboard")]
     public class DashboardController : ControllerBase
     {
         private readonly IDashboardRepository _dashboardRepository;
@@ -42,7 +36,7 @@ namespace YemeniDriver.Api.Controllers
         /// <summary>
         /// Display the passenger dashboard.
         /// </summary>
-        [HttpGet("PassengerDashboard")]
+        [HttpGet("getPassengerDashboard")]
         [Authorize(Roles = "Passenger")] // Add this attribute to make the method accessible only by users with the "Passenger" role
         public async Task<IActionResult> GetPassengerDashboard()
         {
@@ -106,7 +100,7 @@ namespace YemeniDriver.Api.Controllers
         /// <summary>
         /// Display the driver dashboard.
         /// </summary>
-        [HttpGet("DriverDashboard")]
+        [HttpGet("getDriverDashboard")]
         [Authorize(Roles = "Driver")] // Add this attribute to make the method accessible only by users with the "Passenger" role
         public async Task<IActionResult> GetDriverDashboard()
         {
@@ -148,7 +142,7 @@ namespace YemeniDriver.Api.Controllers
         /// <summary>
         /// Display the admin dashboard.
         /// </summary>
-        [HttpGet("AdminDashboard")]
+        [HttpGet("getAdminDashboard")]
         public async Task<IActionResult> GetAdminDashboard()
         {
             try

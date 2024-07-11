@@ -33,7 +33,7 @@ namespace YemeniDriver.Api.Interfaces
         /// </summary>
         /// <param name="ratings">The list of ratings to be deleted.</param>
         /// <returns>True if the ratings are successfully deleted; otherwise, false.</returns>
-        bool DeleteRange(List<Rating> ratings);
+        bool DeleteRatings(List<Rating> ratings);
 
         /// <summary>
         /// Saves changes made to the repository.

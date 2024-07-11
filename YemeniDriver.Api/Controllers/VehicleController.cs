@@ -10,6 +10,8 @@ namespace YemeniDriver.Api.Controllers
     /// <summary>
     /// Controller responsible for handling vehicle-related actions and views.
     /// </summary>
+    [Route("api/vehicle")]
+    [ApiController]
     public class VehicleController : Controller
     {
         private readonly IVehicleRepository _vehicleRepository;
@@ -31,6 +33,7 @@ namespace YemeniDriver.Api.Controllers
         /// <summary>
         /// Action to display the form for updating a vehicle.
         /// </summary>
+        [HttpGet]
         public async Task<IActionResult> UpdateVehicle()
         {
             try
@@ -52,7 +55,7 @@ namespace YemeniDriver.Api.Controllers
         /// <summary>
         /// Action to handle the submission of the vehicle update form.
         /// </summary>
-        [HttpPost]
+        [HttpPost("updateVehicle")]
         public async Task<IActionResult> UpdateVehicle(UpdateVehicleViewModel updateVehicleVM)
         {
             try

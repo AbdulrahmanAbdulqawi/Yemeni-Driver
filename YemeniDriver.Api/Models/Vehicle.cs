@@ -12,6 +12,6 @@
         public string? PlateNumber { get; set; }
         public string? VehiclImageUrl { get; set; }
         public string? DriverId { get; set; }
-        public virtual ApplicationUser Driver { get; set; }
+        public virtual ApplicationUser? Driver { get; set; }
     }
 }

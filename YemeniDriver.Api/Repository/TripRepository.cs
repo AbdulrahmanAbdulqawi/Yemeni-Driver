@@ -80,7 +80,7 @@ namespace YemeniDriver.Api.Repository
         }
 
         /// <inheritdoc/>
-        public bool DeleteRange(List<Trip> trips)
+        public bool DeleteTrips(List<Trip> trips)
         {
             _dbContext.Trips.RemoveRange(trips);
             return Save();

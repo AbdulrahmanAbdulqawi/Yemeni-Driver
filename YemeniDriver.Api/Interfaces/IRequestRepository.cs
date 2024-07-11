@@ -69,7 +69,7 @@ namespace YemeniDriver.Api.Interfaces
         /// </summary>
         /// <param name="requests">The collection of requests to be deleted.</param>
         /// <returns><c>true</c> if the requests are successfully deleted; otherwise, <c>false</c>.</returns>
-        bool DeleteRange(List<Request> requests);
+        bool DeleteRequests(List<Request> requests);
 
         /// <summary>
         /// Saves changes made to the repository.

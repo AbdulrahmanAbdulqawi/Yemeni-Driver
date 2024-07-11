@@ -1,40 +1,27 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using YemeniDriver.Api.Data.Enums;
-using YemeniDriver.Api.Interfaces;
 using YemeniDriver.Api.Models;
 using YemeniDriver.Api.ViewModel.Account;
-using AspNetCoreHero.ToastNotification.Abstractions;
 
 namespace YemeniDriver.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/account")]
     [ApiController]
     public class AccountController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly IPhotoService _photoService;
-        private readonly IUserRepository _userRepository;
-        private readonly IVehicleRepository _vehicleRepository;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager,
-            IUserRepository userRepository,
-            IPhotoService photoService,
-            IVehicleRepository vehicleRepository)
+            SignInManager<ApplicationUser> signInManager)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _signInManager = signInManager ?? throw new ArgumentNullException(nameof(signInManager));
-            _photoService = photoService ?? throw new ArgumentNullException(nameof(photoService));
-            _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-            _vehicleRepository = vehicleRepository ?? throw new ArgumentNullException(nameof(vehicleRepository));
         }
 
-        [HttpPost("Register")]
+        [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterationViewModel registerVM)
         {
             if (ModelState.IsValid)
@@ -66,7 +53,7 @@ namespace YemeniDriver.Api.Controllers
             return BadRequest(new { Message = "Registration failed" });
         }
 
-        [HttpPost("Login")]
+        [HttpPost("login")]
         public async Task<IActionResult> Login(LoginViewModel loginVM)
         {
             if (!ModelState.IsValid) return BadRequest(new { Message = "Invalid model state" });
@@ -87,7 +74,7 @@ namespace YemeniDriver.Api.Controllers
             return BadRequest(new { Message = "Login failed" });
         }
 
-        [HttpPost("Logout")]
+        [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();

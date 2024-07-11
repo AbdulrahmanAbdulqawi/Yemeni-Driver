@@ -77,7 +77,7 @@ namespace YemeniDriver.Api.Repository
         }
 
         /// <inheritdoc/>
-        public bool DeleteRange(List<Rating> ratings)
+        public bool DeleteRatings(List<Rating> ratings)
         {
             try
             {

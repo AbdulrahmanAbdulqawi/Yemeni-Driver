@@ -62,7 +62,7 @@ namespace YemeniDriver.Api.Interfaces
         /// </summary>
         /// <param name="trips">The collection of trips to be deleted.</param>
         /// <returns><c>true</c> if the trips are successfully deleted; otherwise, <c>false</c>.</returns>
-        bool DeleteRange(List<Trip> trips);
+        bool DeleteTrips(List<Trip> trips);
 
         /// <summary>
         /// Saves changes made to the repository.
